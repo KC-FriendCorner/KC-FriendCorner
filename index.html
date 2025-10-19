@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8">
+    <title>KC FriendCorner - User</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <div id="mainContainer">
+        
+        <img id="appLogo" src="https://khanchai.ac.th/images/logo.png" alt="School Logo">
+        <h1 id="appTitle">KC FriendCorner</h1>
+        
+        <div id="userInfoArea">
+            <p id="userIdDisplay" class="user-info-text" style="display:none;"></p>
+            <button id="logoutBtn" class="secondary-button logout-button" style="display:none;" onclick="userLogout()">ออกจากระบบ 🚪</button> 
+        </div>
+        
+        <div id="startScreen">
+            
+            <button id="authButton" class="primary-button" onclick="handleAuth()">เริ่มต้นใช้งาน (สุ่ม ID)</button>
+
+            <div id="mainActions" style="display:none;">
+                <button id="historyBtn" class="secondary-button" style="margin-bottom: 15px;" onclick="showHistoryScreen()">ประวัติการสนทนา 📄</button>
+                <button id="startChat" class="primary-button">เริ่มต้นสนทนาใหม่</button>
+            </div>
+            
+        </div>
+
+        <div id="historyScreen" style="display:none;">
+            <button class="secondary-button back-button" onclick="showStartScreen()">ย้อนกลับ</button>
+            
+            <div id="historyListContainer">
+                <h3 class="history-title">รายการประวัติแชท</h3>
+                <div id="historyList">
+                </div>
+            </div>
+            
+            <div id="historyChatBox" class="chat-panel" style="display:none;">
+                <h4 id="historyChatTitle" class="panel-title"></h4>
+                <div id="historyChatContent" class="chat-content"></div>
+                <button class="primary-button" style="margin-top: 15px;" onclick="startNewChatFromHistory()">สนทนาต่อจากแชทนี้</button>
+                <button class="secondary-button" style="margin-top: 10px; width: 100%;" onclick="loadChatHistoryList()">ย้อนกลับไปรายการประวัติ</button>
+            </div>
+        </div>
+
+        <div id="chatScreen" style="display:none;">
+            
+            <div id="chatHeader">
+                <span id="chatTitle">ห้องสนทนาใหม่</span>
+            </div>
+            
+            <div id="chatBox">
+            </div>
+            
+            <div class="input-area">
+                <textarea id="chatInput" placeholder="พิมพ์ข้อความ..."></textarea>
+                <button id="sendButton" class="primary-button">ส่ง</button>
+            </div>
+            
+            <button id="endChatSessionBtn" class="end-chat-button" onclick="endChatSession()">จบการสนทนา 🛑</button> 
+
+        </div>
+        
+    </div>
+
+    <audio id="notifySound" src="notify.mp3" preload="auto"></audio>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    
+    <script src="user.js"></script>
+    
+</body>
+</html>

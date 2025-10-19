@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8">
+    <title>KC FriendCorner - Admin Panel</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        #adminPanel, #loginScreen {
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="mainContainer">
+        <img id="schoolLogo" src="https://khanchai.ac.th/images/logo.png" alt="School Logo">
+        <h1>Admin Corner</h1>
+        
+        <div id="loginScreen" class="login-container">
+            <h2 style="color: #d9534f; margin-bottom: 25px;">เข้าสู่ระบบผู้ดูแล</h2>
+            
+            <div style="margin-bottom: 15px;">
+                <input type="email" id="emailInput" placeholder="อีเมลแอดมิน" class="input-field">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <input type="password" id="passwordInput" placeholder="รหัสผ่าน" class="input-field">
+            </div>
+            
+            <button id="loginBtn" class="primary-button" onclick="adminLogin()">เข้าสู่ระบบ</button>
+            <p id="errorMessage" style="color: red; margin-top: 15px; display: none;"></p>
+        </div>
+
+        <div id="adminPanel">
+            
+            <div id="chatInterface">
+                
+                <div id="chatListPanel">
+                    <h3 class="panel-title">ห้องสนทนาที่เปิดอยู่</h3>
+                    <div id="chatList">
+                        <p style="color:#777;">กำลังโหลดห้องสนทนา...</p>
+                    </div>
+                </div>
+                
+                <div id="chatPanel" style="display:none;">
+                    <div id="chatHeader">
+                        <span id="chatTitle">กรุณาเลือกห้องแชท</span>
+                    </div>
+
+                    <div id="chatBox">
+                        </div>
+                    
+                    <div class="input-area">
+                        <textarea id="chatInput" placeholder="พิมพ์ข้อความ..."></textarea>
+                        <button id="sendButton" class="primary-button">ส่ง</button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <div id="adminFooter" style="display: none;">
+        <div id="userInfoArea">
+            <p id="adminIdDisplay" class="user-info-text"></p>
+            <button id="logoutBtn" class="secondary-button logout-button" onclick="adminLogout()">ออกจากระบบ 🚪</button>
+        </div>
+    </div>
+
+    <audio id="notifySound" src="notify.mp3" preload="auto"></audio>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    
+    <script src="admin.js"></script>
+
+    <script>
+        function adminLogout() {
+            firebase.auth().signOut().then(() => {
+                console.log("Admin signed out.");
+            }).catch((error) => {
+                console.error("Error signing out:", error);
+                alert("ออกจากระบบไม่สำเร็จ");
+            });
+        }
+    </script>
+</body>
+</html>

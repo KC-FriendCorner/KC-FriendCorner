@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* สไตล์สำหรับหน้า Login โดยเฉพาะ */
+        #mainContainer { padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); }
+        .input-field { width: 90%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+    <div id="mainContainer" style="max-width: 400px; text-align: center;">
+        <img id="schoolLogo" src="https://khanchai.ac.th/images/logo.png" alt="School Logo" style="max-width: 80px; margin-bottom: 20px;">
+        <h2 style="color: #d9534f; margin-bottom: 25px;">เข้าสู่ระบบผู้ดูแล</h2>
+        
+        <div style="margin-bottom: 15px;">
+            <input type="email" id="emailInput" placeholder="อีเมลแอดมิน" class="input-field">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <input type="password" id="passwordInput" placeholder="รหัสผ่าน" class="input-field">
+        </div>
+        
+        <button id="loginBtn" class="primary-button" onclick="adminLogin()">เข้าสู่ระบบ</button>
+        
+        <p id="errorMessage" style="color: red; margin-top: 15px; display: none;"></p>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script> 
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAXBd2MsgeYbILyGPxdYRPpUkkF-z2EDz0",
+            authDomain: "kc-tobe-friendcorner.firebaseapp.com",
+            databaseURL: "https://kc-tobe-friendcorner-default-rtdb.firebaseio.com",
+            projectId: "kc-tobe-friendcorner",
+            storageBucket: "kc-tobe-friendcorner.firebasestorage.app",
+            messagingSenderId: "337157160945",
+            appId: "1:337157160945:web:151f4da137b16fe6cb8e50",
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        const emailInput = document.getElementById('emailInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const errorMessage = document.getElementById('errorMessage');
+
+        const ADMIN_EMAIL = "kcfriendcorner@gmail.com"; // ⚠️ แก้ไขให้ตรงกับอีเมล Admin จริงของคุณ
+
+        function adminLogin() {
+            const email = emailInput.value;
+            const password = passwordInput.value;
+            errorMessage.style.display = 'none';
+            document.getElementById('loginBtn').disabled = true;
+
+            if (!email || !password) {
+                errorMessage.textContent = 'กรุณากรอกอีเมลและรหัสผ่าน';
+                errorMessage.style.display = 'block';
+                document.getElementById('loginBtn').disabled = false;
+                return;
+            }
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    if (userCredential.user.email === ADMIN_EMAIL) {
+                        window.location.href = 'admin.html'; // ล็อกอินสำเร็จ
+                    } else {
+                        auth.signOut();
+                        errorMessage.textContent = 'ไม่ใช่บัญชีผู้ดูแลระบบ';
+                        errorMessage.style.display = 'block';
+                        document.getElementById('loginBtn').disabled = false;
+                    }
+                })
+                .catch((error) => {
+                    errorMessage.textContent = 'เข้าสู่ระบบล้มเหลว: ' + error.message;
+                    errorMessage.style.display = 'block';
+                    document.getElementById('loginBtn').disabled = false;
+                });
+        }
+    </script>
+</body>
+</html>
