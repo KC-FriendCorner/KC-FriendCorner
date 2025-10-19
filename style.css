@@ -1,286 +1,454 @@
-/* โครงสร้างหลักและฟอนต์ */
-body {
-    font-family: 'Prompt', sans-serif, Arial;
-    background: #f0f2f5; 
-    color: #333;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    padding-top: 40px;
-    padding-bottom: 40px;
+/* ================================================= */
+/* 0. VARIABLES & BASE STYLES (กำหนดสีและฟอนต์หลัก) */
+/* ================================================= */
+
+:root {
+    --primary-color: #4A90E2; /* สีน้ำเงินหลัก */
+    --primary-hover: #357ABD;
+    --accent-color: #E94C6D; /* สีแดง/ชมพูสำหรับปุ่มจบการสนทนา */
+    --background-color: #F8F9FA; /* พื้นหลังอ่อน */
+    --container-bg: #FFFFFF; /* สีพื้นหลังกรอบหลัก */
+    --text-color: #343A40;
+    --secondary-color: #6C757D; /* สีเทารอง */
+    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
-#mainContainer {
+
+html, body {
+    height: 100%; 
+    margin: 0;
+    padding: 0;
+    font-family: 'Prompt', sans-serif; 
+    background-color: var(--background-color); 
+    color: var(--text-color);
+    
+    /* 💥 โค้ดที่เพิ่ม: ล็อกการเลื่อนของหน้าจอหลัก 💥 */
+    overflow: auto; 
+}
+
+/* 1. LAYOUT & CONTAINER (Responsive Design) */
+body {
+    display: flex;
+    /* 💥 สำคัญ: ใช้ align-items: flex-start; แทน center 
+       เมื่อเนื้อหายาวเกิน 100vh จะได้ไม่ถูกดันจนเลยขอบบน 💥 */
+    justify-content: center; 
+    align-items: flex-start; /* แก้ไขตรงนี้ */
+    min-height: 100vh; 
+    padding-top: 20px; /* เพิ่มขอบด้านบนเล็กน้อย */
+}
+
+#startScreen {
     width: 100%;
-    max-width: 500px; 
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    /* 💥 NEW: เพิ่ม padding ให้กับหน้าหลักเพื่อให้ขอบดูเท่ากับหน้าอื่น 💥 */
+    padding: 0 15px; 
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
-    transition: all 0.3s ease; 
-}
-#appLogo {
-    max-width: 100px;
-    margin-bottom: 15px;
-}
-h1 {
-    color: #2a7ae2; /* User Theme Color: Blue */
-    margin-bottom: 30px;
-    font-size: 28px;
 }
 
-/* ส่วน ID และ Logout */
-#userInfoArea {
-    width: 100%;
+#mainContainer {
+    max-width: 900px; 
+    width: 90%; 
+    background-color: var(--container-bg);
+    padding: 30px;
+    border-radius: 16px; 
+    box-shadow: var(--shadow-light);
+    
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-}
-.user-info-text {
-    font-size: 14px;
-    font-weight: 500;
-    color: #555;
-    margin: 0;
+    /* 💥 สำคัญ: ลบความสูงที่บังคับออก (height: auto) 💥 */
+    height: auto; 
+    margin: 25px 0; 
+    box-sizing: border-box; 
+    
+    /* 💥 สำคัญ: อนุญาตให้ mainContainer มี Scrollbar ถ้าเนื้อหาเยอะมาก 💥 */
+    overflow: visible; 
 }
 
-/* สไตล์ปุ่มหลัก */
+#mainActions {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
+}
+
+#startChat {
+    flex-grow: 1;
+}
+#historyBtn {
+    flex-grow: 1;
+}
+
+/* 2. LOGO & TITLE AREA */
+#logoArea {
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 15px; 
+    margin-bottom: 5px; 
+}
+
+#appLogo, #newLogo {
+    width: 75px; /* โลโก้ใหญ่ขึ้นเล็กน้อย */
+    height: 75px;
+    object-fit: contain;
+}
+
+#newLogo {
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+#appTitle {
+    text-align: center;
+    margin-top: 5px; 
+    margin-bottom: 30px; /* เว้นระยะห่างมากขึ้น */
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary-color); 
+}
+
+/* 3. USER INFO AREA (ID/Logout) */
+#userInfoArea {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+    width: 100%; 
+    /* 💥 แก้ไข: จัดให้รหัสผู้ใช้อยู่ซ้ายสุด และปุ่มอยู่ขวาสุด 💥 */
+    justify-content: space-between; 
+    
+    margin-bottom: 20px; 
+    padding: 0 10px; 
+}
+
+#userIdDisplay {
+    font-size: 14px;
+    color: var(--secondary-color);
+    font-weight: 500;
+    /* 💥 NEW: จัดให้อยู่ซ้ายสุด 💥 */
+    margin-right: auto; 
+}
+
+#logoutBtn {
+    /* 💥 แก้ไข: ย่อขนาดปุ่มให้เล็กลง 💥 */
+    padding: 6px 12px; /* ลด padding */
+    font-size: 13px; /* ลดขนาดฟอนต์ */
+    
+    white-space: nowrap;
+    background-color: #E9ECEF; /* ใช้สี secondary-button */
+    color: var(--secondary-color);
+    border: 1px solid #DEE2E6;
+    border-radius: 6px; /* ลดขอบโค้งเล็กน้อย */
+    
+    transition: background-color 0.3s;
+}
+
+#logoutBtn:hover {
+    background-color: #DDE2E6;
+}
+
+/* 4. BUTTONS (ปรับสไตล์ให้ดูทันสมัย) */
 .primary-button {
-    background: #2a7ae2;
+    background-color: var(--primary-color);
     color: white;
     border: none;
-    padding: 12px 20px;
-    cursor: pointer;
     border-radius: 8px;
-    transition: background 0.3s;
+    padding: 12px 25px;
     font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
     font-weight: 500;
+}
+
+.primary-button:hover {
+    background-color: var(--primary-hover);
+}
+
+.secondary-button {
+    background-color: #E9ECEF; /* เทาอ่อน */
+    color: var(--secondary-color);
+    border: 1px solid #DEE2E6;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: 500;
+}
+
+.secondary-button:hover {
+    background-color: #DDE2E6;
+}
+
+.end-chat-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-weight: 500;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.end-chat-button:hover {
+    background-color: #D83C5C;
+}
+
+/* 5. HISTORY SCREEN STYLING */
+#historyScreen {
+    width: 100%;
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden; 
+    
+    /* 💥 แก้ไข: ลบ padding ที่อาจขัดขวางการยืดเต็มจอออก 💥 */
+    padding: 0; 
+}
+
+.history-title {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.history-item {
+    background-color: #F8F9FA;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 5px solid var(--primary-color);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.history-item:hover {
+    background-color: #E9ECEF;
+}
+
+#historyListContainer {
+    /* อาจจะต้องกำหนดความสูงสูงสุดถ้าต้องการให้ส่วนนี้เลื่อนได้ */
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#historyList {
+    flex-grow: 1;
+    /* 💥 แก้ไข: ส่วนนี้ต้องเลื่อนได้ 💥 */
+    overflow-y: auto; 
+    padding: 0 10px; 
+}
+
+#historyListWrapper {
+    /* ให้ List มี padding เพื่อให้ดูดีเมื่อแสดงรายการ */
+    flex-grow: 1;
+    overflow-y: hidden; 
+    display: flex;
+    flex-direction: column;
+    padding: 0 15px 20px; /* เพิ่ม padding ซ้าย/ขวา เมื่อแสดง List */
+}
+
+#historyChatContent {
+    flex-grow: 1; 
+    overflow-y: auto; 
+    
+    padding: 15px; 
+    margin-bottom: 10px;
+    background-color: #F0F4F8;
+    border-radius: 8px;
+    
+    /* 💥 สำคัญ: ป้องกันไม่ให้ส่วนนี้ถูกยืดเกินไป 💥 */
+    min-height: 0; 
+}
+
+#historyChatBox {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column; 
     width: 100%; 
     box-sizing: border-box;
-}
-.primary-button:hover { 
-    background: #1e5fb8; 
-}
-
-/* สไตล์ปุ่มรอง (Logout, History, Back) */
-.secondary-button {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: background 0.3s;
-    font-size: 14px;
-    font-weight: 400;
-}
-.secondary-button:hover {
-    background: #5a6268;
-}
-.logout-button {
-    width: auto;
-}
-.back-button {
-    width: auto;
-    margin-bottom: 15px;
+    min-height: 0;
+    
+    padding: 15px; 
+    
+    /* 💥 สำคัญ: ล็อกไม่ให้ส่วนนี้เลื่อนเอง (ให้ Content เลื่อนเท่านั้น) 💥 */
+    overflow: hidden; 
 }
 
-/* สไตล์ปุ่มจบการสนทนา (End Chat) */
-.end-chat-button {
-    background: #d9534f; /* ใช้สีแดงเพื่อเน้นการจบการสนทนา */
-    color: white;
-    border: none;
-    padding: 15px 20px;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: background 0.3s ease;
-    width: auto;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    box-sizing: border-box;
-    margin: 0 30px 30px 30px; /* จัดให้อยู่ด้านล่างสุดในหน้าแชท */
-}
-.end-chat-button:hover { 
-    background: #c9302c; 
+#historyChatBox .primary-button, 
+#historyChatBox .secondary-button {
+    flex-shrink: 0; /* 💥 สำคัญ: ไม่ให้ปุ่มถูกบีบหรือเลยขอบล่าง 💥 */
+    margin-top: 10px; /* รักษาช่องว่าง */
 }
 
-/* ===================================== */
-/* Chat Screen & UI */
-/* ===================================== */
-
+/* 6. CHAT SCREEN LAYOUT */
 #chatScreen {
     width: 100%;
+    /* 💥 สำคัญ: ทำให้ยืดเต็มความสูงที่เหลือของ mainContainer 💥 */
+    flex-grow: 1; 
     display: flex;
     flex-direction: column;
-    min-height: 400px; 
+    padding: 0;
+    
+    min-height: 0; /* สำคัญสำหรับ Flexbox */
+    overflow: hidden; /* ล็อกไม่ให้ Chat Screen เลยขอบ */
+    border-radius: 12px;
 }
 
-/* Header แชท */
 #chatHeader {
-    background: #2a7ae2;
+    background-color: var(--primary-color);
     color: white;
-    padding: 15px 30px; 
-    border-radius: 15px 15px 0 0; 
-    font-weight: 500;
+    padding: 15px 20px;
+    border-radius: 12px 12px 0 0;
+    font-weight: 600;
     font-size: 18px;
-    margin: 0; 
     width: 100%;
     box-sizing: border-box;
+    flex-shrink: 0; /* ไม่ให้ Header ถูกย่อ */
 }
 
-/* กล่องข้อความแชท */
 #chatBox {
-    flex-grow: 1;
-    padding: 15px;
-    overflow-y: auto;
-    background: #fff;
-    min-height: 300px;
+    flex-grow: 1; /* ส่วนนี้ต้องยืดและใช้พื้นที่ที่เหลือทั้งหมด */
+    padding: 20px;
+    /* 💥 สำคัญ: ต้องมี overflow-y: auto; เพื่อให้เลื่อนได้ 💥 */
+    overflow-y: auto; 
+    background-color: #F0F4F8; 
+    box-sizing: border-box;
+    width: 100%;
 }
 
-/* ส่วน Input แชท */
 .input-area {
     display: flex;
-    padding: 15px 30px; 
+    padding: 15px 20px;
+    background-color: var(--container-bg);
+    border-top: 1px solid #DEE2E6;
     gap: 10px;
-    background: #fff;
-    width: 100%;
-    box-sizing: border-box;
+    flex-shrink: 0; /* ไม่ให้ Input Area ถูกย่อ */
 }
 
-textarea {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
+#chatInput {
     flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #CED4DA;
+    border-radius: 8px;
     resize: none;
-    height: 40px;
-    box-sizing: border-box;
+    min-height: 40px;
+    font-family: 'Prompt', sans-serif;
+    font-size: 15px;
 }
 
 #sendButton {
-    width: 100px;
-    padding: 10px 15px;
-    font-size: 14px;
-    height: 40px;
+    padding: 10px 20px;
+    width: 80px;
 }
 
-/* สไตล์ข้อความใน Chatbox */
+/* 7. MESSAGE BUBBLES */
 .message {
-    display: flex; 
-    margin-bottom: 10px; 
+    display: flex;
+    margin-bottom: 15px;
 }
+
 .bubble {
     padding: 10px 15px;
-    border-radius: 18px; 
-    line-height: 1.5;
+    border-radius: 18px;
     max-width: 80%;
-    word-wrap: break-word; 
+    line-height: 1.5;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    font-size: 14px;
 }
-/* ข้อความ User (ชิดขวา) */
+
 .user-message {
-    justify-content: flex-end; 
-    margin-left: auto;
+    justify-content: flex-end;
 }
+
 .user-message .bubble {
-    background-color: #2a7ae2; 
-    color: white;
-    border-bottom-right-radius: 4px;
+    background-color: #DCF8C6; /* สีเขียวอ่อน */
+    color: var(--text-color);
+    border-bottom-right-radius: 2px;
 }
-/* ข้อความ Admin (ชิดซ้าย) */
+
 .friend-message {
-    justify-content: flex-start; 
-    margin-right: auto;
+    justify-content: flex-start;
 }
+
 .friend-message .bubble {
-    background-color: #ebebeb; 
-    color: #333;
-    border-bottom-left-radius: 4px; 
+    background-color: var(--container-bg); /* สีขาว */
+    color: var(--text-color);
+    border-bottom-left-radius: 2px;
 }
-/* ข้อความ System (ตรงกลาง) */
+
 .system-message {
     justify-content: center;
-    width: 100%;
-    margin-bottom: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--secondary-color);
+    margin: 15px 0;
 }
+
 .system-message .bubble {
-    background-color: #f0f0ff;
-    color: #6c757d;
-    font-size: 12px;
-    border-radius: 8px;
+    background-color: transparent;
     box-shadow: none;
-    text-align: center;
+    padding: 5px 10px;
+    font-style: italic;
+    white-space: pre-wrap;
 }
 
-/* ===================================== */
-/* History Screen Styles */
-/* ===================================== */
+/* 8. MEDIA QUERY (Mobile Optimization) */
+@media (max-width: 650px) {
+    body {
+        align-items: flex-start;
+        overflow: hidden; /* ล็อกการเลื่อน Body */
+    }
 
-#historyScreen {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-.history-title {
-    color: #2a7ae2;
-    margin-top: 0;
-    border-bottom: 2px solid #2a7ae2;
-    padding-bottom: 5px;
-    margin-bottom: 20px;
-    text-align: center;
-}
-#historyListContainer {
-    width: 100%;
-}
-#historyList {
-    width: 100%;
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 20px;
-}
-.history-item {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    text-align: left;
-    transition: background 0.2s;
-}
-.history-item:hover {
-    background: #f0f8ff;
-}
-/* กล่องแชทประวัติ */
-#historyChatBox {
-    width: 100%;
-    display: flex; 
-    flex-direction: column;
-    gap: 10px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-}
-#historyChatTitle {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 5px;
-    padding-left: 15px;
-}
-.chat-content {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    max-height: 350px;
-    overflow-y: auto;
-    background: #fcfcfc;
+    #mainContainer {
+        width: 100%; 
+        max-width: none; 
+        min-height: 100vh; 
+        padding: 0; 
+        border-radius: 0; 
+        box-shadow: none; 
+        margin: 0; 
+        
+        display: flex;
+        flex-direction: column; 
+        /* 💥 สำคัญ: ล็อกไม่ให้กรอบหลักเลื่อน (ให้ส่วนย่อยเลื่อนแทน) 💥 */
+        overflow: hidden; 
+        
+        box-sizing: border-box; /* สำคัญ: รวม padding/border ในขนาดรวม */
+    }
+    
+    /* จัดการ Padding ภายในแต่ละหน้าจอ */
+    #startScreen, #historyScreen {
+        padding: 20px 15px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    #userInfoArea {
+        padding: 10px 15px; /* รักษา Padding บนมือถือ */
+    }
+    
+    #chatHeader {
+        border-radius: 0;
+    }
+    
+    .input-area {
+        padding: 10px 15px;
+    }
+    
+    #chatBox {
+        padding: 15px;
+    }
+
+    #logoutBtn {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
 }

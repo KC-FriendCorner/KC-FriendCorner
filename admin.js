@@ -23,7 +23,8 @@ const db = firebase.database();
 
 const adminPanel = document.getElementById('adminPanel'); 
 const loginScreen = document.getElementById('loginScreen');
-const adminFooter = document.getElementById('adminFooter'); // 👈 เพิ่ม Footer Element
+const adminFooter = document.getElementById('adminFooter'); 
+const logoArea = document.getElementById('logoArea'); // 👈 ตัวแปรสำหรับ Logo Area ทั้งหมด
 
 const emailInput = document.getElementById('emailInput');
 const passwordInput = document.getElementById('passwordInput');
@@ -59,7 +60,7 @@ auth.onAuthStateChanged(function(user) {
         
         loginScreen.style.display = 'none';
         adminPanel.style.display = 'flex'; 
-        adminFooter.style.display = 'block'; // 👈 แสดง Admin Footer
+        adminFooter.style.display = 'block'; 
         
         listenToChatList(); 
         
@@ -67,7 +68,7 @@ auth.onAuthStateChanged(function(user) {
         currentAdminId = null;
         
         adminPanel.style.display = 'none';
-        adminFooter.style.display = 'none'; // 👈 ซ่อน Admin Footer
+        adminFooter.style.display = 'none'; 
         loginScreen.style.display = 'block'; 
         
         // ล้าง Listener ทั้งหมด
@@ -144,9 +145,8 @@ function listenToChatList() {
             if (!snapshot.exists()) {
                 chatList.innerHTML = '<p style="color:#777; text-align:center; padding: 20px;">ไม่มีห้องสนทนาที่เปิดอยู่</p>';
                 
-                // ถ้าห้องที่กำลังเปิดอยู่หายไปจากรายการ active
+                // ตรวจสอบว่าแชทที่กำลังเปิดอยู่หายไปจากรายการ active หรือไม่
                 if (currentChatId) {
-                    // ตรวจสอบว่าแชทที่ถูกเลือกยังอยู่ใน snapshot ไหม (กรณีที่มันถูกจบไปแล้ว)
                     const chatStillExists = snapshot.hasChild(currentChatId);
                     
                     if (!chatStillExists) {

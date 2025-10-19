@@ -21,8 +21,7 @@ const db = firebase.database();
 // 2. Elements & Variables
 // ===============================================
 const mainContainer = document.getElementById('mainContainer');
-const appLogo = document.getElementById('appLogo');
-const appTitle = document.getElementById('appTitle');
+const logoArea = document.getElementById('logoArea'); // 👈 ตัวแปรสำหรับ Logo Area ทั้งหมด
 
 const startScreen = document.getElementById('startScreen');
 const chatScreen = document.getElementById('chatScreen');
@@ -63,9 +62,14 @@ window.showStartScreen = function() {
     hideAllScreens();
     startScreen.style.display = 'block';
     
-    appLogo.style.display = 'block';
+    // แสดง Logo, Title และปรับ Container สำหรับหน้า Start
+    logoArea.style.display = 'flex'; 
     appTitle.style.display = 'block';
-    mainContainer.style.maxWidth = '500px'; 
+    
+    // 💥 แก้ไข: ให้ userInfoArea จัดการตัวเองตาม CSS ที่เรากำหนด 💥
+    userInfoArea.style.display = 'flex'; 
+    
+    mainContainer.style.maxWidth = '900px'; // ใช้ค่าที่อัพเดตล่าสุด
     mainContainer.style.padding = '30px'; 
     mainContainer.style.height = 'auto';
     mainContainer.style.justifyContent = 'flex-start';
@@ -78,7 +82,9 @@ window.showStartScreen = function() {
     
     if (currentUserId) {
         authButton.style.display = 'none';
-        mainActions.style.display = 'block';
+        
+        // 💥 NEW: ตรวจสอบการแสดงผลปุ่ม 💥
+        mainActions.style.display = 'flex'; // แสดงเป็น flex เพื่อใช้ CSS ใหม่
         logoutBtn.style.display = 'inline-block';
         userIdDisplay.style.display = 'block';
     } else {
@@ -94,8 +100,7 @@ window.showHistoryScreen = function() {
     historyScreen.style.display = 'flex';
     historyScreen.style.flexDirection = 'column';
 
-    appLogo.style.display = 'block';
-    appTitle.style.display = 'block';
+    logoArea.style.display = 'flex'; // 👈 แสดง Logo Area
     mainContainer.style.maxWidth = '500px'; 
     mainContainer.style.padding = '30px';
     mainContainer.style.height = 'auto';
@@ -113,8 +118,7 @@ function showChatScreen() {
     hideAllScreens();
     chatScreen.style.display = 'flex'; 
     
-    appLogo.style.display = 'none';
-    appTitle.style.display = 'none';
+    logoArea.style.display = 'none'; // 👈 ซ่อน Logo Area
     mainContainer.style.maxWidth = '600px'; 
     mainContainer.style.padding = '0';      
     mainContainer.style.height = '85vh';    
@@ -196,12 +200,17 @@ chatInput.addEventListener("keydown", e => {
     } 
 });
 
+// user.js
+
+// user.js
+
 function startNewChat() {
     if (!currentUserId) {
         alert("กรุณาเริ่มต้นใช้งานก่อน");
         return;
     }
     
+    // 💥 โค้ดที่แก้ไข: สร้าง Chat ID ใหม่เสมอ 💥
     const newChatRef = db.ref('user_chats').push();
     const newChatId = newChatRef.key;
     
@@ -215,6 +224,14 @@ function startNewChat() {
     newChatRef.set(chatData)
         .then(() => {
             currentChatId = newChatId;
+            
+            // เพิ่มข้อความระบบแจ้งการเริ่มต้น
+            db.ref(`messages/${newChatId}`).push({
+                sender: "system",
+                message: `--- เริ่มต้นการสนทนาใหม่ (Chat ID: ${newChatId.substring(0, 8)}...) ---`,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+
             startChatSession(newChatId); 
         })
         .catch(error => {
@@ -301,10 +318,43 @@ function listenToChat(chatId) {
     chatListener = { chatId: chatId, callback: callback };
 }
 
+// user.js
+
+function reopenExistingChat(chatId) {
+    
+    // 1. ตั้งค่าสถานะของแชทเดิมให้เป็น 'active' และอัปเดต Activity
+    db.ref(`user_chats/${chatId}`).update({
+        status: 'active',
+        lastActivity: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+        
+        // 2. ล้างข้อความเก่าทั้งหมดในห้องแชทเดิม (เพื่อเริ่มต้นใหม่)
+        return db.ref(`messages/${chatId}`).set(null); 
+        
+    }).then(() => {
+        
+        // 3. เพิ่มข้อความระบบแจ้งเตือนการเริ่มต้น
+        return db.ref(`messages/${chatId}`).push({
+            sender: "system",
+            message: `--- เริ่มต้นการสนทนาใหม่ (Chat ID เดิม: ${chatId.substring(0, 8)}...) ---`,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
+        
+    }).then(() => {
+        // 4. เริ่มเซสชันแชทด้วย ID เดิม
+        startChatSession(chatId);
+    }).catch(error => {
+        console.error("Error reopening chat:", error);
+    });
+}
 
 // ===============================================
 // 7. History Functions
 // ===============================================
+
+// user.js
+
+// user.js
 
 window.loadChatHistoryList = function() {
     historyList.innerHTML = 'กำลังโหลดประวัติ...';
@@ -332,23 +382,43 @@ window.loadChatHistoryList = function() {
             chats.push({ id: snap.key, ...snap.val() });
         });
         
-        chats.sort((a, b) => b.lastActivity - a.lastActivity);
+        // 💥 โค้ดที่แก้ไข: จัดเรียงตามสถานะ (Active ก่อน Ended) แล้วตามด้วยเวลาล่าสุด 💥
+        chats.sort((a, b) => {
+            const statusA = a.status === 'active' ? 1 : 0;
+            const statusB = b.status === 'active' ? 1 : 0;
+            
+            // 1. ถ้าสถานะต่างกัน ให้เรียงตามสถานะ (Active (1) มาก่อน Ended (0))
+            if (statusA !== statusB) {
+                return statusB - statusA;
+            }
+            
+            // 2. ถ้าสถานะเหมือนกัน ให้เรียงตาม lastActivity (ล่าสุดก่อน)
+            return b.lastActivity - a.lastActivity;
+        });
 
         chats.forEach(chat => {
-            const statusText = chat.status === 'active' ? '<span style="color: green;">(กำลังสนทนา)</span>' : '<span style="color: #6c757d;">(จบแล้ว)</span>';
-            const timeText = new Date(chat.createdAt).toLocaleString('th-TH');
+            const statusText = chat.status === 'active' ? '<span style="color: green; font-weight: 700;">(กำลังสนทนา)</span>' : '<span style="color: var(--secondary-color);">(จบแล้ว)</span>';
+            const createdTime = new Date(chat.createdAt).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+            const lastActiveTime = new Date(chat.lastActivity).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+            
+            // ปรับสีขอบซ้ายตามสถานะเพื่อเน้น
+            const itemBorderColor = chat.status === 'active' ? 'var(--accent-color)' : 'var(--primary-color)';
 
             const item = document.createElement('div');
             item.className = 'history-item';
+            item.style.borderLeft = `5px solid ${itemBorderColor}`;
             item.setAttribute('onclick', `showHistoryChat('${chat.id}')`);
             item.innerHTML = `
                 <strong>รหัสแชท: ${chat.id.substring(0, 8)}...</strong> ${statusText}
-                <p style="font-size: 12px; color: #777; margin: 5px 0 0;">เริ่มเมื่อ: ${timeText}</p>
+                <div style="font-size: 12px; color: #777; margin-top: 5px;">
+                    <p style="margin: 0;">เริ่มเมื่อ: ${createdTime}</p>
+                    <p style="margin: 3px 0 0; font-weight: bold; color: var(--text-color);">ล่าสุด: ${lastActiveTime}</p>
+                </div>
             `;
             historyList.appendChild(item);
         });
     });
-}
+};
 
 window.showHistoryChat = function(chatId) {
     historyListContainer.style.display = 'none'; 
@@ -376,32 +446,70 @@ window.showHistoryChat = function(chatId) {
     historyChatBox.dataset.currentId = chatId;
 }
 
+// user.js
+
+// user.js
+
 window.startNewChatFromHistory = function() {
     const oldChatId = historyChatBox.dataset.currentId;
     if (!oldChatId) return;
+    
+    // 💥 Chat ID ที่ใช้ในการสนทนาต่อ คือ Chat ID ที่ถูกเลือกจากประวัติ (oldChatId) 💥
+    const targetChatId = oldChatId; 
 
-    const newChatRef = db.ref('user_chats').push();
-    const newChatId = newChatRef.key;
-    
-    const chatData = {
-        ownerUID: currentUserId,
-        status: 'active',
-        createdAt: firebase.database.ServerValue.TIMESTAMP,
-        lastActivity: firebase.database.ServerValue.TIMESTAMP,
-        originChatId: oldChatId 
-    };
-    
-    newChatRef.set(chatData)
-        .then(() => {
-             db.ref(`messages/${newChatId}`).push({
-                sender: "system",
-                message: `เริ่มต้นแชทใหม่จากประวัติการสนทนาเก่า ID: ${oldChatId.substring(0, 8)}...`,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
+    // 1. ดึงข้อความเก่าจาก Chat ID ที่เลือกมา
+    db.ref(`messages/${targetChatId}`).once('value')
+        .then(messagesSnapshot => {
+            const messages = messagesSnapshot.val();
+            const newMessagesRef = db.ref(`messages/${targetChatId}`);
+            
+            // 2. ตั้งค่าสถานะของ Chat ID เดิมให้เป็น 'active'
+            db.ref(`user_chats/${targetChatId}`).update({
+                status: 'active',
+                lastActivity: firebase.database.ServerValue.TIMESTAMP
             });
             
-            startChatSession(newChatId); 
+            // 3. (Optional) ลบข้อความเก่าใน Chat ID นั้นทิ้งก่อน (ถ้าต้องการให้ Chat ID เดิมถูก "รีเซ็ต" ก่อนคัดลอก)
+            // ถ้าไม่ต้องการรีเซ็ต ให้ข้ามขั้นตอนนี้ไป แต่ถ้าต้องการให้เป็น Chat ID เดิมแต่เริ่มจากข้อความประวัติที่เลือก
+            // ให้ใช้โค้ดที่ผมให้ไปก่อนหน้านี้ได้เลย (ซึ่งเป็นการคัดลอกเข้า Chat ID ใหม่)
+
+            // **** เราจะใช้ตรรกะเดิมคือ สร้าง Chat ID ใหม่แล้วคัดลอกข้อความเก่ามาใส่
+            // **** แต่ถ้าคุณต้องการ "ใช้รหัสเดิม" (targetChatId) ให้ทำตามโค้ดด้านล่างนี้:
+            
+            // 💥 ขั้นตอน A: ล้างข้อความเก่าทั้งหมดของ Chat ID ที่กำลังจะใช้ต่อ (targetChatId) 💥
+            return newMessagesRef.set(null) 
+                .then(() => messages); // ส่งต่อข้อความที่ดึงมา
+        })
+        .then(messages => {
+            const targetMessagesRef = db.ref(`messages/${targetChatId}`);
+            
+            // 💥 ขั้นตอน B: คัดลอกข้อความที่ดึงมา ใส่กลับเข้าไปใน Chat ID เดิม 💥
+            if (messages) {
+                // คัดลอกข้อความเก่าทั้งหมดไปยัง Chat ID เดิม
+                return targetMessagesRef.set(messages) 
+                    .then(() => {
+                        // เพิ่มข้อความระบบแจ้งการคัดลอก
+                        return targetMessagesRef.push({
+                            sender: "system",
+                            message: `--- ดึงประวัติการสนทนาเก่า ID: ${oldChatId.substring(0, 8)}... มาแสดง และสนทนาต่อในรหัสแชทนี้ ---`,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        });
+                    });
+            } else {
+                 // เพิ่มข้อความระบบแจ้งว่าไม่มีข้อความเก่า
+                 return targetMessagesRef.push({
+                    sender: "system",
+                    message: `เริ่มต้นแชทต่อจากประวัติ ID: ${oldChatId.substring(0, 8)}... (ไม่มีข้อความเก่า)`,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            }
+        })
+        .then(() => {
+            // 4. เริ่มต้นเซสชันแชทด้วย Chat ID เดิมที่เลือกมา
+            startChatSession(targetChatId); 
         })
         .catch(error => {
-            console.error("Error creating new chat from history:", error);
+            console.error("Error continuing chat from history:", error);
+            alert("ไม่สามารถเริ่มต้นสนทนาต่อจากประวัติได้");
         });
-}
+}        
