@@ -176,13 +176,22 @@ window.userLogout = function() {
     }
 };
 
+// user.js
+
 function performSignOut() {
-     auth.signOut().then(() => {
-        console.log("User signed out.");
-    }).catch((error) => {
-        console.error("Error signing out:", error);
-        alert("ออกจากระบบไม่สำเร็จ");
-    });
+    auth.signOut()
+        .then(() => {
+            // 💥 โค้ดที่แก้ไข: ตั้งค่า Persistence เป็น NONE หลัง SignOut 💥
+            // การทำเช่นนี้เป็นการล้างสถานะการคงอยู่ของ Auth ในเบราว์เซอร์อย่างสมบูรณ์
+            return auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+        })
+        .then(() => {
+            console.log("User signed out and persistence cleared.");
+        })
+        .catch((error) => {
+            console.error("Error signing out:", error);
+            alert("ออกจากระบบไม่สำเร็จ");
+        });
 }
 
 
@@ -513,3 +522,27 @@ window.startNewChatFromHistory = function() {
             alert("ไม่สามารถเริ่มต้นสนทนาต่อจากประวัติได้");
         });
 }        
+// user.js
+
+window.handleAuth = function() {
+    if (!currentUserId) {
+        authButton.textContent = 'กำลังสร้าง ID...';
+        
+        // 💥 โค้ดที่แก้ไข: ตั้งค่า Persistence เป็น 'none' ก่อน Sign-in 💥
+        auth.setPersistence(firebase.auth.Auth.Persistence.NONE)
+            .then(() => {
+                return auth.signInAnonymously();
+            })
+            .then(userCredential => {
+                // หากทำสำเร็จ Firebase จะไม่พยายามจำ ID นี้ในเซสชันถัดไป
+                console.log("Anonymous sign-in success with persistence: NONE");
+            })
+            .catch(error => {
+                console.error("Anonymous sign-in failed:", error);
+                alert("เกิดข้อผิดพลาดในการเริ่มต้นใช้งาน: " + error.message);
+                authButton.textContent = 'เริ่มต้นใช้งาน (สุ่ม ID)';
+            });
+    } else {
+        showStartScreen(); 
+    }
+}
