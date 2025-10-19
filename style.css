@@ -21,33 +21,23 @@ html, body {
     background-color: var(--background-color); 
     color: var(--text-color);
     
-    /* 💥 โค้ดที่เพิ่ม: ล็อกการเลื่อนของหน้าจอหลัก 💥 */
-    overflow: auto; 
+    /* 💥 Desktop Default: อนุญาตให้ Body เลื่อนได้ตามปกติ 💥 */
+    overflow-y: auto; 
 }
 
 /* 1. LAYOUT & CONTAINER (Responsive Design) */
 body {
     display: flex;
-    /* 💥 สำคัญ: ใช้ align-items: flex-start; แทน center 
-       เมื่อเนื้อหายาวเกิน 100vh จะได้ไม่ถูกดันจนเลยขอบบน 💥 */
     justify-content: center; 
-    align-items: flex-start; /* แก้ไขตรงนี้ */
+    /* 💥 Desktop: ชิดขอบบน 💥 */
+    align-items: flex-start; 
     min-height: 100vh; 
-    padding-top: 20px; /* เพิ่มขอบด้านบนเล็กน้อย */
-}
-
-#startScreen {
-    width: 100%;
-    /* 💥 NEW: เพิ่ม padding ให้กับหน้าหลักเพื่อให้ขอบดูเท่ากับหน้าอื่น 💥 */
-    padding: 0 15px; 
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 #mainContainer {
-    max-width: 900px; 
+    max-width: 900px; /* ความกว้างสูงสุดบนจอคอมพิวเตอร์ */
     width: 90%; 
     background-color: var(--container-bg);
     padding: 30px;
@@ -57,28 +47,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* 💥 สำคัญ: ลบความสูงที่บังคับออก (height: auto) 💥 */
     height: auto; 
-    margin: 25px 0; 
+    margin: 0; 
     box-sizing: border-box; 
     
-    /* 💥 สำคัญ: อนุญาตให้ mainContainer มี Scrollbar ถ้าเนื้อหาเยอะมาก 💥 */
-    overflow: visible; 
-}
-
-#mainActions {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
-    width: 100%;
-    justify-content: center;
-}
-
-#startChat {
-    flex-grow: 1;
-}
-#historyBtn {
-    flex-grow: 1;
+    /* 💥 Desktop: อนุญาตให้เนื้อหาเลื่อนได้เมื่อจำเป็น 💥 */
+    overflow: visible;
 }
 
 /* 2. LOGO & TITLE AREA */
@@ -91,7 +65,7 @@ body {
 }
 
 #appLogo, #newLogo {
-    width: 75px; /* โลโก้ใหญ่ขึ้นเล็กน้อย */
+    width: 75px; 
     height: 75px;
     object-fit: contain;
 }
@@ -104,19 +78,18 @@ body {
 #appTitle {
     text-align: center;
     margin-top: 5px; 
-    margin-bottom: 30px; /* เว้นระยะห่างมากขึ้น */
+    margin-bottom: 30px; 
     font-size: 32px;
     font-weight: 700;
     color: var(--primary-color); 
 }
 
-/* 3. USER INFO AREA (ID/Logout) */
+/* 3. USER INFO AREA (ID/Logout) - จัดซ้าย/ขวา */
 #userInfoArea {
     display: flex;
     align-items: center;
     gap: 15px; 
     width: 100%; 
-    /* 💥 แก้ไข: จัดให้รหัสผู้ใช้อยู่ซ้ายสุด และปุ่มอยู่ขวาสุด 💥 */
     justify-content: space-between; 
     
     margin-bottom: 20px; 
@@ -127,21 +100,18 @@ body {
     font-size: 14px;
     color: var(--secondary-color);
     font-weight: 500;
-    /* 💥 NEW: จัดให้อยู่ซ้ายสุด 💥 */
     margin-right: auto; 
 }
 
 #logoutBtn {
-    /* 💥 แก้ไข: ย่อขนาดปุ่มให้เล็กลง 💥 */
-    padding: 6px 12px; /* ลด padding */
-    font-size: 13px; /* ลดขนาดฟอนต์ */
-    
+    padding: 6px 12px; 
+    font-size: 13px; 
     white-space: nowrap;
-    background-color: #E9ECEF; /* ใช้สี secondary-button */
+    background-color: #E9ECEF; 
     color: var(--secondary-color);
     border: 1px solid #DEE2E6;
-    border-radius: 6px; /* ลดขอบโค้งเล็กน้อย */
-    
+    border-radius: 6px; 
+    cursor: pointer;
     transition: background-color 0.3s;
 }
 
@@ -149,7 +119,27 @@ body {
     background-color: #DDE2E6;
 }
 
-/* 4. BUTTONS (ปรับสไตล์ให้ดูทันสมัย) */
+
+/* 4. START SCREEN & BUTTONS */
+#startScreen {
+    width: 100%;
+    /* เพิ่ม padding ให้กับหน้าหลักเพื่อให้ขอบดูเท่ากับหน้าอื่น */
+    padding: 0 15px; 
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#mainActions {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
+}
+
+/* 4.1 BUTTONS (ปรับสไตล์ให้ดูทันสมัย) */
 .primary-button {
     background-color: var(--primary-color);
     color: white;
@@ -167,7 +157,7 @@ body {
 }
 
 .secondary-button {
-    background-color: #E9ECEF; /* เทาอ่อน */
+    background-color: #E9ECEF; 
     color: var(--secondary-color);
     border: 1px solid #DEE2E6;
     border-radius: 8px;
@@ -200,107 +190,22 @@ body {
     background-color: #D83C5C;
 }
 
-/* 5. HISTORY SCREEN STYLING */
-#historyScreen {
-    width: 100%;
-    flex-grow: 1; 
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    overflow: hidden; 
-    
-    /* 💥 แก้ไข: ลบ padding ที่อาจขัดขวางการยืดเต็มจอออก 💥 */
-    padding: 0; 
-}
-
-.history-title {
-    color: var(--primary-color);
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-weight: 600;
-}
-
-.history-item {
-    background-color: #F8F9FA;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    border-left: 5px solid var(--primary-color);
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.history-item:hover {
-    background-color: #E9ECEF;
-}
-
-#historyListContainer {
-    /* อาจจะต้องกำหนดความสูงสูงสุดถ้าต้องการให้ส่วนนี้เลื่อนได้ */
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-#historyList {
+#startChat {
     flex-grow: 1;
-    /* 💥 แก้ไข: ส่วนนี้ต้องเลื่อนได้ 💥 */
-    overflow-y: auto; 
-    padding: 0 10px; 
 }
 
-#historyListWrapper {
-    /* ให้ List มี padding เพื่อให้ดูดีเมื่อแสดงรายการ */
-    flex-grow: 1;
-    overflow-y: hidden; 
-    display: flex;
-    flex-direction: column;
-    padding: 0 15px 20px; /* เพิ่ม padding ซ้าย/ขวา เมื่อแสดง List */
-}
-
-#historyChatContent {
-    flex-grow: 1; 
-    overflow-y: auto; 
-    
-    padding: 15px; 
-    margin-bottom: 10px;
-    background-color: #F0F4F8;
-    border-radius: 8px;
-    
-    /* 💥 สำคัญ: ป้องกันไม่ให้ส่วนนี้ถูกยืดเกินไป 💥 */
-    min-height: 0; 
-}
-
-#historyChatBox {
-    flex-grow: 1; 
-    display: flex;
-    flex-direction: column; 
-    width: 100%; 
-    box-sizing: border-box;
-    min-height: 0;
-    
-    padding: 15px; 
-    
-    /* 💥 สำคัญ: ล็อกไม่ให้ส่วนนี้เลื่อนเอง (ให้ Content เลื่อนเท่านั้น) 💥 */
-    overflow: hidden; 
-}
-
-#historyChatBox .primary-button, 
-#historyChatBox .secondary-button {
-    flex-shrink: 0; /* 💥 สำคัญ: ไม่ให้ปุ่มถูกบีบหรือเลยขอบล่าง 💥 */
-    margin-top: 10px; /* รักษาช่องว่าง */
-}
 
 /* 6. CHAT SCREEN LAYOUT */
 #chatScreen {
     width: 100%;
-    /* 💥 สำคัญ: ทำให้ยืดเต็มความสูงที่เหลือของ mainContainer 💥 */
     flex-grow: 1; 
     display: flex;
     flex-direction: column;
     padding: 0;
     
-    min-height: 0; /* สำคัญสำหรับ Flexbox */
-    overflow: hidden; /* ล็อกไม่ให้ Chat Screen เลยขอบ */
-    border-radius: 12px;
+    min-height: 0; 
+    overflow: hidden; 
+    border-radius: 12px; 
 }
 
 #chatHeader {
@@ -312,17 +217,17 @@ body {
     font-size: 18px;
     width: 100%;
     box-sizing: border-box;
-    flex-shrink: 0; /* ไม่ให้ Header ถูกย่อ */
+    flex-shrink: 0; 
 }
 
 #chatBox {
-    flex-grow: 1; /* ส่วนนี้ต้องยืดและใช้พื้นที่ที่เหลือทั้งหมด */
+    flex-grow: 1;
     padding: 20px;
-    /* 💥 สำคัญ: ต้องมี overflow-y: auto; เพื่อให้เลื่อนได้ 💥 */
     overflow-y: auto; 
     background-color: #F0F4F8; 
     box-sizing: border-box;
     width: 100%;
+    min-height: 0; 
 }
 
 .input-area {
@@ -331,7 +236,7 @@ body {
     background-color: var(--container-bg);
     border-top: 1px solid #DEE2E6;
     gap: 10px;
-    flex-shrink: 0; /* ไม่ให้ Input Area ถูกย่อ */
+    flex-shrink: 0; 
 }
 
 #chatInput {
@@ -369,7 +274,7 @@ body {
 }
 
 .user-message .bubble {
-    background-color: #DCF8C6; /* สีเขียวอ่อน */
+    background-color: #DCF8C6; 
     color: var(--text-color);
     border-bottom-right-radius: 2px;
 }
@@ -379,7 +284,7 @@ body {
 }
 
 .friend-message .bubble {
-    background-color: var(--container-bg); /* สีขาว */
+    background-color: var(--container-bg); 
     color: var(--text-color);
     border-bottom-left-radius: 2px;
 }
@@ -404,7 +309,8 @@ body {
 @media (max-width: 650px) {
     body {
         align-items: flex-start;
-        overflow: hidden; /* ล็อกการเลื่อน Body */
+        overflow: hidden; 
+        padding: 0;
     }
 
     #mainContainer {
@@ -418,23 +324,26 @@ body {
         
         display: flex;
         flex-direction: column; 
-        /* 💥 สำคัญ: ล็อกไม่ให้กรอบหลักเลื่อน (ให้ส่วนย่อยเลื่อนแทน) 💥 */
         overflow: hidden; 
         
-        box-sizing: border-box; /* สำคัญ: รวม padding/border ในขนาดรวม */
+        box-sizing: border-box; 
     }
     
     /* จัดการ Padding ภายในแต่ละหน้าจอ */
-    #startScreen, #historyScreen {
+    #startScreen {
         padding: 20px 15px;
-        width: 100%;
-        box-sizing: border-box;
     }
 
     #userInfoArea {
-        padding: 10px 15px; /* รักษา Padding บนมือถือ */
+        padding: 10px 15px; 
+        margin-bottom: 10px;
     }
     
+    #logoutBtn {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+
     #chatHeader {
         border-radius: 0;
     }
@@ -445,10 +354,5 @@ body {
     
     #chatBox {
         padding: 15px;
-    }
-
-    #logoutBtn {
-        padding: 5px 10px;
-        font-size: 11px;
     }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>KC FriendCorner - User</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,12 +15,13 @@
         
         <div id="logoArea">
             <img id="appLogo" src="https://khanchai.ac.th/images/logo.png" alt="School Logo">
-            <img id="newLogo" src="https://scontent.fhdy2-1.fna.fbcdn.net/v/t39.30808-6/307292068_519407590188122_6085118533982841765_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=W04_nWdH9Y0Q7kNvwHrUtCs&_nc_oc=AdlxqhLbKepidwWnz8_nKGlkiIKOZuBU9os9KLEKTWnWbMLx5LKxAHJl-xoc1aFB2c_wTM8cm87MxYPc0UqPQ_zh&_nc_zt=23&_nc_ht=scontent.fhdy2-1.fna&_nc_gid=FzqvEpuLkNazApwenuViQw&oh=00_AfeYy4JfeuDVi7qQ0fdqEUZSRskILGUkYM8EOuPUrwczzA&oe=68FADAC7" alt="Support Group Logo">
+            <img id="newLogo" src="https://scontent.fhdy2-1.fna.fbcdn.net/v/t39.30808-6/307292068_519407590188122_6085118533982841765_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=W04_nWdH9Y0Q7kNvwHrUtCs&_nc_oc=AdlxqhLbKepidwWnz8_nKGlkiIKOZuBU9os9KLEKTWnWMLx5LKxAHJl-xoc1aFB2c_wTM8cm87MxYPc0UqPQ_zh&_nc_zt=23&_nc_ht=scontent.fhdy2-1.fna&_nc_gid=FzqvEpuLkNazApwenuViQw&oh=00_AfeYy4JfeuDVi7qQ0fdhEUZSRskILGUkYM8EOuPUrwczzA&oe=68FADAC7" alt="Support Group Logo">
         </div>
         <h1 id="appTitle">KC FriendCorner</h1>
+        
         <div id="userInfoArea">
             <p id="userIdDisplay" class="user-info-text" style="display:none;"></p>
-            <button id="logoutBtn" class="secondary-button logout-button" style="display:none;" onclick="userLogout()">ออกจากระบบ 🚪</button> 
+            <button id="logoutBtn" style="display:none;" onclick="userLogout()">ออกจากระบบ 🚪</button> 
         </div>
         
         <div id="startScreen">
@@ -28,29 +29,10 @@
             <button id="authButton" class="primary-button" onclick="handleAuth()">เริ่มต้นใช้งาน (สุ่ม ID)</button>
 
             <div id="mainActions" style="display:none;">
-                <button id="historyBtn" class="secondary-button" style="margin-bottom: 15px;" onclick="showHistoryScreen()">ประวัติการสนทนา 📄</button>
                 <button id="startChat" class="primary-button">เริ่มต้นสนทนาใหม่</button>
             </div>
             
         </div>
-
-        <div id="historyScreen" style="display:none;">
-    <button class="secondary-button back-button" onclick="showStartScreen()">ย้อนกลับ</button>
-    
-    <div id="historyListContainer">
-        <h3 class="history-title">รายการประวัติแชท</h3>
-        <div id="historyList">
-        </div>
-    </div>
-    
-    <div id="historyChatBox" class="chat-panel" style="display:none;">
-            <h4 id="historyChatTitle" class="panel-title"></h4>
-            <div id="historyChatContent" class="chat-content"></div>
-
-            <button class="primary-button" style="margin-top: 15px;" onclick="startNewChatFromHistory()">สนทนาต่อจากแชทนี้</button>
-            <button class="secondary-button" style="margin-top: 10px; width: 100%;" onclick="loadChatHistoryList()">ย้อนกลับไปรายการประวัติ</button>
-        </div>
-</div>
 
         <div id="chatScreen" style="display:none;">
             
