@@ -1,66 +1,381 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-    <meta charset="utf-8">
-    <title>KC FriendCorner - User</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    
-    <div id="mainContainer">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KC FriendCorner - User Chat</title>
         
-        <div id="logoArea">
-            <img id="appLogo" src="https://khanchai.ac.th/images/logo.png" alt="School Logo">
-            <img id="newLogo" src="https://scontent.fhdy2-1.fna.fbcdn.net/v/t39.30808-6/307292068_519407590188122_6085118533982841765_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=W04_nWdH9Y0Q7kNvwHrUtCs&_nc_oc=AdlxqhLbKepidwWnz8_nKGlkiIKOZuBU9os9KLEKTWnWMLx5LKxAHJl-xoc1aFB2c_wTM8cm87MxYPc0UqPQ_zh&_nc_zt=23&_nc_ht=scontent.fhdy2-1.fna&_nc_gid=FzqvEpuLkNazApwenuViQw&oh=00_AfeYy4JfeuDVi7qQ0fdhEUZSRskILGUkYM8EOuPUrwczzA&oe=68FADAC7" alt="Support Group Logo">
-        </div>
-        <h1 id="appTitle">KC FriendCorner</h1>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
         
-        <div id="userInfoArea">
-            <p id="userIdDisplay" class="user-info-text" style="display:none;"></p>
-            <button id="logoutBtn" style="display:none;" onclick="userLogout()">ออกจากระบบ 🚪</button> 
-        </div>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         
-        <div id="startScreen">
+        <style>
+            /* 1. Reset, Font, และการจัดกึ่งกลางของ Body */
+            body {
+                font-family: 'Sarabun', sans-serif;
+                background-color: #f4f7f6;
+                display: flex;
+                justify-content: center;
+                align-items: center; 
+                min-height: 100vh;
+                margin: 0;
+                padding: 10px; 
+            }
             
-            <button id="authButton" class="primary-button" onclick="handleAuth()">เริ่มต้นใช้งาน (สุ่ม ID)</button>
+            /* 2. ตัวแปรและ Shadow */
+            :root {
+                --primary-color: #007bff;
+                --secondary-color: #6c757d;
+                --success-color: #28a745;
+                --border-radius-xl: 16px; 
+                --border-radius-lg: 12px;
+                --border-radius-md: 8px;
+                --shadow-lift: 0 6px 20px rgba(0, 0, 0, 0.15); 
+                --transition-time: 0.3s;
+            }
 
-            <div id="mainActions" style="display:none;">
-                <button id="startChat" class="primary-button">เริ่มต้นสนทนาใหม่</button>
-            </div>
+            /* 3. Main Container - ปรับให้ Responsive */
+            #mainContainer {
+                background-color: white;
+                border-radius: var(--border-radius-xl);
+                box-shadow: var(--shadow-lift);
+                width: 100%; 
+                max-width: 450px; 
+                min-height: 500px;
+                height: 95vh;
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+                transition: max-width var(--transition-time), height var(--transition-time);
+            }
+
+            /* MEDIA QUERY สำหรับ Tablet/PC (แนวนอนและจอใหญ่) */
+            @media (min-width: 768px) and (orientation: landscape), (min-width: 992px) {
+                #mainContainer {
+                    max-width: 600px; 
+                    height: 85vh;
+                }
+            }
+
+            /* 4. Welcome/Start Screen (หน้าแรก) */
+            #welcomeScreen {
+                padding: 20px;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                flex-grow: 1;
+                justify-content: center; 
+            }
             
+            #logoArea {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+            #logoArea img {
+                width: 60px;
+                height: 60px;
+                object-fit: cover;
+                border-radius: 50%;
+                margin: 0 5px;
+                border: 3px solid #eee;
+            }
+            #appTitle {
+                font-size: 1.8rem;
+                color: var(--primary-color);
+                margin-bottom: 30px;
+                font-weight: 700;
+            }
+            
+            #userInfoArea {
+                width: 100%;
+                margin-bottom: 20px;
+                padding: 10px 0;
+                border-bottom: 1px solid #eee;
+            }
+            .user-info-text {
+                color: var(--secondary-color);
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+            
+            /* 🚩 ปรับ: จัดให้ปุ่มอยู่กึ่งกลาง */
+            #mainActions {
+                display: flex;
+                flex-direction: column;
+                align-items: center; 
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto; 
+            }
+            
+            /* 5. Buttons */
+            .primary-button, .secondary-button {
+                border: none;
+                padding: 12px 25px;
+                border-radius: var(--border-radius-md);
+                cursor: pointer;
+                font-size: 1rem;
+                font-weight: 600;
+                margin-bottom: 10px;
+                transition: all var(--transition-time);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                width: 100%; 
+                max-width: 300px;
+            }
+            .primary-button {
+                background-color: var(--primary-color);
+                color: white;
+            }
+            .primary-button:hover {
+                background-color: #0056b3;
+                transform: translateY(-2px);
+            }
+            .secondary-button {
+                background-color: var(--secondary-color);
+                color: white;
+            }
+            .secondary-button:hover {
+                background-color: #5a6268;
+                transform: translateY(-2px);
+            }
+            
+            /* 🚩 ปรับ: ปุ่มหลักให้อยู่กึ่งกลาง */
+            #authButton {
+                width: 80%;
+                max-width: 300px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+
+            /* 6. Chat Panel */
+            #chatPanel, #chatScreen { 
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+                height: 100%; 
+            }
+            
+            #chatHeader {
+                padding: 15px;
+                background-color: var(--primary-color);
+                color: white;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-top-left-radius: var(--border-radius-xl); 
+                border-top-right-radius: var(--border-radius-xl);
+                font-weight: 500;
+            }
+            #chatTitle {
+                flex-grow: 1;
+                text-align: center;
+                font-size: 1.1rem;
+                margin-right: -10px; 
+            }
+            #homeButton {
+                background-color: transparent;
+                color: white;
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                padding: 6px 10px;
+                border-radius: var(--border-radius-md);
+                cursor: pointer;
+                font-size: 0.9rem;
+                transition: background-color 0.2s;
+            }
+            #homeButton:hover {
+                background-color: rgba(255, 255, 255, 0.15);
+            }
+
+            /* 7. Chat Box และ Input */
+            #chatBox {
+                flex-grow: 1;
+                padding: 15px;
+                overflow-y: auto;
+                background-color: #fcfcfc;
+                min-height: 50px; 
+            }
+            
+            .input-area {
+                padding: 10px 15px;
+                border-top: 1px solid #eee;
+                display: flex;
+                align-items: flex-end; 
+                flex-shrink: 0;
+            }
+            
+            #chatInput {
+                flex-grow: 1;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 20px;
+                resize: none;
+                margin-right: 10px;
+                font-size: 1rem;
+                font-family: 'Sarabun', sans-serif;
+            }
+
+            /* 🚩 ปรับ: ทำให้ปุ่มส่งข้อความเล็กลงและเป็นวงกลม */
+            #sendButton {
+                padding: 10px 12px;
+                border-radius: 50%; 
+                width: 40px; 
+                height: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 1rem;
+            }
+            #sendButton i {
+                 margin-right: 0 !important;
+            }
+            
+            /* 8. Message Styles */
+            .message {
+                display: flex;
+                margin-bottom: 10px;
+                max-width: 80%;
+                align-items: flex-end;
+            }
+            .bubble {
+                padding: 10px 12px;
+                border-radius: 18px;
+                line-height: 1.4;
+                word-wrap: break-word;
+            }
+            .user-message {
+                justify-content: flex-end;
+                margin-left: auto;
+            }
+            .user-message .bubble {
+                background-color: var(--primary-color);
+                color: white;
+                border-bottom-right-radius: 2px;
+            }
+            .friend-message {
+                justify-content: flex-start;
+                margin-right: auto;
+            }
+            .friend-message .bubble {
+                background-color: #e2e6ea;
+                color: #333;
+                border-bottom-left-radius: 2px;
+            }
+            .system-message {
+                justify-content: center;
+                text-align: center;
+                margin: 10px auto;
+                font-style: italic;
+                font-size: 0.85rem;
+                color: var(--secondary-color);
+            }
+            .system-message .bubble {
+                background: none;
+                padding: 0;
+                border-radius: 0;
+            }
+            
+            .delete-message-btn {
+                font-size: 0.8rem;
+                margin-left: 5px !important;
+                margin-bottom: 5px;
+                align-self: flex-end !important;
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <div id="mainContainer">
+
+            <div id="welcomeScreen"> 
+
+                <div id="logoArea">
+                    <img id="appLogo"
+                        src="https://khanchai.ac.th/images/logo.png"
+                        alt="School Logo">
+                    <img id="newLogo" src="TOBEKC.jpg.jpg"
+                        alt="Support Group Logo">
+                </div>
+
+                <h1 id="appTitle">KC FriendCorner</h1>
+
+                <div id="userInfoArea" style="display: none;">
+                    <p id="userIdDisplay" class="user-info-text"></p>
+                </div>
+
+                <div id="startScreen" style="width: 100%; text-align: center;">
+
+                    <button id="authButton" class="primary-button"
+                        onclick="handleAuth()">
+                        <i class="fas fa-sign-in-alt"></i> **เริ่มต้นใช้งาน (สุ่ม
+                        ID)**
+                    </button>
+
+                    <br><br>
+
+                    <div id="mainActions"
+                        style="display:none;">
+                        
+                        <button id="startChat" class="primary-button">
+                            <i class="fas fa-comment-dots"></i>
+                            กดเพื่อสนทนา
+                        </button>
+
+                        <button id="logoutBtn" class="secondary-button"
+                            onclick="userLogout()">
+                            <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="chatScreen"
+                style="display:none; flex-direction: column; flex-grow: 1;">
+
+                <div id="chatHeader">
+                    <button id="homeButton" onclick="showStartScreen()">
+                        <i class="fas fa-home"></i> หน้าแรก
+                    </button>
+                    <span id="chatTitle">ห้องสนทนาใหม่</span>
+                    <div style="width: 70px;">&nbsp;</div>
+                </div>
+
+                <div id="chatBox">
+                </div>
+
+                <div class="input-area">
+                    <textarea id="chatInput"
+                        placeholder="พิมพ์ข้อความ..."></textarea>
+                    <button id="sendButton" class="primary-button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+
+            </div>
+
         </div>
 
-        <div id="chatScreen" style="display:none;">
-            
-            <div id="chatHeader">
-                <span id="chatTitle">ห้องสนทนาใหม่</span>
-            </div>
-            
-            <div id="chatBox">
-            </div>
-            
-            <div class="input-area">
-                <textarea id="chatInput" placeholder="พิมพ์ข้อความ..."></textarea>
-                <button id="sendButton" class="primary-button">ส่ง</button>
-            </div>
-            
-            <button id="endChatSessionBtn" class="end-chat-button" onclick="endChatSession()">จบการสนทนา 🛑</button> 
+        <audio id="notifySound" src="notify.mp3" preload="auto"></audio>
 
-        </div>
-        
-    </div>
+        <script
+            src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <audio id="notifySound" src="notify.mp3" preload="auto"></audio>
+        <script src="user.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script> 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    
-    <script src="user.js"></script>
-    
-</body>
+    </body>
 </html>
