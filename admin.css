@@ -1,3 +1,4 @@
+/* admin.css */
 /* 0. VARIABLES & BASE STYLES */
 
 /* ================================================= */
@@ -19,6 +20,8 @@
     --secondary-color: #6c757d;
     --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08);
     /* เงาที่นุ่มนวลขึ้น */
+    --danger-color: #dc3545; /* ⬅️ สีแดงสำหรับปุ่ม Logout */
+    --danger-hover: #c82333; 
 }
 
 html,
@@ -53,48 +56,48 @@ body {
     border-radius: 12px;
     box-sizing: border-box;
     text-align: center;
-    /* 💡 [NEW] จัดเรียงองค์ประกอบหลักในแนวตั้ง */
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-#logoArea {
-    /* 💡 การแก้ไข: ทำให้โลโก้เรียงแนวนอนอยู่ตรงกลาง (ตามภาพเดิม) */
-    /* ถ้าต้องการเรียงโลโก้ใน #logoArea เป็น **แนวตั้ง** ต้องเปลี่ยนเป็น: flex-direction: column; */
+/* 🎯 [CSS สำหรับ 3 โลโก้ - 70px, ไม่มีกรอบ, วงกลม] */
+#logoArea, .welcome-logo-area {
     display: flex;
     flex-direction: row;
-    /* คงไว้ตามโค้ดเดิม (โลโก้ 2 อันเคียงกัน) */
-    align-items: center;
     justify-content: center;
-    /* ตรงกลาง */
-    gap: 15px;
+    align-items: flex-end; 
+    gap: 0px; 
     margin-bottom: 20px;
-    /* เพิ่มระยะห่างจากชื่อแอพ */
-    flex-wrap: wrap;
+    flex-wrap: nowrap; 
 }
 
-/* 💡 ปรับขนาดโลโก้ให้เหมาะสมเมื่ออยู่แนวนอน */
-#schoolLogo,
-#newLogo {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 50%;
-    margin-bottom: 0px;
+/* 1. สไตล์สำหรับโลโก้ทั้งสาม */
+#logoArea img, 
+.welcome-logo-area img,
+#logoArea #schoolLogo, 
+.welcome-logo-area #welcomeSchoolLogo 
+{
+    /* ขนาด: 70px พร้อม !important เพื่อ Override */
+    height: 70px !important; 
+    width: 70px !important;  
+    margin: 0 8px !important; /* ระยะห่างแนวนอน */
+    object-fit: cover !important; 
+    
+    /* 🚩 ไม่มีกรอบและเป็นวงกลม */
+    border: none !important; 
+    padding: 0 !important;   
+    border-radius: 50% !important; 
+    
+    margin-top: 0 !important; 
 }
-
-#newLogo {
-    object-fit: cover;
-    border-radius: 50%;
-}
+/* สิ้นสุดการปรับสไตล์โลโก้ */
 
 .app-title-login {
     font-size: 32px;
     color: var(--primary-color);
     font-weight: 700;
     margin-bottom: 20px;
-    /* เพิ่มระยะห่างจากช่องใส่อีเมล */
 }
 
 .input-field {
@@ -139,29 +142,6 @@ body {
     margin: 10px 0 0;
 }
 
-.welcome-logo-area {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 5px;
-}
-
-/* 💡 ทำให้โลโก้ทั้งคู่เป็นวงกลมและขนาดเท่ากันในหน้า Welcome */
-.welcome-logo-img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-.welcome-logo-img.circular {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
 .welcome-box {
     max-width: 380px;
     width: 100%;
@@ -186,9 +166,13 @@ body {
     width: 100%;
 }
 
+/* 🚩 กลุ่มปุ่ม Welcome Screen (ขนาดเท่ากัน) */
 .welcome-button-group {
     width: 100%;
-    max-width: 280px;
+    max-width: 280px; 
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
 }
 
 /* 3. BUTTONS */
@@ -202,7 +186,7 @@ body {
     transition: background 0.3s, transform 0.1s;
     font-size: 16px;
     font-weight: 500;
-    width: 100%;
+    width: 100%; /* ⬅️ ทำให้ปุ่มยาวเต็มความกว้าง */
     box-sizing: border-box;
 }
 
@@ -211,9 +195,10 @@ body {
     transform: translateY(-1px);
 }
 
+/* ปุ่มเข้าสู่ห้องสนทนา (Active) - สีเขียว */
 .primary-button.enter-chat-btn {
     background-color: var(--accent-color);
-    margin: 0 auto;
+    margin: 0; 
     display: block;
 }
 
@@ -221,29 +206,38 @@ body {
     background-color: var(--accent-hover);
 }
 
+/* ปุ่มทั่วไปที่ใช้ class .secondary-button (คือ 'ประวัติแชทที่สิ้นสุดแล้ว') */
 .secondary-button {
+    /* 🚩 [แก้ไข] ใช้สีเทา (secondary) สำหรับปุ่ม "ประวัติแชทที่สิ้นสุดแล้ว" */
     background: var(--secondary-color);
     color: white;
-    border: none;
-    padding: 10px 15px;
+    padding: 12px 20px; 
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 8px; 
     transition: background 0.3s;
-    font-size: 14px;
-    font-weight: 400;
+    font-size: 16px; 
+    font-weight: 500; 
+    width: 100%; 
+    box-sizing: border-box;
+    border: none;
 }
 
+.secondary-button:hover {
+    background: #5a6268;
+}
+
+/* ปุ่มออกจากระบบ - สีแดง */
 .secondary-button.logout-full-btn {
-    background: #e9ecef;
-    color: var(--text-color);
-    border: 1px solid #ced4da;
+    background: var(--danger-color); 
+    color: white;
+    border: none;
     font-weight: 500;
-    margin: 0 auto;
+    margin: 0; 
     display: block;
 }
 
 .secondary-button.logout-full-btn:hover {
-    background: #dee2e6;
+    background: var(--danger-hover);
 }
 
 /* 4. ADMIN PANEL & HISTORY PANEL BASE STYLES */
@@ -256,22 +250,65 @@ body {
     display: flex;
 }
 
-.chat-interface {
+/* 💥 NEW: Base Layout for full screen switching 💥 */
+.chat-interface-wrapper {
     flex-grow: 1;
     display: flex;
-    gap: 20px;
-    padding: 20px;
-    box-sizing: border-box;
+    position: relative;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
+
+/* 💥 NEW: Panels inside the wrapper 💥 */
+/* Panel ที่จะแสดงรายการแชททั้งหมด */
+#listScreenContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    /* กำหนดให้เป็น Flex เพื่อจัดการ List และ History List */
+    gap: 20px;
+    background-color: var(--container-bg);
+}
+
+/* Panel ที่จะแสดงห้องแชทแบบเต็มจอ */
+#chatScreenContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    /* เริ่มต้นซ่อนไว้ */
+    flex-direction: column;
+    background-color: var(--container-bg);
+}
+
 
 /* BASE CLASSES สำหรับ Chat View */
 .chat-panel-base {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    padding: 20px;
+    /* เพิ่ม padding ให้ Chat Screen Container */
+    box-sizing: border-box;
 }
+
+/* 💥 NEW: สไตล์เฉพาะสำหรับ Chat Screen Container 💥 */
+#fullChatView {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
 
 .chat-header {
     display: flex;
@@ -288,6 +325,24 @@ body {
     background: var(--primary-color);
     color: white;
 }
+
+/* 💥 NEW: สไตล์สำหรับปุ่มย้อนกลับ (Back Button) 💥 */
+#backButton {
+    background-color: var(--primary-hover);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.2s;
+    margin-right: 15px;
+}
+
+#backButton:hover {
+    background-color: #0056b3;
+}
+
 
 #historyChatHeader {
     background: var(--history-color);
@@ -317,6 +372,13 @@ body {
     flex-direction: column;
 }
 
+/* 💥 FIXED: ลบ border-right สำหรับ historyListPanel ใน List Screen Container */
+#listScreenContainer #historyListPanel {
+    border-right: none;
+    padding-right: 0;
+}
+
+
 /* CHAT LIST HEADER (ใช้ร่วมกัน) */
 .chat-list-header {
     display: flex;
@@ -332,7 +394,7 @@ body {
 
 #historyListHeader {
     border-bottom: 3px solid var(--history-color);
-    /* ใช้สีเทาสำหรับ History */
+    /* สีเทาสำหรับ History */
 }
 
 .panel-title {
@@ -376,7 +438,6 @@ body {
     border-radius: 6px;
     margin-bottom: 5px;
     position: relative;
-    /* [FIXED] สำหรับตำแหน่งปุ่มลบ */
 }
 
 .chat-item:hover {
@@ -418,18 +479,22 @@ body {
     z-index: 10;
 }
 
-/* HISTORY ITEM SPECIFIC STYLES */
+.chat-item:not(.active) .unread-dot {
+    /* ทำให้จุดไม่โดนบังในสถานะ active */
+    background-color: #ffc107; 
+}
+
+
+/* HISTORY ITEM SPECIFIC STYLES - ใช้สีเทาเดิม */
 .history-item {
     background-color: var(--history-light);
     border-left: 5px solid var(--history-color);
-    /* สีเทาแสดงว่าปิดแล้ว */
 }
 
 .history-item:hover {
     background: #d4d8db;
 }
 
-/* ให้ไอเทมประวัติแชทที่ถูกเลือกใช้สีต่างกัน */
 .history-item.active {
     background: var(--history-color);
     color: white;
@@ -439,9 +504,7 @@ body {
 
 
 /* CHAT PANEL (ขวา - Active Chat) */
-#chatPanel {
-    /* ใช้ .chat-panel-base */
-}
+/* 💥 OLD #chatPanel ถูกลบออกเนื่องจากตอนนี้ใช้ #fullChatView 💥 */
 
 #chatBox {
     /* ใช้ .chat-box-base */
@@ -451,6 +514,9 @@ body {
     display: flex;
     padding: 15px 0 0;
     gap: 10px;
+    /* 💥 NEW: ต้องทำให้ input-area อยู่ด้านล่างสุดของ #fullChatView 💥 */
+    margin-top: auto;
+    flex-shrink: 0;
 }
 
 #chatInput {
@@ -478,12 +544,11 @@ body {
 }
 
 
-/* 5. CHAT MESSAGE STYLES */
+/* 5. CHAT MESSAGE STYLES (ไม่แก้ไข) */
 .message {
     display: flex;
     margin: 5px 0;
     position: relative;
-    /* [FIXED] สำหรับตำแหน่งปุ่มลบ */
 }
 
 .message .bubble {
@@ -615,7 +680,7 @@ body {
 /* ================================================= */
 
 /* ซ่อนข้อความ Error ที่อาจถูกเบราว์เซอร์หรือ Firebase แสดงทับซ้อนขึ้นมา 
-   เราจะใช้แค่ <p id="errorMessage"> ที่อยู่ใน HTML/JS เท่านั้น
+    เราจะใช้แค่ <p id="errorMessage"> ที่อยู่ใน HTML/JS เท่านั้น
 */
 .firebase-error-message,
 #firebase-error-message {
@@ -646,9 +711,13 @@ div[role="alert"] {
         min-height: 100vh;
     }
 
-    .chat-interface {
+    /* 💥 NEW: Mobile View for List Screen 💥 */
+    #listScreenContainer {
         flex-direction: column;
         padding: 15px;
+        position: static;
+        max-height: 100vh;
+        overflow-y: auto;
     }
 
     #chatListPanel,
@@ -660,6 +729,16 @@ div[role="alert"] {
         border-bottom: 1px solid #eee;
         padding-right: 0;
         padding-bottom: 10px;
+    }
+
+    /* 💥 NEW: Mobile View for Chat Screen 💥 */
+    #chatScreenContainer {
+        padding: 0;
+        /* ลบ padding เพื่อให้เต็มจอใน Mobile */
+    }
+
+    #fullChatView {
+        padding: 15px;
     }
 
     #chatPanel,

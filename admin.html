@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,138 +10,234 @@
             rel="stylesheet">
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
         <link rel="stylesheet" href="admin.css">
+
         <style>
-            /* กำหนดตัวแปรสำหรับความโค้งและเงา */
-            :root {
-                --border-radius-xl: 16px; /* โค้งมากขึ้น */
-                --border-radius-lg: 12px;
-                --border-radius-md: 8px;
-                --shadow-lift: 0 6px 20px rgba(0, 0, 0, 0.15); /* เงาที่ชัดเจนขึ้น */
-                --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.2); /* เงาเมื่อโฮเวอร์ */
-                --transition-time: 0.3s; /* เวลาแอนิเมชัน */
-            }
+        /* * ส่วน CSS (ยังคงไว้ตามที่คุณส่งมา) */
+        :root {
+            --primary-color: #D81B60; 
+            --primary-hover: #AD1457;
+            --light-bg-color: #FCE4EC; 
+            --secondary-color: #6c757d;
+            --danger-color: #dc3545; 
+            --border-radius-xl: 16px;
+            --border-radius-lg: 12px;
+            --border-radius-md: 8px;
+            --shadow-lift: 0 6px 20px rgba(0, 0, 0, 0.15);
+            --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.2);
+            --transition-time: 0.3s;
+        }
 
-            /* เพิ่มแอนิเมชันให้กับองค์ประกอบที่โต้ตอบได้ */
-            .primary-button, .secondary-button, .action-btn, .small-action-btn, .chat-item, #loginScreen {
-                transition: all var(--transition-time) ease-in-out;
-            }
+        #loginScreen, .welcome-screen-container {
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-lift);
+        }
+        .admin-panel-container {
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
 
-            /* 1. โค้งมนและเงาให้กับคอนเทนเนอร์หลัก */
-            #loginScreen, .welcome-screen-container, .admin-panel-container {
-                border-radius: var(--border-radius-xl);
-                box-shadow: var(--shadow-lift);
-            }
+        .input-field {
+            border-radius: var(--border-radius-lg);
+        }
 
-            /* 2. โค้งมนให้กับช่องกรอกข้อมูล */
-            .input-field {
-                border-radius: var(--border-radius-lg);
-            }
+        .primary-button, .secondary-button, .action-btn, .small-action-btn {
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all var(--transition-time);
+        }
 
-            /* 3. โค้งมนให้กับปุ่มต่างๆ และเพิ่มเงาเมื่อโฮเวอร์ */
-            .primary-button, .secondary-button, .action-btn, .small-action-btn {
-                border-radius: var(--border-radius-md); 
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* เงาเล็กน้อย */
-            }
-            .primary-button:hover, .secondary-button:hover, .action-btn:hover, .small-action-btn:hover {
-                transform: translateY(-2px); /* ยกปุ่มขึ้นเล็กน้อย */
-                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* เงาเข้มขึ้น */
-            }
-            
-            /* 4. โค้งมนให้กับแผงแชทและกล่องแชท */
-            .chat-panel-base {
-                border-radius: var(--border-radius-xl);
-            }
-            .chat-box-base {
-                border-radius: var(--border-radius-xl);
-            }
-            
-            /* 5. โค้งมนและแอนิเมชันให้กับรายการแชท */
-            .chat-item { 
-                border-radius: var(--border-radius-md);
-                margin: 5px 10px; /* เพิ่มระยะห่างให้แต่ละรายการ */
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            }
-            .chat-item:hover {
-                background-color: #f0f0f0;
-                transform: translateX(5px); /* เลื่อนไปทางขวาเล็กน้อยเมื่อโฮเวอร์ */
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            }
-            .chat-item.active {
-                border-left: none !important; /* ลบเส้นเดิมออก */
-                box-shadow: 0 0 10px rgba(0, 123, 255, 0.5); /* เพิ่มเงาสีน้ำเงิน */
-                transform: scale(1.02);
-            }
+        .primary-button:hover, .secondary-button:hover, .action-btn:hover, .small-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
 
-            /* CSS เดิมที่เกี่ยวข้องกับปุ่มเล็กและการจัดเรียง (คงไว้) */
-            .small-action-btn {
-                padding: 5px 10px; 
-                font-size: 14px; 
-                white-space: nowrap;
-            }
+        .primary-button {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .primary-button:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .disabled-button {
+            background-color: #ccc !important;
+            cursor: not-allowed !important;
+            opacity: 0.8;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .chat-box-base {
+            border-radius: var(--border-radius-xl);
+        }
 
-            #deleteHistoryBtn {
-                background-color: #dc3545 !important; 
-                color: white !important;
-                border: none;
-            }
-            #deleteHistoryBtn:hover {
-                background-color: #c82333 !important;
-            }
-            
-            #backToHistoryListBtn {
-                background-color: #6c757d !important; 
-                color: white !important;
-                border: none;
-            }
-            #backToHistoryListBtn:hover {
-                background-color: #5a6268 !important;
-            }
-            
-            #historyViewPanel .input-area {
-                padding: 15px; 
-                display: flex; 
-                justify-content: space-between; 
-                align-items: center;
-                border-top: 1px solid #eee;
-            }
-            /* จัดการความโค้งของ textarea */
-            .input-area textarea {
-                border-radius: var(--border-radius-md);
-            }
+        .chat-item {
+            border-radius: var(--border-radius-md);
+            margin: 5px 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all var(--transition-time);
+        }
+
+        .chat-item:hover {
+            background-color: var(--light-bg-color); 
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-item.active {
+            background-color: var(--light-bg-color) !important;
+            border-left: 5px solid var(--primary-color) !important;
+            box-shadow: 0 0 10px rgba(216, 27, 96, 0.5); 
+            transform: scale(1.02);
+        }
+        .chat-item.active .chat-id {
+            color: var(--primary-color); 
+            font-weight: 700;
+        }
+
+        .input-area { 
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+        }
+        
+        .input-area textarea {
+            border-radius: var(--border-radius-md);
+        }
+
+        #backButton {
+            background-color: var(--primary-hover);
+            color: white; 
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 8px 12px; 
+            cursor: pointer;
+            margin-right: 15px;
+            font-size: 16px;
+            font-weight: 600; 
+            transition: all 0.2s;
+            border-radius: var(--border-radius-md); 
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+        }
+        #backButton:hover {
+            background-color: #0056b3; 
+            transform: translateY(-1px);
+        }
+
+        .chat-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title-login, .app-title-welcome {
+            color: var(--primary-color);
+        }
+        
+        #closeChatBtn {
+            background-color: var(--danger-color) !important;
+            color: white !important;
+        }
+        #closeChatBtn:hover {
+            background-color: #c82333 !important;
+        }
+
+        #chatListHeader {
+            border-bottom: 2px solid var(--primary-color);
+        }
+        #chatListHeader .panel-title {
+            color: var(--primary-color);
+        }
+
+        .admin-message .bubble {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+        }
+        .user-message .bubble {
+            background-color: var(--light-bg-color) !important;
+            color: #333 !important;
+        }
+        
+        #logoArea, .welcome-logo-area {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; 
+            margin-bottom: 20px;
+        }
+        
+        #logoArea img, .welcome-logo-area img {
+            height: 50px; 
+            width: 50px; 
+            margin: 0 8px; 
+            border: none;
+            object-fit: cover; 
+            border-radius: 50%;
+            margin-top: calc(120px - 50px); 
+        }
+
+        #logoArea #schoolLogo, 
+        .welcome-logo-area #welcomeSchoolLogo 
+        { 
+            height: 120px; 
+            width: 120px;
+            object-fit: contain; 
+            border-radius: 0; 
+            margin: 0 5px; 
+            margin-top: 0; 
+        }
+
+        #logoArea img.circular, .welcome-logo-area img.circular {
+            object-fit: cover;
+            border-radius: 50%;
+        }
 
         </style>
     </head>
+
     <body>
 
-        <div id="loginScreen">
+        <div id="loginScreen" style="display: none;">
             <div id="logoArea">
-                <img id="schoolLogo" src="KC.jpg.jpg" alt="School Logo">
                 <img id="newLogo" class="circular" src="TOBEKC.jpg.jpg"
-                    alt="App Logo">
+                    alt="TOBEKC Logo">
+
+                <img id="schoolLogo" src="KC.png" alt="School Logo">
+
+                <img id="friendCornerLogo" class="circular"
+                    src="FriendCorner.jpg.png" alt="Friend Corner Logo">
             </div>
-            <h1 class="app-title-login">KC Friend Corner ADMIN</h1>
+            <h1 class="app-title-login">KC FriendCorner ADMIN</h1>
 
             <input type="email" id="emailInput" class="input-field"
                 placeholder="อีเมลแอดมิน">
             <input type="password" id="passwordInput" class="input-field"
                 placeholder="รหัสผ่าน">
 
-            <p id="errorMessage"
-                style="color: #dc3545; display: none; margin-bottom: 15px; font-weight: 500; text-align: left; padding: 0 5px;"></p>
+            <p id="loginError"
+                style="color: var(--danger-color); margin-bottom: 15px; font-weight: 500; text-align: center; padding: 0 5px; display: none;"></p>
 
-            <button id="loginBtn" class="primary-button"
-                onclick="adminLogin()">เข้าสู่ระบบ</button>
+            <button id="loginBtn" class="primary-button" onclick="adminLogin()">เข้าสู่ระบบ</button>
         </div>
 
         <div id="welcomeScreen" class="welcome-screen-container"
             style="display: none;">
             <div id="welcomeHeader">
                 <div class="welcome-logo-area">
-                    <img class="welcome-logo-img" src="KC.jpg.jpg"
-                        alt="School Logo">
                     <img class="welcome-logo-img circular" src="TOBEKC.jpg.jpg"
-                        alt="App Logo">
+                        alt="TOBEKC Logo">
+
+                    <img class="welcome-logo-img" id="welcomeSchoolLogo" src="KC.png"
+                        alt="School Logo">
+
+                    <img class="welcome-logo-img circular"
+                        src="FriendCorner.jpg.png"
+                        alt="Friend Corner Logo">
                 </div>
                 <br>
                 <h2 class="app-title-welcome">KC Friend Corner ADMIN</h2>
@@ -152,15 +249,15 @@
             <div class="welcome-box">
                 <div class="welcome-button-group">
                     <button class="primary-button enter-chat-btn"
-                        onclick="showChatListScreen()"
+                        onclick="showListScreen('active')"
                         style="margin-bottom: 15px;">
                         <i class="fas fa-comments"></i> เข้าสู่ห้องสนทนา
                         (Active)
                     </button>
 
                     <button class="secondary-button logout-full-btn"
-                        onclick="showHistoryScreen()"
-                        style="margin-bottom: 15px; background: #6c757d; color: white;">
+                        onclick="showListScreen('history')"
+                        style="margin-bottom: 15px;">
                         <i class="fas fa-history"></i> ประวัติแชทที่สิ้นสุดแล้ว
                     </button>
 
@@ -172,69 +269,16 @@
             </div>
         </div>
 
-        <div id="chatHistoryPanel" class="admin-panel-container"
+        <div id="adminPanelContainer" class="admin-panel-container"
             style="display: none;">
-            <div id="historyInterface" class="chat-interface">
 
-                <div id="historyListPanel">
-                    <div id="historyListHeader" class="chat-list-header">
-                        <h3 class="panel-title"
-                            style="color:#6c757d;">ประวัติแชทที่สิ้นสุด</h3>
-                        <button id="backToWelcomeBtn" class="secondary-button small-action-btn"
-                            onclick="showWelcomeScreen()">
-                            <i class="fas fa-home"></i> หน้าหลัก
-                        </button>
-                    </div>
-                    <div id="historyList">
-                        <p
-                            style="color:#777; text-align:center;">กำลังโหลดประวัติการสนทนา...</p>
-                    </div>
-                </div>
-
-                <div id="historyViewPanel" class="chat-panel-base"
-                    style="display: none;">
-                    <div id="historyChatHeader" class="chat-header">
-                        <span id="historyChatTitle">ประวัติ ID: </span>
-                    </div>
-
-                    <div id="historyChatBox" class="chat-box-base">
-                    </div>
-
-                    <div class="input-area">
-                        <button id="backToHistoryListBtn"
-                            class="secondary-button small-action-btn"
-                            onclick="showHistoryScreen()">
-                            <i class="fas fa-arrow-left"></i>
-                            กลับสู่รายการประวัติแชท
-                        </button>
-                        
-                        <button id="deleteHistoryBtn"
-                            class="action-btn small-action-btn"
-                            style="display: none;">
-                            <i class="fas fa-trash-alt"></i> ลบประวัติถาวร
-                        </button>
-                    </div>
-                </div>
-
-                <div id="historyChatView" class="history-chat-view-placeholder"
-                    style="flex-grow: 1; display:flex; flex-direction: column; justify-content:center; align-items:center;">
-                    <i class="fas fa-search"
-                        style="font-size: 40px; color: #ddd; margin-bottom: 15px;"></i>
-                    <p
-                        style="color: #999; font-size: 18px;">เลือกรายการแชททางซ้ายเพื่อดูประวัติ</p>
-                </div>
-
-            </div>
-        </div>
-
-        <div id="adminPanel" class="admin-panel-container"
-            style="display: none;">
-            <div id="chatInterface" class="chat-interface">
-
+            <div id="listScreenContainer"> 
+                
                 <div id="chatListPanel">
                     <div id="chatListHeader" class="chat-list-header">
                         <h3 class="panel-title">ห้องสนทนาที่เปิดอยู่</h3>
-                        <button id="goHomeBtn" class="secondary-button small-action-btn"
+                        <button id="goHomeBtn"
+                            class="secondary-button small-action-btn"
                             onclick="showWelcomeScreen()">
                             <i class="fas fa-home"></i> หน้าหลัก
                         </button>
@@ -245,11 +289,41 @@
                     </div>
                 </div>
 
-                <div id="chatPanel" class="chat-panel-base"
-                    style="display: none;">
+                <div id="historyListPanel" style="display: none;"> 
+                    <div id="historyListHeader" class="chat-list-header">
+                        <h3 class="panel-title"
+                            style="color:#6c757d;">ประวัติแชทที่สิ้นสุด</h3>
+                        <button id="backToWelcomeBtn"
+                            class="secondary-button small-action-btn"
+                            onclick="showWelcomeScreen()">
+                            <i class="fas fa-home"></i> หน้าหลัก
+                        </button>
+                    </div>
+                    <div id="historyList">
+                        <p
+                            style="color:#777; text-align:center;">กำลังโหลดประวัติการสนทนา...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chatScreenContainer"
+                style="display: none;">
+
+                <div id="fullChatView">
                     <div id="chatHeader" class="chat-header">
-                        <span id="chatTitle">สนทนากับ ID: </span>
-                        </div>
+                        <button id="backButton"
+                            onclick="showListScreen(currentListType)">
+                            <i class="fas fa-arrow-left"></i> รายการแชท
+                        </button>
+
+                        <span id="chatTitle" style="flex-grow: 1;">สนทนากับ ID:
+                        </span>
+
+                        <button id="closeChatBtn"
+                            class="action-btn small-action-btn">
+                            <i class="fas fa-times-circle"></i> จบการสนทนา
+                        </button>
+                    </div>
 
                     <div id="chatBox" class="chat-box-base">
                     </div>
@@ -262,6 +336,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
         <audio id="notifySound" src="notification.mp3" preload="auto"></audio>
@@ -275,4 +350,5 @@
         <script src="admin.js"></script>
 
     </body>
+
 </html>

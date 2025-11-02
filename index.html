@@ -1,364 +1,513 @@
 <!DOCTYPE html>
 <html lang="th">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>KC FriendCorner - User Chat</title>
-        
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
-            rel="stylesheet">
-        
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        
-        <style>
-            /* 1. Reset, Font, และการจัดกึ่งกลางของ Body */
-            body {
-                font-family: 'Sarabun', sans-serif;
-                background-color: #f4f7f6;
-                display: flex;
-                justify-content: center;
-                align-items: center; 
-                min-height: 100vh;
-                margin: 0;
-                padding: 10px; 
-            }
-            
-            /* 2. ตัวแปรและ Shadow */
-            :root {
-                --primary-color: #007bff;
-                --secondary-color: #6c757d;
-                --success-color: #28a745;
-                --border-radius-xl: 16px; 
-                --border-radius-lg: 12px;
-                --border-radius-md: 8px;
-                --shadow-lift: 0 6px 20px rgba(0, 0, 0, 0.15); 
-                --transition-time: 0.3s;
-            }
 
-            /* 3. Main Container - ปรับให้ Responsive */
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KC FriendCorner - User Chat</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* 1. Reset, Font, และการจัดกึ่งกลางของ Body */
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+            /* 🚩 ป้องกัน Scrollbar ของ Body (เผื่อไว้) */
+            overflow: hidden; 
+        }
+
+        /* 2. ตัวแปรและ Shadow (สี: Vibrant Berry) */
+        :root {
+            /* 💖 สีหลัก: Vibrant Berry (แดงเลือดหมูสดใส) */
+            --primary-color: #D81B60;
+            /* สีสำหรับ Hover (เข้มขึ้นเล็กน้อย) */
+            --primary-hover: #AD1457;
+            /* สีอ่อนสำหรับพื้นหลัง/Bubble เพื่อน */
+            --friend-bubble-bg: #FCE4EC;
+
+            /* สีรอง (ยังคงเป็นสีเทา) */
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+
+            --border-radius-xl: 16px;
+            --border-radius-lg: 12px;
+            --border-radius-md: 8px;
+            --shadow-lift: 0 6px 20px rgba(0, 0, 0, 0.15);
+            --transition-time: 0.3s;
+        }
+
+        /* 3. Main Container - ปรับให้ Responsive */
+        #mainContainer {
+            background-color: white;
+            border-radius: var(--border-radius-xl);
+            box-shadow: var(--shadow-lift);
+            width: 100%;
+            max-width: 450px;
+            min-height: 500px;
+            height: 95vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: max-width var(--transition-time), height var(--transition-time);
+        }
+        
+        /* 🚩 [สำคัญ] ล็อกการเลื่อนแนวนอน และยังคงให้เลื่อนแนวตั้งได้ */
+        #mainContainer {
+            overflow-x: hidden; /* **ล็อกการเลื่อนแนวนอน (ซ้าย-ขวา)** */
+            overflow-y: auto; /* ยังคงให้เลื่อนแนวตั้งได้ (ด้วยเมาส์/สัมผัส) */
+        }
+
+        /* MEDIA QUERY สำหรับ Tablet/PC (แนวนอนและจอใหญ่) */
+        @media (min-width: 768px) and (orientation: landscape), (min-width: 992px) {
             #mainContainer {
-                background-color: white;
-                border-radius: var(--border-radius-xl);
-                box-shadow: var(--shadow-lift);
-                width: 100%; 
-                max-width: 450px; 
-                min-height: 500px;
-                height: 95vh;
-                display: flex;
-                flex-direction: column;
-                overflow: hidden;
-                transition: max-width var(--transition-time), height var(--transition-time);
+                max-width: 600px;
+                height: 85vh;
             }
+        }
 
-            /* MEDIA QUERY สำหรับ Tablet/PC (แนวนอนและจอใหญ่) */
-            @media (min-width: 768px) and (orientation: landscape), (min-width: 992px) {
-                #mainContainer {
-                    max-width: 600px; 
-                    height: 85vh;
-                }
-            }
+        /* 4. Welcome/Start Screen (หน้าแรก) */
+        #welcomeScreen {
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+        }
 
-            /* 4. Welcome/Start Screen (หน้าแรก) */
-            #welcomeScreen {
-                padding: 20px;
-                text-align: center;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                flex-grow: 1;
-                justify-content: center; 
-            }
-            
-            #logoArea {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-            #logoArea img {
-                width: 60px;
-                height: 60px;
-                object-fit: cover;
-                border-radius: 50%;
-                margin: 0 5px;
-                border: 3px solid #eee;
-            }
-            #appTitle {
-                font-size: 1.8rem;
-                color: var(--primary-color);
-                margin-bottom: 30px;
-                font-weight: 700;
-            }
-            
-            #userInfoArea {
-                width: 100%;
-                margin-bottom: 20px;
-                padding: 10px 0;
-                border-bottom: 1px solid #eee;
-            }
-            .user-info-text {
-                color: var(--secondary-color);
-                font-size: 0.9rem;
-                font-weight: 500;
-            }
-            
-            /* 🚩 ปรับ: จัดให้ปุ่มอยู่กึ่งกลาง */
-            #mainActions {
-                display: flex;
-                flex-direction: column;
-                align-items: center; 
-                width: 100%;
-                max-width: 300px;
-                margin: 0 auto; 
-            }
-            
-            /* 5. Buttons */
-            .primary-button, .secondary-button {
-                border: none;
-                padding: 12px 25px;
-                border-radius: var(--border-radius-md);
-                cursor: pointer;
-                font-size: 1rem;
-                font-weight: 600;
-                margin-bottom: 10px;
-                transition: all var(--transition-time);
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                width: 100%; 
-                max-width: 300px;
-            }
-            .primary-button {
-                background-color: var(--primary-color);
-                color: white;
-            }
-            .primary-button:hover {
-                background-color: #0056b3;
-                transform: translateY(-2px);
-            }
-            .secondary-button {
-                background-color: var(--secondary-color);
-                color: white;
-            }
-            .secondary-button:hover {
-                background-color: #5a6268;
-                transform: translateY(-2px);
-            }
-            
-            /* 🚩 ปรับ: ปุ่มหลักให้อยู่กึ่งกลาง */
-            #authButton {
-                width: 80%;
-                max-width: 300px;
-                margin-left: auto;
-                margin-right: auto;
-            }
+        #logoArea {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* 🎯 ปรับขนาดโลโก้ User เป็น 70px x 70px */
+        #logoArea img {
+            width: 70px;
+            height: 70px;
+            margin: 0 7px;
+            /* เว้นระยะห่างระหว่างโลโก้ */
+            /* 🚩 [แก้ไข] เปลี่ยนขอบเป็นสีใส (Transparent) */
+            border: 3px solid transparent; 
+        }
+
+        /* สไตล์สำหรับโลโก้แบบวงกลม (โลโก้ 2 และ 3) */
+        #newLogo,
+        #friendCornerLogo,
+        #appLogo {
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        #appTitle {
+            font-size: 1.8rem;
+            /* 💥 ปรับสีชื่อแอป */
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        /* 🚩 userInfoArea แสดง ID ผู้ใช้เท่านั้น */
+        #userInfoArea {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex; /* เพิ่มเพื่อให้จัดวาง ID ได้ */
+            justify-content: center; /* จัดให้อยู่ตรงกลาง */
+        }
+
+        .user-info-text {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* 🚩 ปรับ: จัดให้ปุ่มอยู่กึ่งกลาง */
+        #mainActions {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        /* 5. Buttons */
+        .primary-button,
+        .secondary-button {
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            transition: all var(--transition-time);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .primary-button {
+            /* 💥 ปุ่มหลักใช้สีหลัก Vibrant Berry */
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .primary-button:hover {
+            /* 💥 Hover Darker Berry */
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .secondary-button {
+            /* 🚩 สไตล์ปุ่ม Logout */
+            background-color: #E9ECEF;
+            color: var(--secondary-color);
+            border: 1px solid #DEE2E6;
+            box-shadow: none;
+        }
+
+        .secondary-button:hover {
+            background-color: #DDE2E6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 🚩 ปรับ: ปุ่มหลักให้อยู่กึ่งกลาง */
+        #authButton {
+            width: 80%;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
 
-            /* 6. Chat Panel */
-            #chatPanel, #chatScreen { 
-                display: flex;
-                flex-direction: column;
-                flex-grow: 1;
-                height: 100%; 
-            }
-            
-            #chatHeader {
-                padding: 15px;
-                background-color: var(--primary-color);
-                color: white;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                border-top-left-radius: var(--border-radius-xl); 
-                border-top-right-radius: var(--border-radius-xl);
-                font-weight: 500;
-            }
-            #chatTitle {
-                flex-grow: 1;
-                text-align: center;
-                font-size: 1.1rem;
-                margin-right: -10px; 
-            }
-            #homeButton {
-                background-color: transparent;
-                color: white;
-                border: 1px solid rgba(255, 255, 255, 0.5);
-                padding: 6px 10px;
-                border-radius: var(--border-radius-md);
-                cursor: pointer;
-                font-size: 0.9rem;
-                transition: background-color 0.2s;
-            }
-            #homeButton:hover {
-                background-color: rgba(255, 255, 255, 0.15);
-            }
+        /* 6. Chat Panel */
+        #chatPanel,
+        #chatScreen {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            height: 100%;
+        }
 
-            /* 7. Chat Box และ Input */
-            #chatBox {
-                flex-grow: 1;
-                padding: 15px;
-                overflow-y: auto;
-                background-color: #fcfcfc;
-                min-height: 50px; 
-            }
-            
-            .input-area {
-                padding: 10px 15px;
-                border-top: 1px solid #eee;
-                display: flex;
-                align-items: flex-end; 
-                flex-shrink: 0;
-            }
-            
-            #chatInput {
-                flex-grow: 1;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 20px;
-                resize: none;
-                margin-right: 10px;
-                font-size: 1rem;
-                font-family: 'Sarabun', sans-serif;
-            }
+        #chatHeader {
+            padding: 15px;
+            /* 💥 Header ใช้สีหลัก Vibrant Berry */
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: var(--border-radius-xl);
+            border-top-right-radius: var(--border-radius-xl);
+            font-weight: 500;
+        }
 
-            /* 🚩 ปรับ: ทำให้ปุ่มส่งข้อความเล็กลงและเป็นวงกลม */
-            #sendButton {
-                padding: 10px 12px;
-                border-radius: 50%; 
-                width: 40px; 
-                height: 40px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                font-size: 1rem;
-            }
-            #sendButton i {
-                 margin-right: 0 !important;
-            }
-            
-            /* 8. Message Styles */
-            .message {
-                display: flex;
-                margin-bottom: 10px;
-                max-width: 80%;
-                align-items: flex-end;
-            }
-            .bubble {
-                padding: 10px 12px;
-                border-radius: 18px;
-                line-height: 1.4;
-                word-wrap: break-word;
-            }
-            .user-message {
-                justify-content: flex-end;
-                margin-left: auto;
-            }
-            .user-message .bubble {
-                background-color: var(--primary-color);
-                color: white;
-                border-bottom-right-radius: 2px;
-            }
-            .friend-message {
-                justify-content: flex-start;
-                margin-right: auto;
-            }
-            .friend-message .bubble {
-                background-color: #e2e6ea;
-                color: #333;
-                border-bottom-left-radius: 2px;
-            }
-            .system-message {
-                justify-content: center;
-                text-align: center;
-                margin: 10px auto;
-                font-style: italic;
-                font-size: 0.85rem;
-                color: var(--secondary-color);
-            }
-            .system-message .bubble {
-                background: none;
-                padding: 0;
-                border-radius: 0;
-            }
-            
-            .delete-message-btn {
-                font-size: 0.8rem;
-                margin-left: 5px !important;
-                margin-bottom: 5px;
-                align-self: flex-end !important;
-            }
+        #chatTitle {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 1.1rem;
+            margin-right: -10px;
+        }
 
-        </style>
-    </head>
-    <body>
+        #homeButton {
+            background-color: transparent;
+            color: white;
+            /* 💥 ปรับสีขอบปุ่ม Home */
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 6px 10px;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
 
-        <div id="mainContainer">
+        #homeButton:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
 
-            <div id="welcomeScreen"> 
+        /* 7. Chat Box และ Input */
+        #chatBox {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #fcfcfc;
+            min-height: 50px;
+        }
+        
+        /* 🚩 [สำคัญ] ล็อกการเลื่อนแนวนอน และยังคงให้เลื่อนแนวตั้งได้ */
+        #chatBox {
+            overflow-x: hidden; /* **ล็อกการเลื่อนแนวนอน (ซ้าย-ขวา)** */
+            overflow-y: auto; /* ยังคงให้เลื่อนแนวตั้งได้ (ด้วยเมาส์/สัมผัส) */
+        }
 
-                <div id="logoArea">
-                    <img id="appLogo"
-                        src="https://khanchai.ac.th/images/logo.png"
-                        alt="School Logo">
-                    <img id="newLogo" src="TOBEKC.jpg.jpg"
-                        alt="Support Group Logo">
-                </div>
 
-                <h1 id="appTitle">KC FriendCorner</h1>
+        .input-area {
+            padding: 10px 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
 
-                <div id="userInfoArea" style="display: none;">
-                    <p id="userIdDisplay" class="user-info-text"></p>
-                </div>
+        #chatInput {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            resize: none;
+            margin-right: 10px;
+            font-size: 1rem;
+            font-family: 'Sarabun', sans-serif;
+        }
 
-                <div id="startScreen" style="width: 100%; text-align: center;">
+        /* 🚩 ปรับ: ทำให้ปุ่มส่งข้อความเล็กลงและเป็นวงกลม (ใช้ primary-button class) */
+        #sendButton {
+            padding: 10px 12px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+        }
 
-                    <button id="authButton" class="primary-button"
-                        onclick="handleAuth()">
-                        <i class="fas fa-sign-in-alt"></i> **เริ่มต้นใช้งาน (สุ่ม
-                        ID)**
-                    </button>
+        #sendButton i {
+            margin-right: 0 !important;
+        }
 
-                    <br><br>
+        /* 8. Message Styles (ปรับปรุงเพื่อรองรับ UI ใหม่) */
+        .message {
+            /* 🚩 ใช้ Flex เพื่อจัดวาง Bubble และเวลาให้อยู่ในแถวเดียวกัน */
+            display: flex;
+            margin-bottom: 15px;
+            max-width: 100%;
+        }
 
-                    <div id="mainActions"
-                        style="display:none;">
-                        
-                        <button id="startChat" class="primary-button">
-                            <i class="fas fa-comment-dots"></i>
-                            กดเพื่อสนทนา
-                        </button>
+        /* จำกัดความกว้างของเนื้อหาข้อความ (Message Bubble) ให้อยู่ใน 80% */
+        .message .bubble {
+            max-width: 80%;
+        }
 
-                        <button id="logoutBtn" class="secondary-button"
-                            onclick="userLogout()">
-                            <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-                        </button>
-                    </div>
 
-                </div>
+        .bubble {
+            padding: 10px 12px;
+            border-radius: 18px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* เพิ่ม Shadow เล็กน้อย */
+        }
 
+        .user-message {
+            justify-content: flex-end;
+            margin-left: auto;
+            align-items: flex-end; /* จัดให้เนื้อหาทั้งหมดชิดล่าง (bubble, time) */
+        }
+
+        .user-message .bubble {
+            /* 💥 Bubble User ใช้สีหลัก Vibrant Berry */
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .friend-message {
+            justify-content: flex-start;
+            margin-right: auto;
+            align-items: flex-end; /* จัดให้เนื้อหาทั้งหมดชิดล่าง (time, bubble) */
+        }
+
+        .friend-message .bubble {
+            /* 💥 Bubble Friend ใช้สีอ่อน Lighter Pink */
+            background-color: var(--friend-bubble-bg);
+            color: #333;
+            border-bottom-left-radius: 2px;
+        }
+
+        /* ---------------------------------------------------- */
+        /* 9.1 OUTSIDE MESSAGE TIME (เวลาที่อยู่ข้างกรอบ) */
+        /* ---------------------------------------------------- */
+        .message-time-outside.small {
+            /* 🚩 ปรับขนาดให้เล็กมากๆ สีเทาจาง ชิดขอบ Bubble */
+            font-size: 0.65em;
+            color: #888;
+            white-space: nowrap;
+            align-self: flex-end;
+            margin-top: 0;
+            margin-bottom: 4px; /* ชิดขอบล่างของ Bubble เล็กน้อย */
+        }
+
+        .user-message .message-time-outside.small {
+            margin-left: 5px; /* เว้นระยะห่างจาก Bubble */
+            order: 4; /* ให้เวลาอยู่ท้ายสุดของ messageDiv */
+        }
+
+        .friend-message .message-time-outside.small {
+            margin-right: 5px; /* เว้นระยะห่างจาก Bubble */
+            order: 1; /* ให้เวลาอยู่ก่อน Bubble (ซ้ายสุด) */
+        }
+
+
+        /* ---------------------------------------------------- */
+        /* 9.2 DELETED MESSAGE (ข้อความยกเลิกการส่ง - กลางจอ) */
+        /* ---------------------------------------------------- */
+        .deleted-system-message {
+            /* 🚩 สไตล์สำหรับข้อความยกเลิกการส่งที่อยู่กลางหน้าจอ */
+            display: flex; /* ใช้ flex เพื่อจัดให้อยู่กลาง */
+            justify-content: center;
+            text-align: center;
+            font-size: 0.75em;
+            /* ตัวเล็ก */
+            color: #AAA;
+            /* สีเทาจางมากๆ */
+            margin: 8px auto;
+            /* จัดให้อยู่ตรงกลางและมีระยะห่าง */
+            font-style: italic;
+            padding: 2px 10px;
+            width: 100%;
+        }
+
+        .deleted-system-message .fa-ban {
+            color: #AAA;
+            margin-right: 5px;
+        }
+
+        /* ---------------------------------------------------- */
+        /* 9.3 CONTEXT MENU (สำหรับคลิกขวา/กดค้าง) */
+        /* ---------------------------------------------------- */
+        #contextMenu {
+            /* 🚩 สไตล์ Context Menu */
+            position: fixed;
+            background-color: white;
+            border: 1px solid #DEE2E6;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none; /* ซ่อนไว้ก่อน */
+            min-width: 150px;
+            overflow: hidden;
+        }
+
+        .context-menu-option {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            transition: background-color 0.15s;
+        }
+
+        #deleteOption {
+            color: var(--primary-color);
+            /* ใช้สีหลักสำหรับ 'ยกเลิกการส่ง' */
+            font-weight: 500;
+        }
+
+        .context-menu-option:hover {
+            background-color: #F0F4F8;
+        }
+
+        /* ---------------------------------------------------- */
+        /* 9.4 System Message (ปรับปรุงเล็กน้อย) */
+        /* ---------------------------------------------------- */
+        .system-message {
+            justify-content: center;
+            text-align: center;
+            margin: 10px auto;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            /* ต้องปรับให้เป็น width: 100% เพื่อให้ข้อความอยู่กลาง */
+            width: 100%;
+        }
+
+        .system-message .bubble {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            max-width: 90%; /* ลด max-width เพื่อไม่ให้กว้างเกินไป */
+        }
+
+
+        /* ลบ CSS ของปุ่มกากบาทเก่าออก */
+        .delete-message-btn {
+            display: none !important; /* บังคับซ่อนปุ่มกากบาทเก่า */
+        }
+        
+        /* ---------------------------------------------------- */
+        /* 10. SCROLLBAR HIDING (ซ่อน Scrollbar แต่ยัง Scroll ได้) */
+        /* ---------------------------------------------------- */
+        /* สำหรับ Chrome, Safari, Opera */
+        #mainContainer::-webkit-scrollbar,
+        #chatBox::-webkit-scrollbar {
+            display: none;
+            width: 0; /* ซ่อนแถบเลื่อนแนวตั้ง */
+            height: 0; /* ซ่อนแถบเลื่อนแนวนอน */
+        }
+
+        /* สำหรับ IE และ Edge */
+        #mainContainer,
+        #chatBox {
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        /* หมายเหตุ: การป้องกันการเลื่อนแนวนอนถูกเพิ่มไว้ด้านบนแล้ว (overflow-x: hidden) */
+    </style>
+</head>
+
+<body>
+
+    <div id="mainContainer">
+
+        <div id="welcomeScreen">
+
+            <div id="logoArea">
+                <img id="newLogo" src="TOBEKC.jpg.jpg" alt="Support Group Logo">
+                <img id="appLogo" src="KC.png" alt="School Logo">
+                <img id="friendCornerLogo" src="FriendCorner.jpg.png" alt="Friend Corner Logo">
             </div>
 
-            <div id="chatScreen"
-                style="display:none; flex-direction: column; flex-grow: 1;">
+            <h1 id="appTitle">KC FriendCorner</h1>
 
-                <div id="chatHeader">
-                    <button id="homeButton" onclick="showStartScreen()">
-                        <i class="fas fa-home"></i> หน้าแรก
+            <div id="userInfoArea" style="display: none;">
+                <p id="userIdDisplay" class="user-info-text"></p>
+            </div>
+
+            <br>
+
+            <div id="startScreen" style="width: 100%; text-align: center;">
+
+                <button id="authButton" class="primary-button" onclick="handleAuth()">
+                    <i class="fas fa-sign-in-alt"></i> **เริ่มต้นใช้งาน (สุ่ม
+                    ID)**
+                </button>
+
+                <br><br>
+
+                <div id="mainActions" style="display:none;">
+
+                    <button id="startChat" class="primary-button">
+                        <i class="fas fa-comment-dots"></i>
+                        กดเพื่อสนทนา
                     </button>
-                    <span id="chatTitle">ห้องสนทนาใหม่</span>
-                    <div style="width: 70px;">&nbsp;</div>
-                </div>
 
-                <div id="chatBox">
-                </div>
-
-                <div class="input-area">
-                    <textarea id="chatInput"
-                        placeholder="พิมพ์ข้อความ..."></textarea>
-                    <button id="sendButton" class="primary-button">
-                        <i class="fas fa-paper-plane"></i>
+                    <button id="logoutBtn" class="secondary-button" onclick="userLogout()">
+                        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
                     </button>
                 </div>
 
@@ -366,16 +515,42 @@
 
         </div>
 
-        <audio id="notifySound" src="notify.mp3" preload="auto"></audio>
+        <div id="chatScreen" style="display:none; flex-direction: column; flex-grow: 1;">
 
-        <script
-            src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-        <script
-            src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-        <script
-            src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+            <div id="chatHeader">
+                <button id="homeButton" onclick="showStartScreen()">
+                    <i class="fas fa-home"></i> หน้าแรก
+                </button>
+                <span id="chatTitle">ห้องสนทนาใหม่</span>
+                <div style="width: 70px;">&nbsp;</div>
+            </div>
 
-        <script src="user.js"></script>
+            <div id="chatBox">
+            </div>
 
-    </body>
+            <div class="input-area">
+                <textarea id="chatInput" placeholder="พิมพ์ข้อความ..."></textarea>
+                <button id="sendButton" class="primary-button">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="contextMenu">
+        <div id="deleteOption" class="context-menu-option">ยกเลิกการส่ง</div>
+    </div>
+
+    <audio id="notifySound" src="notify.mp3" preload="auto"></audio>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <script src="user.js"></script>
+
+</body>
+
 </html>
