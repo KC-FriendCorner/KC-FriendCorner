@@ -2,14 +2,20 @@
 /* ================================================= */
 
 :root {
-    --primary-color: #4A90E2; /* สีน้ำเงินหลัก */
-    --primary-hover: #357ABD;
-    --accent-color: #E94C6D; /* สีแดง/ชมพูสำหรับปุ่มจบการสนทนา */
-    --background-color: #F8F9FA; /* พื้นหลังอ่อน */
+    --primary-color: #D81B60; /* Vibrant Berry */ 
+    --primary-hover: #AD1457;
+    --accent-color: #E94C6D; /* สีแดง/ชมพูสำหรับปุ่มจบการสนทนา/ลบ */
+    --background-color: #F0F2F5; /* พื้นหลังแชท/Body แบบ Messenger */
     --container-bg: #FFFFFF; /* สีพื้นหลังกรอบหลัก */
     --text-color: #343A40;
-    --secondary-color: #6C757D; /* สีเทารอง */
-    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+    --secondary-color: #6C757D;
+    --shadow-lift: 0 8px 25px rgba(0, 0, 0, 0.12); /* เงาสำหรับ Container ที่ดูยกขึ้น */
+    
+    --user-bubble-bg: var(--primary-color); 
+    --admin-bubble-bg: #E4E6EB; 
+    --bubble-radius: 18px; 
+    --system-text-color: #606770;
+    --transition-time: 0.3s;
 }
 
 html, body {
@@ -19,32 +25,31 @@ html, body {
     font-family: 'Prompt', sans-serif;
     background-color: var(--background-color);
     color: var(--text-color);
-    
-    /* 💥 Desktop Full Viewport: ลบ Padding/Margin และควบคุม Scroll 💥 */
-    overflow-y: hidden;
+    /* 🚩 FIX: ลบ overflow-y: hidden เพื่อให้ Body สามารถ Scroll ได้หากจำเป็น */
 }
 
-/* 1. LAYOUT & CONTAINER (Full Viewport) */
+/* 1. LAYOUT & CONTAINER */
 body {
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    /* 🚩 ADJUSTMENT: เปลี่ยนเป็น center เพื่อจัดกลางในแนวตั้งบน Desktop */
+    align-items: center;
     min-height: 100vh;
-    
-    /* ลบ Padding รอบนอกออกเพื่อให้ติดขอบจอ */
-    padding: 0;
+    padding: 20px 0; /* เพิ่ม Padding แนวตั้งเล็กน้อยบน Desktop */
+    box-sizing: border-box;
 }
 
 #mainContainer {
     max-width: 900px;
     width: 90%;
     background-color: var(--container-bg);
-    
-    /* 💥 กำหนดให้ยืดเต็มจอ (Desktop) 💥 */
-    height: 100vh;
+    /* 🚩 ADJUSTMENT: กำหนด Max-Height และ Height สำหรับ Desktop */
+    height: 90vh;
+    max-height: 800px; /* จำกัดความสูงสูงสุด */
     padding: 0;
-    border-radius: 0;
-    box-shadow: none;
+    /* 🚩 ADJUSTMENT: เพิ่มขอบโค้งมนและเงาสำหรับ Desktop Look */
+    border-radius: 12px;
+    box-shadow: var(--shadow-lift);
     
     display: flex;
     flex-direction: column;
@@ -61,6 +66,7 @@ body {
     justify-content: center;
     gap: 15px;
     margin-bottom: 5px;
+    padding-top: 20px; /* เพิ่ม Padding ด้านบน */
 }
 
 #appLogo, #newLogo {
@@ -83,16 +89,16 @@ body {
     color: var(--primary-color);
 }
 
-/* 3. USER INFO AREA (ID/Logout) - จัดซ้าย/ขวา (คงเดิม) */
+/* 3. USER INFO AREA */
 #userInfoArea {
     display: flex;
     align-items: center;
     gap: 15px;
     width: 100%;
     justify-content: space-between;
-    
     margin-bottom: 20px;
-    padding: 0 10px; /* เพิ่ม Padding เฉพาะภายในแถบนี้ */
+    padding: 0 30px; /* เพิ่ม Padding ด้านข้าง */
+    box-sizing: border-box;
 }
 
 #userIdDisplay {
@@ -100,6 +106,10 @@ body {
     color: var(--secondary-color);
     font-weight: 500;
     margin-right: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60%;
 }
 
 #logoutBtn {
@@ -111,22 +121,23 @@ body {
     border: 1px solid #DEE2E6;
     border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color var(--transition-time);
 }
 
 #logoutBtn:hover {
     background-color: #DDE2E6;
 }
 
-
-/* 4. START SCREEN & BUTTONS (คงเดิม) */
+/* 4. START SCREEN & BUTTONS */
 #startScreen {
     width: 100%;
-    padding: 0 15px; /* เพิ่ม Padding ภายในหน้าจอเริ่มต้น */
+    padding: 0 30px; /* เพิ่ม Padding ด้านข้าง */
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex-grow: 1; /* ให้ยืดเพื่อจัดกลางเนื้อหา */
+    justify-content: center; /* จัดกลางเนื้อหาใน Start Screen */
 }
 
 #mainActions {
@@ -135,34 +146,38 @@ body {
     gap: 15px;
     width: 100%;
     justify-content: center;
+    max-width: 500px; /* จำกัดความกว้างปุ่ม */
 }
 
-/* 4.1 BUTTONS (คงเดิม) */
+/* 4.1 BUTTONS */
 .primary-button {
     background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 25px; 
     padding: 12px 25px;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.1s;
+    transition: background-color var(--transition-time), transform 0.1s;
     font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* เพิ่มเงาให้ปุ่ม */
 }
 
 .primary-button:hover {
     background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .secondary-button {
     background-color: #E9ECEF;
     color: var(--secondary-color);
     border: 1px solid #DEE2E6;
-    border-radius: 8px;
+    border-radius: 25px;
     padding: 12px 25px;
     font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color var(--transition-time);
     font-weight: 500;
 }
 
@@ -174,14 +189,16 @@ body {
     background-color: var(--accent-color);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 25px;
     padding: 12px 20px;
     font-size: 15px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color var(--transition-time);
     font-weight: 500;
     width: 100%;
     margin-top: 15px;
+    max-width: 500px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .end-chat-button:hover {
@@ -193,180 +210,211 @@ body {
 }
 
 
-/* 6. CHAT SCREEN LAYOUT (คงเดิม) */
+/* 6. CHAT SCREEN LAYOUT */
 #chatScreen {
     width: 100%;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     padding: 0;
-    
     min-height: 0;
     overflow: hidden;
-    border-radius: 0; 
+    background-color: var(--background-color);
 }
 
 #chatHeader {
     background-color: var(--primary-color);
     color: white;
     padding: 15px 20px;
-    border-radius: 0;
     font-weight: 600;
     font-size: 18px;
     width: 100%;
     box-sizing: border-box;
     flex-shrink: 0;
+    text-align: center;
 }
 
 #chatBox {
     flex-grow: 1;
-    padding: 20px;
+    padding: 10px 15px;
     overflow-y: auto;
-    background-color: #F0F4F8;
+    background-color: var(--background-color);
     box-sizing: border-box;
     width: 100%;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .input-area {
     display: flex;
-    padding: 15px 20px;
+    padding: 10px 15px;
     background-color: var(--container-bg);
     border-top: 1px solid #DEE2E6;
     gap: 10px;
     flex-shrink: 0;
+    align-items: flex-end;
 }
 
 #chatInput {
     flex-grow: 1;
-    padding: 10px;
+    padding: 10px 15px;
     border: 1px solid #CED4DA;
-    border-radius: 8px;
+    border-radius: 20px;
     resize: none;
     min-height: 40px;
+    max-height: 80px;
     font-family: 'Prompt', sans-serif;
     font-size: 15px;
+    line-height: 1.4;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#chatInput:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(216, 27, 96, 0.15);
 }
 
 #sendButton {
-    padding: 10px 20px;
-    width: 80px;
-}
-
-/* 7. MESSAGE BUBBLES */
-.message {
-    /* 🚩 [แก้ไข] ใช้ Flex เพื่อจัดวาง Bubble และเวลาให้อยู่ในแถวเดียวกัน */
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
     display: flex;
-    margin-bottom: 15px;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: background-color var(--transition-time), transform 0.1s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.bubble {
-    padding: 10px 15px;
-    border-radius: 18px;
-    max-width: 80%;
-    line-height: 1.5;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+#sendButton:hover {
+    background-color: var(--primary-hover);
+    transform: scale(1.05);
 }
 
-.user-message {
-    justify-content: flex-end;
-    align-items: flex-end; /* จัดให้เนื้อหาทั้งหมดชิดล่าง (bubble, time) */
-    /* 🚩 user: [Bubble] [Time] */
+#sendButton i {
+    font-size: 16px;
 }
 
-.user-message .bubble {
-    background-color: #DCF8C6;
-    color: var(--text-color);
-    border-bottom-right-radius: 2px;
+
+/* 7. MESSAGE BUBBLES (Messenger Style) */
+/* ------------------------------------ */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.friend-message {
-    justify-content: flex-start;
-    align-items: flex-end; /* จัดให้เนื้อหาทั้งหมดชิดล่าง (time, bubble) */
-    /* 🚩 friend: [Time] [Bubble] */
+.message-container {
+    display: flex;
+    max-width: 85%;
+    margin-bottom: 2px;
+    align-items: flex-end;
+    animation: fadeIn 0.3s ease-out; 
 }
 
-.friend-message .bubble {
-    background-color: var(--container-bg);
-    color: var(--text-color);
-    border-bottom-left-radius: 2px;
+.user-container { 
+    align-self: flex-end;
+    flex-direction: row-reverse;
+    margin-left: auto;
 }
 
-.system-message {
+.admin-container { 
+    align-self: flex-start;
+    flex-direction: row;
+    margin-right: auto;
+}
+
+.system-container { 
+    align-self: center; 
+    max-width: 100%;
+    margin: 5px 0;
     justify-content: center;
     text-align: center;
-    font-size: 13px;
-    color: var(--secondary-color);
-    margin: 15px 0;
+    width: 100%;
 }
 
-.system-message .bubble {
-    background-color: transparent;
-    box-shadow: none;
-    padding: 5px 10px;
-    font-style: italic;
+
+/* --- Message Bubble Style --- */
+.message-bubble { 
+    padding: 8px 12px;
+    border-radius: var(--bubble-radius); 
+    line-height: 1.4;
+    font-size: 15px;
+    word-wrap: break-word;
     white-space: pre-wrap;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); 
+    display: inline-block;
+    transition: background-color var(--transition-time);
+    cursor: default; 
 }
 
-/* --- */
-/* 9. MESSAGE ENHANCEMENTS (การปรับปรุงข้อความและเวลา) */
-/* --- */
+.user-bubble {
+    background-color: var(--user-bubble-bg);
+    color: white;
+    border-bottom-right-radius: 4px; 
+}
 
-/* ---------------------------------------------------- */
-/* 9.1 OUTSIDE MESSAGE TIME (เวลาที่อยู่ข้างกรอบ) */
-/* ---------------------------------------------------- */
-.message-time-outside.small {
-    /* 🚩 [แก้ไข] ปรับขนาดให้เล็กมากๆ */
-    font-size: 0.65em; 
-    color: #888; 
+.admin-bubble {
+    background-color: var(--admin-bubble-bg);
+    color: var(--text-color);
+    border-bottom-left-radius: 4px; 
+}
+
+.system-bubble {
+    background-color: transparent; 
+    color: var(--system-text-color); 
+    font-size: 12px;
+    padding: 2px 10px;
+    text-align: center;
+    box-shadow: none;
+    font-style: italic;
+    max-width: 90%;
+}
+
+
+/* --- 7.5 Time Stamp Style --- */
+.message-time { 
+    font-size: 10px;
+    color: #606770;
+    margin: 0 5px; 
+    align-self: flex-end;
     white-space: nowrap;
-    align-self: flex-end; 
-    
-    margin-top: 0;
-    margin-bottom: 4px; /* ชิดขอบล่างของ Bubble เล็กน้อย */
 }
 
-.user-message .message-time-outside.small {
-    margin-left: 5px; /* เว้นระยะห่างจาก Bubble */
-    order: 4; /* ให้เวลาอยู่ท้ายสุดของ messageDiv */
-}
-
-.friend-message .message-time-outside.small {
-    margin-right: 5px; /* เว้นระยะห่างจาก Bubble */
-    order: 1; /* ให้เวลาอยู่ก่อน Bubble (ซ้ายสุด) */
-}
-
-/* ---------------------------------------------------- */
-/* 9.2 DELETED MESSAGE (ข้อความยกเลิกการส่ง - กลางจอ) */
-/* ---------------------------------------------------- */
-
+/* 9.2 DELETED MESSAGE (ใช้สำหรับข้อความระบบ) */
 .deleted-system-message {
-    /* 🚩 [ปรับปรุง] สไตล์สำหรับข้อความยกเลิกการส่งที่อยู่กลางหน้าจอ */
     justify-content: center;
     text-align: center;
-    font-size: 0.75em; /* ตัวเล็ก */
-    color: #AAA; /* สีเทาจางมากๆ */
-    margin: 8px 0; /* ระยะห่างน้อยกว่า System Message ปกติ */
+    font-size: 0.75em;
+    color: #AAA; 
+    margin: 8px 0; 
     font-style: italic;
-    padding: 2px 10px; /* ลด Padding */
-    width: 100%; /* ทำให้ข้อความอยู่กลางหน้าจอได้ */
+    padding: 2px 10px;
+    width: 100%; 
 }
 
 .deleted-system-message .fa-ban {
     color: #AAA;
+    margin-right: 5px;
 }
 
-/* ---------------------------------------------------- */
 /* 9.3 CONTEXT MENU (สำหรับคลิกขวา/กดค้าง) */
-/* ---------------------------------------------------- */
 #contextMenu {
     position: fixed;
     background-color: var(--container-bg);
     border: 1px solid #DEE2E6;
     border-radius: 8px;
-    box-shadow: var(--shadow-light);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); 
     z-index: 1000;
-    display: none; /* ซ่อนไว้ก่อน */
+    display: none; 
     min-width: 150px;
     overflow: hidden;
 }
@@ -380,7 +428,7 @@ body {
 }
 
 #deleteOption {
-    color: var(--accent-color); /* สีแดง/ชมพูสำหรับยกเลิก */
+    color: var(--accent-color); 
     font-weight: 500;
 }
 
@@ -388,27 +436,27 @@ body {
     background-color: #F0F4F8;
 }
 
-/* 8. MEDIA QUERY (Mobile Optimization) (คงเดิม) */
+/* 8. MEDIA QUERY (Mobile Optimization) */
 @media (max-width: 650px) {
+    /* 🚩 MOBILE BODY STYLES */
     body {
         padding: 0;
         margin: 0;
-        overflow-y: hidden;
+        align-items: flex-start; /* บนมือถือ ให้แนบกับขอบบน */
     }
 
+    /* 🚩 MOBILE CONTAINER STYLES (Overrides Desktop) */
     #mainContainer {
         width: 100%;
         max-width: none;
         min-height: 100vh;
         height: 100vh;
-        
         padding: 0;
-        border-radius: 0;
-        box-shadow: none;
+        border-radius: 0; /* ลบขอบโค้งมน */
+        box-shadow: none; /* ลบเงา */
         margin: 0;
     }
     
-    /* จัดการ Padding ภายในแต่ละหน้าจอ */
     #startScreen {
         padding: 20px 15px;
     }
@@ -430,7 +478,6 @@ body {
         padding: 15px;
     }
     
-    /* ปรับขนาดโลโก้ให้เล็กลงเล็กน้อยบนมือถือ */
     #appLogo, #newLogo {
         width: 60px;
         height: 60px;
