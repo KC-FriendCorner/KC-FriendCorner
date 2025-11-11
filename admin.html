@@ -14,13 +14,21 @@
         <link rel="stylesheet" href="admin.css">
 
         <style>
-        /* * ส่วน CSS (ยังคงไว้ตามที่คุณส่งมา) */
+        
+        /* 1. ตัวแปรสำหรับสี (Vibrant Berry: #D81B60) */
         :root {
+            /* 💖 สีหลัก: Vibrant Berry (แดงเลือดหมูสดใส) */
             --primary-color: #D81B60; 
+            /* สีสำหรับ Hover (เข้มขึ้นเล็กน้อย) */
             --primary-hover: #AD1457;
+            /* สีอ่อนสำหรับพื้นหลัง/ไฮไลท์ (Light Pink) */
             --light-bg-color: #FCE4EC; 
+
+            /* สีรอง (ยังคงเป็นสีเทา) */
             --secondary-color: #6c757d;
+            /* สีสำหรับปุ่มอันตราย (จบการสนทนา/ลบ) */
             --danger-color: #dc3545; 
+
             --border-radius-xl: 16px;
             --border-radius-lg: 12px;
             --border-radius-md: 8px;
@@ -29,30 +37,35 @@
             --transition-time: 0.3s;
         }
 
+        /* 1. โค้งมนและเงาให้กับคอนเทนเนอร์หลัก */
         #loginScreen, .welcome-screen-container {
             border-radius: var(--border-radius-xl);
             box-shadow: var(--shadow-lift);
         }
+        /* ลบเงาและโค้งมนจาก admin-panel-container เมื่อมันยืดเต็มหน้าจอ */
         .admin-panel-container {
             border-radius: 0 !important;
             box-shadow: none !important;
         }
 
+        /* 2. โค้งมนให้กับช่องกรอกข้อมูล */
         .input-field {
             border-radius: var(--border-radius-lg);
         }
 
-        .primary-button, .secondary-button, .action-btn, .small-action-btn {
+        /* 3. โค้งมนให้กับปุ่มต่างๆ และเพิ่มเงาเมื่อโฮเวอร์ */
+        .primary-button, .secondary-button, .action-btn, .small-action-btn, .danger-button {
             border-radius: var(--border-radius-md);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all var(--transition-time);
+            transition: all var(--transition-time); /* เพิ่ม Transition */
         }
 
-        .primary-button:hover, .secondary-button:hover, .action-btn:hover, .small-action-btn:hover {
+        .primary-button:hover, .secondary-button:hover, .action-btn:hover, .small-action-btn:hover, .danger-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
 
+        /* 💥 การปรับสีปุ่มหลัก (Primary Button) */
         .primary-button {
             background-color: var(--primary-color);
             color: white;
@@ -60,7 +73,17 @@
         .primary-button:hover {
             background-color: var(--primary-hover);
         }
+
+        /* 💡 NEW: Danger Button Class (สำหรับปุ่มลบ/จบการสนทนา) */
+        .danger-button {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        .danger-button:hover {
+            background-color: #c82333; /* Darker red */
+        }
         
+        /* สไตล์สำหรับปุ่มที่ถูกปิดใช้งาน (Disabled Button) */
         .disabled-button {
             background-color: #ccc !important;
             cursor: not-allowed !important;
@@ -69,35 +92,40 @@
             box-shadow: none !important;
         }
         
+        /* 4. โค้งมนให้กับแผงแชทและกล่องแชท */
         .chat-box-base {
             border-radius: var(--border-radius-xl);
         }
 
+        /* 5. โค้งมนและแอนิเมชันให้กับรายการแชท */
         .chat-item {
             border-radius: var(--border-radius-md);
             margin: 5px 10px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: all var(--transition-time);
+            transition: all 0.2s ease-in-out;
         }
 
         .chat-item:hover {
+            /* 💥 พื้นหลังเมื่อโฮเวอร์ ใช้สีอ่อน */
             background-color: var(--light-bg-color); 
             transform: translateX(5px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .chat-item.active {
+            /* 💥 ไฮไลท์รายการแชทที่ถูกเลือก */
             background-color: var(--light-bg-color) !important;
             border-left: 5px solid var(--primary-color) !important;
-            box-shadow: 0 0 10px rgba(216, 27, 96, 0.5); 
+            box-shadow: 0 0 10px rgba(216, 27, 96, 0.5); /* เงาจากสีหลัก */
             transform: scale(1.02);
         }
         .chat-item.active .chat-id {
-            color: var(--primary-color); 
+            color: var(--primary-color); /* สี ID ให้เป็นสีหลัก */
             font-weight: 700;
         }
 
-        .input-area { 
+        /* ปรับปรุง Input Area ให้สอดคล้องกับโครงสร้างใหม่ */
+        .input-area { /* ใช้ class แทน ID */
             padding: 15px;
             display: flex;
             justify-content: space-between;
@@ -109,9 +137,10 @@
             border-radius: var(--border-radius-md);
         }
 
+        /* === สไตล์ที่ปรับปรุง: ปุ่มย้อนกลับ (#backButton) === */
         #backButton {
             background-color: var(--primary-hover);
-            color: white; 
+            color: white; /* 💥 สีขาวเพื่อให้ตัดกับพื้นหลังสีเข้ม */
             border: 1px solid rgba(255, 255, 255, 0.5);
             padding: 8px 12px; 
             cursor: pointer;
@@ -126,7 +155,9 @@
             background-color: #0056b3; 
             transform: translateY(-1px);
         }
+        /* ================================================= */
 
+        /* 💥 สไตล์สำหรับ Chat Header (ใช้สีหลัก) */
         .chat-header {
             background-color: var(--primary-color);
             color: white;
@@ -136,18 +167,15 @@
             align-items: center;
         }
 
+        /* 💥 ปรับสี Title ใน Login และ Welcome Screen */
         .app-title-login, .app-title-welcome {
             color: var(--primary-color);
         }
         
-        #closeChatBtn {
-            background-color: var(--danger-color) !important;
-            color: white !important;
-        }
-        #closeChatBtn:hover {
-            background-color: #c82333 !important;
-        }
+        /* 💥 ปรับปุ่ม 'จบการสนทนา' ให้ใช้สี Danger */
+        /* ⚠️ [REMOVED]: ลบโค้ดสไตล์เฉพาะ #closeChatBtn ออก เพื่อให้ JS ควบคุม Class ได้ */
 
+        /* 💥 ปรับสี Header ของ Chat List (Active) */
         #chatListHeader {
             border-bottom: 2px solid var(--primary-color);
         }
@@ -155,46 +183,142 @@
             color: var(--primary-color);
         }
 
-        .admin-message .bubble {
+        /* 💥 สไตล์สำหรับ Bubble ข้อความ (แก้ไข Class ให้สอดคล้องกับ JS) */
+        .admin-container .message-bubble { 
             background-color: var(--primary-color) !important;
             color: white !important;
         }
-        .user-message .bubble {
+        .user-container .message-bubble { 
             background-color: var(--light-bg-color) !important;
             color: #333 !important;
         }
         
+        /* 🎯 [CSS สำหรับ 3 โลโก้] */
         #logoArea, .welcome-logo-area {
             display: flex;
             justify-content: center;
-            align-items: flex-end; 
+            align-items: flex-end; /* 🚩 จัดให้ฐานขององค์ประกอบทั้งหมดอยู่ล่างสุด */
             margin-bottom: 20px;
         }
         
+        /* 1. สไตล์สำหรับโลโก้ด้านข้าง (TOBEKC, FriendCorner) */
         #logoArea img, .welcome-logo-area img {
-            height: 50px; 
+            height: 50px; /* ขนาดปกติ (โลโก้ด้านข้าง) */
             width: 50px; 
-            margin: 0 8px; 
+            margin: 0 8px; /* ลดระยะห่างแนวนอน (8px) */
             border: none;
             object-fit: cover; 
             border-radius: 50%;
+            /* ดันโลโก้ลงมาเพื่อให้ฐานเสมอกับโลโก้ 120px */
             margin-top: calc(120px - 50px); 
         }
 
+        /* 2. สไตล์เฉพาะสำหรับโลโก้หลัก (KC.png/School Logo) */
         #logoArea #schoolLogo, 
         .welcome-logo-area #welcomeSchoolLogo 
         { 
+            /* ขนาดใหญ่ */
             height: 120px; 
             width: 120px;
             object-fit: contain; 
             border-radius: 0; 
-            margin: 0 5px; 
+            margin: 0 5px; /* เพื่อควบคุมระยะห่างแนวนอน */
             margin-top: 0; 
         }
 
+        /* สไตล์สำหรับโลโก้ที่ต้องเป็นวงกลม (TOBEKC, FriendCorner) */
         #logoArea img.circular, .welcome-logo-area img.circular {
             object-fit: cover;
             border-radius: 50%;
+        }
+        
+        /* สไตล์สำหรับ Context Menu (ใช้สำหรับลบข้อความ) */
+        .context-menu {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            min-width: 150px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        .context-menu-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .context-menu-item:hover {
+            background-color: var(--light-bg-color);
+        }
+        .context-menu-item.delete {
+            color: var(--danger-color);
+        }
+
+        /* สไตล์สำหรับการแสดงข้อความ */
+        .message-container {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: flex-end;
+            transition: all 0.3s ease-out;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .message-container.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* [FIXED] ใช้ .user-container */
+        .user-container {
+            justify-content: flex-start;
+        }
+        /* [FIXED] ใช้ .admin-container */
+        .admin-container {
+            justify-content: flex-end;
+        }
+        .system-message {
+            justify-content: center;
+            text-align: center;
+            font-style: italic;
+            color: #999;
+        }
+
+        /* [FIXED] ใช้ .message-bubble และเพิ่ม white-space: pre-wrap; */
+        .message-bubble {
+            max-width: 70%;
+            padding: 8px 12px;
+            border-radius: 18px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            /* 🔑 [CRITICAL FIX]: คำสั่งให้เคารพการขึ้นบรรทัดใหม่และช่องว่าง */
+            white-space: pre-wrap; 
+        }
+
+        /* [FIXED] ใช้ .user-container และ .message-bubble */
+        .user-container .message-bubble {
+            border-top-left-radius: 4px; /* มุมซ้ายบนแบน */
+        }
+        /* [FIXED] ใช้ .admin-container และ .message-bubble */
+        .admin-container .message-bubble {
+            border-top-right-radius: 4px; /* มุมขวาบนแบน */
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: #999;
+            margin: 0 5px;
+            white-space: nowrap;
+        }
+        
+        /* สไตล์สำหรับ Dot แจ้งเตือนข้อความใหม่ */
+        .unread-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            margin-left: 8px;
+            flex-shrink: 0;
         }
 
         </style>
@@ -202,7 +326,7 @@
 
     <body>
 
-        <div id="loginScreen" style="display: none;">
+        <div id="loginScreen">
             <div id="logoArea">
                 <img id="newLogo" class="circular" src="TOBEKC.jpg.jpg"
                     alt="TOBEKC Logo">
@@ -219,10 +343,10 @@
             <input type="password" id="passwordInput" class="input-field"
                 placeholder="รหัสผ่าน">
 
-            <p id="loginError"
-                style="color: var(--danger-color); margin-bottom: 15px; font-weight: 500; text-align: center; padding: 0 5px; display: none;"></p>
+            <p id="errorMessage"
+                style="color: #dc3545; display: none; margin-bottom: 15px; font-weight: 500; text-align: center; padding: 0 5px;"></p>
 
-            <button id="loginBtn" class="primary-button" onclick="adminLogin()">เข้าสู่ระบบ</button>
+            <button id="loginBtn" class="primary-button">เข้าสู่ระบบ</button>
         </div>
 
         <div id="welcomeScreen" class="welcome-screen-container"
@@ -273,7 +397,6 @@
             style="display: none;">
 
             <div id="listScreenContainer"> 
-                
                 <div id="chatListPanel">
                     <div id="chatListHeader" class="chat-list-header">
                         <h3 class="panel-title">ห้องสนทนาที่เปิดอยู่</h3>
@@ -341,12 +464,14 @@
 
         <audio id="notifySound" src="notification.mp3" preload="auto"></audio>
 
-        <script
-            src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-        <script
-            src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-        <script
-            src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+        <div id="chatContextMenu" class="context-menu" style="display: none;">
+            <div id="deleteMessageOption" class="context-menu-item delete">
+                <i class="fas fa-trash-alt"></i> ยกเลิกการส่งข้อความ
+            </div>
+        </div>
+        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
         <script src="admin.js"></script>
 
     </body>

@@ -1,27 +1,28 @@
-/* admin.css */
-/* 0. VARIABLES & BASE STYLES */
-
+/* ================================================= */
+/* [CSS FIX] ADMIN CHAT PANEL STYLING (ฉบับสมบูรณ์) */
 /* ================================================= */
 
+/* 0. VARIABLES & BASE STYLES */
 :root {
-    --primary-color: #007bff;
-    /* สีน้ำเงินสำหรับ Admin (Active Chat) */
-    --primary-hover: #0056b3;
-    --accent-color: #28a745;
-    /* สีเขียวสำหรับปุ่มเข้าแชท */
-    --accent-hover: #1e7e34;
+    /* 🔴 [ปรับสีหลัก: สีแดงเลือดหมูสดใส] */
+    --primary-color: #A51C30;
+    --primary-hover: #8F192A;
+    --accent-color: #A51C30;
+    --accent-hover: #8F192A;
     --history-color: #6c757d;
-    /* สีเทาสำหรับ History */
     --history-light: #e9ecef;
     --background-color: #f8f9fa;
-    /* Background อ่อนลง */
     --container-bg: #ffffff;
     --text-color: #343a40;
     --secondary-color: #6c757d;
     --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08);
-    /* เงาที่นุ่มนวลขึ้น */
-    --danger-color: #dc3545; /* ⬅️ สีแดงสำหรับปุ่ม Logout */
-    --danger-hover: #c82333; 
+    --danger-color: #dc3545;
+    --danger-hover: #c82333;
+    /* 💡 NEW: Chat Bubble Colors */
+    --user-bubble-bg: #e4e6eb;
+    /* สีเทาอ่อนสำหรับ User Bubble */
+    --admin-bubble-bg: var(--primary-color);
+    /* สีหลักสำหรับ Admin Bubble */
 }
 
 html,
@@ -32,7 +33,8 @@ body {
     font-family: 'Prompt', sans-serif, Arial;
     background-color: var(--background-color);
     color: var(--text-color);
-    overflow-y: hidden;
+    /* 🚩 อนุญาตให้ Scroll ได้ถ้าจำเป็นในบางกรณี */
+    overflow: auto;
 }
 
 /* 1. LAYOUT & CONTAINER (Full Viewport) */
@@ -43,10 +45,12 @@ body {
     min-height: 100vh;
     padding: 0;
     margin: 0;
+    /* 🚩 ให้ Admin Panel ครอบคลุมพื้นที่จอทั้งหมดเมื่อ Login แล้ว */
+    width: 100vw;
+    height: 100vh;
 }
 
 /* 2. LOGIN & WELCOME SCREEN STYLES */
-
 #loginScreen {
     max-width: 400px;
     width: 90%;
@@ -61,37 +65,30 @@ body {
     align-items: center;
 }
 
-/* 🎯 [CSS สำหรับ 3 โลโก้ - 70px, ไม่มีกรอบ, วงกลม] */
-#logoArea, .welcome-logo-area {
+#logoArea,
+.welcome-logo-area {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: flex-end; 
-    gap: 0px; 
+    align-items: flex-end;
+    gap: 0px;
     margin-bottom: 20px;
-    flex-wrap: nowrap; 
+    flex-wrap: nowrap;
 }
 
-/* 1. สไตล์สำหรับโลโก้ทั้งสาม */
-#logoArea img, 
+#logoArea img,
 .welcome-logo-area img,
-#logoArea #schoolLogo, 
-.welcome-logo-area #welcomeSchoolLogo 
-{
-    /* ขนาด: 70px พร้อม !important เพื่อ Override */
-    height: 70px !important; 
-    width: 70px !important;  
-    margin: 0 8px !important; /* ระยะห่างแนวนอน */
-    object-fit: cover !important; 
-    
-    /* 🚩 ไม่มีกรอบและเป็นวงกลม */
-    border: none !important; 
-    padding: 0 !important;   
-    border-radius: 50% !important; 
-    
-    margin-top: 0 !important; 
+#logoArea #schoolLogo,
+.welcome-logo-area #welcomeSchoolLogo {
+    height: 70px !important;
+    width: 70px !important;
+    margin: 0 8px !important;
+    object-fit: cover !important;
+    border: none !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    margin-top: 0 !important;
 }
-/* สิ้นสุดการปรับสไตล์โลโก้ */
 
 .app-title-login {
     font-size: 32px;
@@ -114,9 +111,8 @@ body {
 .input-field:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(165, 28, 48, 0.25);
 }
-
 
 .welcome-screen-container {
     width: 100vw;
@@ -166,13 +162,12 @@ body {
     width: 100%;
 }
 
-/* 🚩 กลุ่มปุ่ม Welcome Screen (ขนาดเท่ากัน) */
 .welcome-button-group {
     width: 100%;
-    max-width: 280px; 
+    max-width: 280px;
     display: flex;
     flex-direction: column;
-    gap: 15px; 
+    gap: 15px;
 }
 
 /* 3. BUTTONS */
@@ -186,7 +181,7 @@ body {
     transition: background 0.3s, transform 0.1s;
     font-size: 16px;
     font-weight: 500;
-    width: 100%; /* ⬅️ ทำให้ปุ่มยาวเต็มความกว้าง */
+    width: 100%;
     box-sizing: border-box;
 }
 
@@ -195,10 +190,9 @@ body {
     transform: translateY(-1px);
 }
 
-/* ปุ่มเข้าสู่ห้องสนทนา (Active) - สีเขียว */
 .primary-button.enter-chat-btn {
     background-color: var(--accent-color);
-    margin: 0; 
+    margin: 0;
     display: block;
 }
 
@@ -206,18 +200,16 @@ body {
     background-color: var(--accent-hover);
 }
 
-/* ปุ่มทั่วไปที่ใช้ class .secondary-button (คือ 'ประวัติแชทที่สิ้นสุดแล้ว') */
 .secondary-button {
-    /* 🚩 [แก้ไข] ใช้สีเทา (secondary) สำหรับปุ่ม "ประวัติแชทที่สิ้นสุดแล้ว" */
     background: var(--secondary-color);
     color: white;
-    padding: 12px 20px; 
+    padding: 12px 20px;
     cursor: pointer;
-    border-radius: 8px; 
+    border-radius: 8px;
     transition: background 0.3s;
-    font-size: 16px; 
-    font-weight: 500; 
-    width: 100%; 
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
     box-sizing: border-box;
     border: none;
 }
@@ -226,13 +218,12 @@ body {
     background: #5a6268;
 }
 
-/* ปุ่มออกจากระบบ - สีแดง */
 .secondary-button.logout-full-btn {
-    background: var(--danger-color); 
+    background: var(--danger-color);
     color: white;
     border: none;
     font-weight: 500;
-    margin: 0; 
+    margin: 0;
     display: block;
 }
 
@@ -241,28 +232,18 @@ body {
 }
 
 /* 4. ADMIN PANEL & HISTORY PANEL BASE STYLES */
-.admin-panel-container {
+#adminPanelContainer {
+    /* 🔑 [CRITICAL FIX] เปลี่ยนเป็น position: relative เพื่อให้ container ย่อย absolute ได้ */
     max-width: 100vw;
     width: 100vw;
     height: 100vh;
     background-color: var(--container-bg);
     overflow: hidden;
-    display: flex;
-}
-
-/* 💥 NEW: Base Layout for full screen switching 💥 */
-.chat-interface-wrapper {
-    flex-grow: 1;
-    display: flex;
     position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
 }
 
-/* 💥 NEW: Panels inside the wrapper 💥 */
-/* Panel ที่จะแสดงรายการแชททั้งหมด */
 #listScreenContainer {
+    /* ใช้ position: absolute: เพื่อให้ List Screen อยู่เต็มจอ (เมื่อแสดงผล) */
     position: absolute;
     top: 0;
     left: 0;
@@ -271,44 +252,36 @@ body {
     padding: 20px;
     box-sizing: border-box;
     display: flex;
-    /* กำหนดให้เป็น Flex เพื่อจัดการ List และ History List */
     gap: 20px;
-    background-color: var(--container-bg);
+    background-color: var(--background-color);
 }
 
-/* Panel ที่จะแสดงห้องแชทแบบเต็มจอ */
 #chatScreenContainer {
+    /* ใช้ position: absolute: เพื่อให้ Chat Screen อยู่เต็มจอและทับ List Screen */
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     display: none;
-    /* เริ่มต้นซ่อนไว้ */
+    /* เริ่มต้นซ่อน */
     flex-direction: column;
     background-color: var(--container-bg);
-}
-
-
-/* BASE CLASSES สำหรับ Chat View */
-.chat-panel-base {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
     padding: 20px;
-    /* เพิ่ม padding ให้ Chat Screen Container */
     box-sizing: border-box;
+    z-index: 10;
+    /* สำคัญ: ต้องทับ List Screen */
 }
 
-/* 💥 NEW: สไตล์เฉพาะสำหรับ Chat Screen Container 💥 */
+/* 🚩 Chat View Flex Container */
 #fullChatView {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100%;
+    background-color: var(--container-bg);
 }
-
 
 .chat-header {
     display: flex;
@@ -326,7 +299,6 @@ body {
     color: white;
 }
 
-/* 💥 NEW: สไตล์สำหรับปุ่มย้อนกลับ (Back Button) 💥 */
 #backButton {
     background-color: var(--primary-hover);
     color: white;
@@ -340,29 +312,34 @@ body {
 }
 
 #backButton:hover {
-    background-color: #0056b3;
+    background-color: #8F192A;
 }
 
 
 #historyChatHeader {
     background: var(--history-color);
-    /* สีเทาสำหรับ History */
     color: white;
 }
 
-.chat-box-base {
+/* 🚩 [FIX] ปรับ Chat Box ให้เป็นพื้นที่แสดงผลหลัก */
+#chatBox {
     flex-grow: 1;
-    padding: 20px;
     overflow-y: auto;
-    background: #fff;
+    /* 🚩 สำคัญ: ต้องเลื่อนได้ */
+    background: #f0f0f0;
+    /* สีพื้นหลังที่แตกต่างเพื่อดูขอบเขต */
     border: 1px solid #dee2e6;
     border-radius: 8px;
+    padding: 10px;
+    /* ลด Padding ลงเล็กน้อย */
     display: flex;
     flex-direction: column;
+    /* 🔑 ลบ min-height ที่ไม่จำเป็นออก เพื่อให้ flex-grow ทำงานเต็มที่ */
+    /* min-height: 200px; */
     gap: 10px;
 }
 
-/* CHAT LIST PANEL (ซ้าย - ใช้ร่วมกัน) */
+/* CHAT LIST PANEL */
 #chatListPanel,
 #historyListPanel {
     flex: 0 0 320px;
@@ -372,14 +349,13 @@ body {
     flex-direction: column;
 }
 
-/* 💥 FIXED: ลบ border-right สำหรับ historyListPanel ใน List Screen Container */
 #listScreenContainer #historyListPanel {
     border-right: none;
     padding-right: 0;
 }
 
 
-/* CHAT LIST HEADER (ใช้ร่วมกัน) */
+/* CHAT LIST HEADER */
 .chat-list-header {
     display: flex;
     justify-content: space-between;
@@ -394,7 +370,6 @@ body {
 
 #historyListHeader {
     border-bottom: 3px solid var(--history-color);
-    /* สีเทาสำหรับ History */
 }
 
 .panel-title {
@@ -421,7 +396,7 @@ body {
     background-color: #e0e0e0;
 }
 
-/* CHAT LIST AREA (ใช้ร่วมกัน) */
+/* CHAT LIST AREA */
 #chatList,
 #historyList {
     flex-grow: 1;
@@ -429,25 +404,43 @@ body {
     min-height: 200px;
 }
 
-/* ----- CHAT ITEM BASE & ACTIVE STYLES (ใช้ร่วมกัน) ----- */
+/* ----- CHAT ITEM BASE & ACTIVE STYLES ----- */
 .chat-item {
-    padding: 12px;
+    padding: 8px 12px;
     border-bottom: 1px solid #f8f9fa;
     cursor: pointer;
     transition: background 0.2s;
     border-radius: 6px;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
     position: relative;
+    line-height: 1.2;
 }
 
 .chat-item:hover {
-    background: #e6f7ff;
+    background: #fce4e4;
+}
+
+.chat-item strong,
+.chat-item .chat-time,
+.chat-item .chat-owner,
+.chat-item p {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.chat-item strong {
+    font-size: 14px;
+}
+
+.chat-item .chat-time,
+.chat-item .chat-owner {
+    font-size: 11px;
 }
 
 .chat-item.active {
     background: var(--primary-color);
     color: white;
-    box-shadow: 0 2px 5px rgba(0, 123, 255, 0.2);
+    box-shadow: 0 2px 5px rgba(165, 28, 48, 0.2);
 }
 
 .chat-item.active strong,
@@ -456,7 +449,6 @@ body {
     color: white !important;
 }
 
-/* UNREAD STATUS (สำหรับ Active Chat List เท่านั้น) */
 .chat-item.unread {
     background-color: #fffde7;
     border-left: 5px solid #ffc107;
@@ -480,12 +472,9 @@ body {
 }
 
 .chat-item:not(.active) .unread-dot {
-    /* ทำให้จุดไม่โดนบังในสถานะ active */
-    background-color: #ffc107; 
+    background-color: #ffc107;
 }
 
-
-/* HISTORY ITEM SPECIFIC STYLES - ใช้สีเทาเดิม */
 .history-item {
     background-color: var(--history-light);
     border-left: 5px solid var(--history-color);
@@ -504,17 +493,10 @@ body {
 
 
 /* CHAT PANEL (ขวา - Active Chat) */
-/* 💥 OLD #chatPanel ถูกลบออกเนื่องจากตอนนี้ใช้ #fullChatView 💥 */
-
-#chatBox {
-    /* ใช้ .chat-box-base */
-}
-
 .input-area {
     display: flex;
     padding: 15px 0 0;
     gap: 10px;
-    /* 💥 NEW: ต้องทำให้ input-area อยู่ด้านล่างสุดของ #fullChatView 💥 */
     margin-top: auto;
     flex-shrink: 0;
 }
@@ -538,84 +520,114 @@ body {
     background: var(--primary-hover);
 }
 
-/* HISTORY PLACEHOLDER */
-.history-chat-view-placeholder {
-    /* ใช้เป็น Flex Container */
-}
 
+/* 5. CHAT MESSAGE STYLES (UI Unification - สำคัญมากสำหรับการแสดงผล) */
+/* ------------------------------------------------------------------------- */
 
-/* 5. CHAT MESSAGE STYLES (ไม่แก้ไข) */
-.message {
+/* NEW: Message Container (แถวข้อความเดียว) */
+.message-container {
     display: flex;
     margin: 5px 0;
-    position: relative;
+    align-items: flex-end;
+    opacity: 1;
+    transform: translateY(0);
 }
 
-.message .bubble {
-    padding: 8px 12px;
-    border-radius: 18px;
+/* NEW: Bubble Base */
+.message-bubble {
+    padding: 10px 14px;
+    border-radius: 20px;
     max-width: 70%;
     position: relative;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
     line-height: 1.4;
-}
-
-.message-text {
-    display: block;
     word-wrap: break-word;
-    margin-bottom: 3px;
 }
 
-.message-time {
-    display: block;
-    font-size: 10px;
-    opacity: 0.7;
-    text-align: right;
-    white-space: nowrap;
-}
-
-.user-message {
+/* ------------------- */
+/* User (ซ้าย - สีเทาอ่อน) */
+/* ------------------- */
+.user-container {
     justify-content: flex-start;
 }
 
-.user-message .bubble {
-    background-color: #e4e6eb;
+.user-container .message-bubble {
+    background-color: var(--user-bubble-bg);
     color: var(--text-color);
-    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
 }
 
-.admin-message {
+.user-container .message-time {
+    order: 2;
+    margin-left: 8px;
+    color: var(--secondary-color);
+}
+
+
+/* ------------------- */
+/* Admin (ขวา - สีหลัก: แดงเลือดหมู) */
+/* ------------------- */
+.admin-container {
     justify-content: flex-end;
 }
 
-.admin-message .bubble {
-    background-color: var(--primary-color);
+.admin-container .message-bubble {
+    background-color: var(--admin-bubble-bg);
     color: white;
-    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    order: 2;
 }
 
-.admin-message .message-time {
-    color: rgba(255, 255, 255, 0.8);
+.admin-container .message-time {
+    order: 1;
+    margin-right: 8px;
+    color: var(--secondary-color);
 }
 
-.system-message {
+/* ------------------- */
+/* System Message (กลาง) */
+/* ------------------- */
+.system-container,
+.deleted-system-message {
     justify-content: center;
     text-align: center;
+    width: 100%;
 }
 
-.system-message .bubble {
+.system-container .message-bubble,
+.deleted-system-message .message-bubble {
     background-color: #fff3cd;
     color: #856404;
     font-size: 13px;
     padding: 5px 10px;
     border-radius: 10px;
+    max-width: 50%;
+    box-shadow: none;
+    order: 1;
 }
 
-/* [NEW] ปุ่มลบข้อความ */
-.delete-message-btn {
+.deleted-system-message .message-bubble {
+    background-color: #fce4e4;
+    color: var(--danger-color);
+    font-style: italic;
+    border: 1px dashed var(--danger-color);
+}
+
+/* NEW: Message Time Base */
+.message-time {
+    display: block;
+    font-size: 10px;
+    opacity: 0.8;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+/* ปุ่มลบข้อความ */
+.admin-container .delete-message-btn {
     position: absolute;
     top: -8px;
-    right: -8px;
+    left: -8px;
+    right: auto;
     width: 20px;
     height: 20px;
     background-color: #dc3545;
@@ -628,21 +640,16 @@ body {
     cursor: pointer;
     opacity: 0.8;
     transition: opacity 0.2s, transform 0.2s;
+    z-index: 10;
 }
 
-.delete-message-btn:hover {
+.admin-container .delete-message-btn:hover {
     opacity: 1;
     transform: scale(1.1);
     background-color: #c82333;
 }
 
-/* ปรับตำแหน่งปุ่มลบสำหรับข้อความ Admin (อยู่ด้านซ้ายของ Bubble) */
-.admin-message .delete-message-btn {
-    left: -8px;
-    right: auto;
-}
-
-/* [NEW] แถบแบ่งข้อความใหม่ (Unread Divider) */
+/* UNREAD DIVIDER */
 .unread-divider {
     text-align: center;
     margin: 10px 0;
@@ -659,7 +666,6 @@ body {
     right: 0;
     height: 1px;
     background-color: #f1c40f;
-    /* สีเหลือง */
     z-index: -1;
 }
 
@@ -667,7 +673,6 @@ body {
     background-color: var(--container-bg);
     padding: 0 10px;
     color: #e67e22;
-    /* สีส้ม */
     font-size: 13px;
     font-weight: 600;
     border: 1px solid #f1c40f;
@@ -675,26 +680,7 @@ body {
 }
 
 
-/* ================================================= */
-/* 8. FIREBASE/BROWSER OVERLAY UI FIXES (ส่วนที่เพิ่ม) */
-/* ================================================= */
-
-/* ซ่อนข้อความ Error ที่อาจถูกเบราว์เซอร์หรือ Firebase แสดงทับซ้อนขึ้นมา 
-    เราจะใช้แค่ <p id="errorMessage"> ที่อยู่ใน HTML/JS เท่านั้น
-*/
-.firebase-error-message,
-#firebase-error-message {
-    display: none !important;
-    /* !important เพื่อบังคับซ่อนข้อความ Error ที่ลอยขึ้นมา */
-}
-
-/* หากข้อความแปลกๆ ยังลอยขึ้นมา ลองเพิ่มโค้ดนี้ */
-div[role="alert"] {
-    display: none !important;
-}
-
-
-/* 7. MEDIA QUERY (Responsive) */
+/* 6. MEDIA QUERY (Responsive) */
 @media (max-width: 900px) {
     body {
         align-items: flex-start;
@@ -711,7 +697,6 @@ div[role="alert"] {
         min-height: 100vh;
     }
 
-    /* 💥 NEW: Mobile View for List Screen 💥 */
     #listScreenContainer {
         flex-direction: column;
         padding: 15px;
@@ -731,22 +716,66 @@ div[role="alert"] {
         padding-bottom: 10px;
     }
 
-    /* 💥 NEW: Mobile View for Chat Screen 💥 */
     #chatScreenContainer {
         padding: 0;
-        /* ลบ padding เพื่อให้เต็มจอใน Mobile */
+        /* ต้องกลับไปใช้ position: absolute; ในโหมด Chat View */
+        position: absolute;
     }
 
     #fullChatView {
         padding: 15px;
     }
 
-    #chatPanel,
-    #historyViewPanel {
-        min-height: 50vh;
-    }
+    /* ลบส่วนที่ไม่จำเป็นออก หรือรวมเข้ากับ Chat List Panel เดิม */
+    /* #chatPanel,
+    #historyViewPanel {
+        min-height: 50vh;
+    }
 
-    #historyChatView {
-        min-height: 50vh;
-    }
+    #historyChatView {
+        min-height: 50vh;
+    } */
+}
+
+/* 🚩 1. ทำให้ Message Container ของ Admin เป็นฐานในการวางตำแหน่ง (จำเป็น!) */
+.message-container.admin-container {
+    position: relative;
+    /* 🔑 ต้องมี: เพื่อให้ position: absolute ในเมนูทำงาน */
+}
+
+/* 🚩 2. สไตล์ Context Menu ตัวหลัก */
+#chatContextMenu {
+    /* ใช้ ID นี้สำหรับ Admin */
+    position: absolute;
+    z-index: 1000;
+
+    /* ตำแหน่ง: ชิดด้านบน และชิดขวาของ container (ซึ่งคือด้านซ้ายของ Admin Bubble) */
+    top: 0;
+    right: 100%;
+    margin-right: 6px;
+
+    /* สไตล์ Messenger */
+    background-color: var(--container-bg);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    padding: 3px;
+    font-size: 14px;
+    width: auto;
+    white-space: nowrap;
+    display: none;
+    /* เริ่มต้นซ่อนไว้ */
+}
+
+/* 🚩 3. สไตล์ปุ่ม "ยกเลิกการส่ง" */
+#chatContextMenu .context-menu-item.delete {
+    padding: 8px 15px;
+    color: var(--accent-color);
+    font-weight: 500;
+    border-radius: 18px;
+    cursor: pointer;
+}
+
+#chatContextMenu .context-menu-item.delete:hover {
+    background-color: #F0F4F8;
 }
