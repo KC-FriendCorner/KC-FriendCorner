@@ -1,58 +1,117 @@
 <!DOCTYPE html>
 <html lang="th">
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KC FriendCorner - User Chat</title>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KC FriendCorner - User Chat</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
-    <link rel="stylesheet" href="style.css"> 
-    
-</head>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<body>
+        <link rel="stylesheet" href="style.css">
 
-    <div id="mainContainer">
+    </head>
 
-        <div id="welcomeScreen">
+    <body>
 
-            <div id="logoArea">
-                <img id="newLogo" src="TOBEKC.jpg.jpg" alt="Support Group Logo">
-                <img id="appLogo" src="KC.png" alt="School Logo">
-                <img id="friendCornerLogo" src="FriendCorner.jpg.png" alt="Friend Corner Logo">
-            </div>
+        <div id="mainContainer">
 
-            <h1 id="appTitle">KC FriendCorner</h1>
+            <div id="welcomeScreen">
 
-            <div id="userInfoArea" style="display: none;">
-                <p id="userIdDisplay" class="user-info-text"></p>
-            </div>
+                <div id="logoArea">
+                    <img id="newLogo" src="TOBEKC.jpg.jpg"
+                        alt="Support Group Logo">
+                    <img id="appLogo" src="KC.png" alt="School Logo">
+                    <img id="friendCornerLogo" src="FriendCorner.jpg.png"
+                        alt="Friend Corner Logo">
+                </div>
 
-            <br>
+                <img id="appTitleImage" src="KCFC.png"
+                    alt="KC FriendCorner Logo">
+                <div id="userInfoArea" style="display: none;">
+                    <p id="userIdDisplay" class="user-info-text"></p>
+                </div>
 
-            <div id="startScreen" style="width: 100%; text-align: center;">
+                <br>
 
-                <button id="authButton" class="primary-button" onclick="handleAuth()">
-                    <i class="fas fa-sign-in-alt"></i> **เริ่มต้นใช้งาน (สุ่ม ID)**
-                </button>
+                <div id="startScreen" style="width: 100%; text-align: center;">
 
-                <br><br>
-
-                <div id="mainActions" style="display:none;">
-
-                    <button id="startChat" class="primary-button">
-                        <i class="fas fa-comment-dots"></i>
-                        กดเพื่อสนทนา
+                    <button id="authButton" class="primary-button"
+                        onclick="handleAuth()">
+                        <i class="fas fa-sign-in-alt"></i> เริ่มต้นใช้งาน (สุ่ม ID)
                     </button>
 
-                    <button id="logoutBtn" class="secondary-button" onclick="userLogout()">
-                        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+                    <br><br>
+
+                    <div id="mainActions" style="display:none;">
+
+                        <button id="startChat" class="primary-button">
+                            <i class="fas fa-comment-dots"></i>
+                            กดเพื่อสนทนา
+                        </button>
+
+                        <button id="logoutBtn" class="secondary-button"
+                            onclick="userLogout()">
+                            <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div id="chatScreen"
+                style="display:none; flex-direction: column; flex-grow: 1;">
+
+                <div id="chatHeader">
+                    <button id="homeButton" onclick="showStartScreen()">
+                        <i class="fas fa-home"></i> หน้าแรก
+                    </button>
+                    <span id="chatTitle">ห้องสนทนาใหม่</span>
+                    <div style="width: 70px;">&nbsp;</div>
+                </div>
+
+                <div id="chatBox">
+                    <div class="message-container admin-container">
+                        <div
+                            class="message-bubble admin-bubble">สวัสดีครับ</div>
+                        <div class="message-time">10:00</div>
+                    </div>
+                    <div class="message-container admin-container">
+                        <div class="message-bubble admin-bubble">ยินดีต้อนรับสู่
+                            KC FriendCorner ครับ หากคุณมีเรื่องไม่สบายใจ
+                            สามารถพิมพ์เข้ามาคุยกับเราได้เลยนะครับ</div>
+                        <div class="message-time">10:01</div>
+                    </div>
+                    <div class="system-container">
+                        <div
+                            class="message-bubble system-bubble">คุณเริ่มการสนทนาในเวลา
+                            10:05 น.</div>
+                    </div>
+                    <div class="message-container user-container">
+                        <div class="message-bubble user-bubble">ขอบคุณครับ</div>
+                        <div class="message-time">10:06</div>
+                    </div>
+                    <div class="message-container user-container">
+                        <div
+                            class="message-bubble user-bubble">วันนี้ผมรู้สึกไม่ค่อยสบายใจเลย
+                            ไม่รู้จะคุยกับใครดี เลยลองมาปรึกษาที่นี่ดูครับ</div>
+                        <div class="message-time">10:07</div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <textarea id="chatInput"
+                        placeholder="พิมพ์ข้อความ..."></textarea>
+                    <button id="sendButton" class="primary-button">
+                        <i class="fas fa-paper-plane"></i>
                     </button>
                 </div>
 
@@ -60,61 +119,22 @@
 
         </div>
 
-        <div id="chatScreen" style="display:none; flex-direction: column; flex-grow: 1;">
-
-            <div id="chatHeader">
-                <button id="homeButton" onclick="showStartScreen()">
-                    <i class="fas fa-home"></i> หน้าแรก
-                </button>
-                <span id="chatTitle">ห้องสนทนาใหม่</span>
-                <div style="width: 70px;">&nbsp;</div>
-            </div>
-
-            <div id="chatBox">
-                <div class="message-container admin-container">
-                    <div class="message-bubble admin-bubble">สวัสดีครับ</div>
-                    <div class="message-time">10:00</div>
-                </div>
-                <div class="message-container admin-container">
-                    <div class="message-bubble admin-bubble">ยินดีต้อนรับสู่ KC FriendCorner ครับ หากคุณมีเรื่องไม่สบายใจ สามารถพิมพ์เข้ามาคุยกับเราได้เลยนะครับ</div>
-                    <div class="message-time">10:01</div>
-                </div>
-                <div class="system-container">
-                    <div class="message-bubble system-bubble">คุณเริ่มการสนทนาในเวลา 10:05 น.</div>
-                </div>
-                <div class="message-container user-container">
-                    <div class="message-bubble user-bubble">ขอบคุณครับ</div>
-                    <div class="message-time">10:06</div>
-                </div>
-                <div class="message-container user-container">
-                    <div class="message-bubble user-bubble">วันนี้ผมรู้สึกไม่ค่อยสบายใจเลย ไม่รู้จะคุยกับใครดี เลยลองมาปรึกษาที่นี่ดูครับ</div>
-                    <div class="message-time">10:07</div>
-                </div>
-            </div>
-
-            <div class="input-area">
-                <textarea id="chatInput" placeholder="พิมพ์ข้อความ..."></textarea>
-                <button id="sendButton" class="primary-button">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-
+        <div id="contextMenu">
+            <div id="deleteOption"
+                class="context-menu-option">ยกเลิกการส่ง</div>
         </div>
 
-    </div>
+        <audio id="notifySound" src="notify.mp3" preload="auto"></audio>
 
-    <div id="contextMenu">
-        <div id="deleteOption" class="context-menu-option">ยกเลิกการส่ง</div>
-    </div>
+        <script
+            src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <audio id="notifySound" src="notify.mp3" preload="auto"></audio>
+        <script src="user.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
-    <script src="user.js"></script>
-
-</body>
+    </body>
 
 </html>

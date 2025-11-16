@@ -1,0 +1,13 @@
+{
+  "name": "line-webhook-receiver",
+  "version": "1.0.0",
+  "description": "LINE Webhook Receiver for Vercel",
+  "main": "api/webhook.js",
+  "scripts": {
+    "start": "node api/webhook.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@line/bot-sdk": "^7.5.2"
+  }
+}

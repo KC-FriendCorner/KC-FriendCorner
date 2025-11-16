@@ -1,182 +1,186 @@
 <!DOCTYPE html>
 <html lang="th">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Friend Corner Chat</title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin - Friend Corner Chat</title>
 
-    <link
-        href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
 
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <link rel="stylesheet" href="admin.css">
+        <link rel="stylesheet" href="admin.css">
 
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 
-</head>
+    </head>
 
-<body>
+    <body>
 
-    <div id="loginScreen" class="screen">
-        <div id="logoArea">
-            <img id="newLogo" class="circular" src="TOBEKC.jpg.jpg"
-                alt="TOBEKC Logo">
-            <img id="schoolLogo" src="KC.png" alt="School Logo">
-            <img id="friendCornerLogo" class="circular"
-                src="FriendCorner.jpg.png" alt="Friend Corner Logo">
-        </div>
-        <h1 class="app-title-login">KC FriendCorner ADMIN</h1>
-
-        <input type="email" id="emailInput" class="input-field"
-            placeholder="อีเมลแอดมิน">
-        <input type="password" id="passwordInput" class="input-field"
-            placeholder="รหัสผ่าน">
-
-        <p id="errorMessage"
-            style="color: #dc3545; display: none; margin-bottom: 15px; font-weight: 500; text-align: center; padding: 0 5px;"></p>
-
-        <button id="loginBtn" class="primary-button">เข้าสู่ระบบ</button>
-    </div>
-
-    <div id="welcomeScreen" class="welcome-screen-container screen"
-        style="display: none;">
-        <div id="welcomeHeader">
-            <div class="welcome-logo-area">
-                <img class="welcome-logo-img circular" src="TOBEKC.jpg.jpg"
+        <div id="loginScreen" class="screen">
+            <div id="logoArea">
+                <img id="newLogo" class="circular" src="TOBEKC.jpg.jpg"
                     alt="TOBEKC Logo">
-                <img class="welcome-logo-img" id="welcomeSchoolLogo"
-                    src="KC.png" alt="School Logo">
-                <img class="welcome-logo-img circular"
+                <img id="schoolLogo" src="KC.png" alt="School Logo">
+                <img id="friendCornerLogo" class="circular"
                     src="FriendCorner.jpg.png" alt="Friend Corner Logo">
             </div>
-            <br>
-            <h2 class="app-title-welcome">KC Friend Corner ADMIN</h2>
-            <p class="welcome-message" id="welcomeMessage">
-                ยินดีต้อนรับ Admin! กรุณาเลือกดำเนินการ
-            </p>
+            <img id="appTitleImageAdmin" src="KCFCAM.png"
+                alt="KC Friend Corner ADMIN">
+            <input type="email" id="emailInput" class="input-field"
+                placeholder="อีเมลแอดมิน">
+            <input type="password" id="passwordInput" class="input-field"
+                placeholder="รหัสผ่าน">
+
+            <p id="errorMessage"
+                style="color: #dc3545; display: none; margin-bottom: 15px; font-weight: 500; text-align: center; padding: 0 5px;"></p>
+
+            <button id="loginBtn" class="primary-button">เข้าสู่ระบบ</button>
         </div>
 
-        <div class="welcome-box">
-            <div class="welcome-button-group">
-                <button class="primary-button enter-chat-btn"
-                    onclick="showListScreen('active')">
-                    <i class="fas fa-comments"></i> เข้าสู่ห้องสนทนา
-                    (Active)
-                </button>
-
-                <button class="secondary-button"
-                    onclick="showListScreen('history')">
-                    <i class="fas fa-history"></i> ประวัติแชทที่สิ้นสุดแล้ว
-                </button>
-
-                <button id="logoutButton"
-                    class="secondary-button logout-full-btn"
-                    onclick="adminLogout()">
-                    <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="adminPanelContainer" class="admin-panel-container"
-        style="display: none;">
-
-        <div id="temporaryMessage"
-            style="display: none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 8px; z-index: 1000; font-weight: 500;">
-            ข้อความชั่วคราว
-        </div>
-
-        <div id="listScreen" class="screen list-screen"
+        <div id="welcomeScreen" class="welcome-screen-container screen"
             style="display: none;">
-            <div id="chatListPanel" class="list-panel">
-                <div id="chatListHeader" class="chat-list-header">
-                    <h3 id="listTitle" class="panel-title">🟢 ห้องสนทนาที่เปิดอยู่</h3>
-                    <button id="goHomeBtn"
-                        class="secondary-button small-action-btn"
-                        onclick="showWelcomeScreen()">
-                        <i class="fas fa-home"></i> หน้าหลัก
+            <div id="welcomeHeader">
+                <div class="welcome-logo-area">
+                    <img class="welcome-logo-img circular" src="TOBEKC.jpg.jpg"
+                        alt="TOBEKC Logo">
+                    <img class="welcome-logo-img" id="welcomeSchoolLogo"
+                        src="KC.png" alt="School Logo">
+                    <img class="welcome-logo-img circular"
+                        src="FriendCorner.jpg.png" alt="Friend Corner Logo">
+                </div>
+                <br>
+                <img id="appTitleImageAdmin" src="KCFCAM.png"
+                    alt="KC Friend Corner ADMIN"> <p class="welcome-message"
+                    id="welcomeMessage">
+
+                </p>
+            </div>
+
+            <div class="welcome-box">
+                <div class="welcome-button-group">
+                    <button class="primary-button enter-chat-btn"
+                        onclick="showListScreen('active')">
+                        <i class="fas fa-comments"></i> เข้าสู่ห้องสนทนา
+                        (Active)
+                    </button>
+
+                    <button class="secondary-button"
+                        onclick="showListScreen('history')">
+                        <i class="fas fa-history"></i> ประวัติแชทที่สิ้นสุดแล้ว
+                    </button>
+
+                    <button id="logoutButton"
+                        class="secondary-button logout-full-btn"
+                        onclick="adminLogout()">
+                        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
                     </button>
                 </div>
-                <div id="chatList" class="chat-list-container">
-                    <p
-                        style="color:#777; text-align:center;">กำลังโหลดห้องสนทนา...</p>
-                </div>
             </div>
         </div>
 
-        <div id="historyScreen" class="screen list-screen"
+        <div id="adminPanelContainer" class="admin-panel-container"
             style="display: none;">
-            <div id="historyListPanel" class="list-panel">
-                <div id="historyListHeader"
-                    class="chat-list-header history-header">
-                    <h3 class="panel-title" id="historyListTitle"
-                        style="color:#ffffff;">
-                        🔴 ประวัติแชทที่สิ้นสุดแล้ว</h3>
-                    <button id="backToWelcomeBtn"
-                        class="secondary-button small-action-btn"
-                        onclick="showWelcomeScreen()">
-                        <i class="fas fa-home"></i> หน้าหลัก
-                    </button>
-                </div>
-                <div id="historyList" class="chat-list-container">
-                    <p
-                        style="color:#777; text-align:center;">กำลังโหลดประวัติการสนทนา...</p>
+
+            <div id="temporaryMessage"
+                style="display: none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 8px; z-index: 1000; font-weight: 500;">
+                ข้อความชั่วคราว
+            </div>
+
+            <div id="listScreen" class="screen list-screen"
+                style="display: none;">
+                <div id="chatListPanel" class="list-panel">
+                    <div id="chatListHeader" class="chat-list-header">
+                        <h3 id="listTitle" class="panel-title">🟢
+                            ห้องสนทนาที่เปิดอยู่</h3>
+                        <button id="goHomeBtn"
+                            class="secondary-button small-action-btn"
+                            onclick="showWelcomeScreen()">
+                            <i class="fas fa-home"></i> หน้าหลัก
+                        </button>
+                    </div>
+                    <div id="chatList" class="chat-list-container">
+                        <p
+                            style="color:#777; text-align:center;">กำลังโหลดห้องสนทนา...</p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div id="chatScreenContainer" class="chat-screen-container"
-            style="display: none;">
+            <div id="historyScreen" class="screen list-screen"
+                style="display: none;">
+                <div id="historyListPanel" class="list-panel">
+                    <div id="historyListHeader"
+                        class="chat-list-header history-header">
+                        <h3 class="panel-title" id="historyListTitle"
+                            style="color:#ffffff;">
+                            🔴 ประวัติแชทที่สิ้นสุดแล้ว</h3>
+                        <button id="backToWelcomeBtn"
+                            class="secondary-button small-action-btn"
+                            onclick="showWelcomeScreen()">
+                            <i class="fas fa-home"></i> หน้าหลัก
+                        </button>
+                    </div>
+                    <div id="historyList" class="chat-list-container">
+                        <p
+                            style="color:#777; text-align:center;">กำลังโหลดประวัติการสนทนา...</p>
+                    </div>
+                </div>
+            </div>
 
-            <div id="fullChatView" class="chat-view-panel">
+            <div id="chatScreenContainer" class="chat-screen-container"
+                style="display: none;">
 
-                <div class="chat-header-bar">
-                    
-                    <div id="chatTitle">
-                        สนทนากับ ID: <span id="currentUserID"></span>
+                <div id="fullChatView" class="chat-view-panel">
+
+                    <div class="chat-header-bar">
+
+                        <div id="chatTitle">
+                            สนทนากับ ID: <span id="currentUserID"></span>
+                        </div>
+
+                        <button id="closeChatBtn" class="danger-button"
+                            style="display: none;">
+                            <i class="fas fa-power-off"></i> จบ/ลบการสนทนา
+                        </button>
+
+                        <button id="backButton">
+                            <i class="fas fa-arrow-left"></i> รายการแชท
+                        </button>
+
                     </div>
 
-                    <button id="closeChatBtn" class="danger-button"
-                        style="display: none;">
-                        <i class="fas fa-power-off"></i> จบ/ลบการสนทนา
-                    </button>
+                    <div id="chatBox" class="chat-box-base">
+                    </div>
 
-                    <button id="backButton">
-                        <i class="fas fa-arrow-left"></i> รายการแชท
-                    </button>
+                    <div class="input-area">
+                        <textarea id="chatInput" placeholder="พิมพ์ข้อความ..."
+                            rows="1"></textarea>
+                        <button id="sendButton" class="primary-button"><i
+                                class="fas fa-paper-plane"></i> ส่ง</button>
+                    </div>
 
                 </div>
-
-                <div id="chatBox" class="chat-box-base">
-                </div>
-
-                <div class="input-area">
-                    <textarea id="chatInput" placeholder="พิมพ์ข้อความ..." rows="1"></textarea>
-                    <button id="sendButton" class="primary-button"><i class="fas fa-paper-plane"></i> ส่ง</button>
-                </div>
-
             </div>
+
         </div>
 
-    </div>
+        <audio id="notifySound" src="notification.mp3" preload="auto"></audio>
 
-    <audio id="notifySound" src="notification.mp3" preload="auto"></audio>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+        <script
+            src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+        <script src="admin.js"></script>
 
-    <script
-        src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script
-        src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script
-        src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
-    <script src="admin.js"></script>
-
-</body>
+    </body>
 
 </html>

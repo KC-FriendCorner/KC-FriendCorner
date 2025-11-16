@@ -8,13 +8,14 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    height: 100vh; 
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 /* =============================================== */
-/* 2. ตัวแปรและ Shadow (สี: Vibrant Berry & Messenger Blue) */
+/* 2. ตัวแปรและ Shadow (คงเดิม) */
 /* =============================================== */
 :root {
     /* 💖 สีหลัก: Vibrant Berry */
@@ -24,41 +25,53 @@ body {
     /* 🟦 สีรอง: Messenger Blue */
     --messenger-blue: #0078FF;
     --messenger-blue-hover: #0063d1;
+    
+    /* 🔑 สีของ Bubble */
+    --user-bubble-bg: var(--primary-color); 
+    --admin-bubble-bg: #E4E6EB; 
+    --user-text-color: #ffffff; 
+    --admin-text-color: #000000; 
 
-    /* สีพื้นหลังแชท/Bubble Admin */
     --chat-bg: #f0f2f5;
-    --admin-bubble-bg: #E4E6EB;
     --system-text: #606770;
 
     --border-radius-xl: 16px;
-    --border-radius-bubble: 18px;
-    --transition-time: 0.3s;
-    --shadow-lift: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --border-radius-bubble: 20px; 
+    --border-radius-group-corner: 6px; 
+    
+    --transition-time: 0.2s; 
+    
+    --shadow-lift: 0 8px 25px rgba(0, 0, 0, 0.2); 
+    --shadow-medium: 0 4px 10px rgba(0, 0, 0, 0.12);
+    --shadow-low: 0 1px 2px rgba(0, 0, 0, 0.08);
+
     --secondary-color: #6C757D;
 }
 
 /* =============================================== */
-/* 3. Main Container - ปรับให้ Responsive & Fix Height */
+/* 3. Main Container - ปรับให้ Responsive & Fix Height (FULL HEIGHT/WIDTH) */
 /* =============================================== */
 #mainContainer {
     background-color: white;
     border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-lift);
+    box-shadow: var(--shadow-lift); 
     width: 100%;
-    max-width: 450px;
-    min-height: 500px;
-    height: 95vh;
+    /* max-width: 1200px; */ 
+    
+    min-height: 100%; 
+    height: 100%; 
+    
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    transition: max-width var(--transition-time), height var(--transition-time);
+    overflow: hidden; 
+    transition: all var(--transition-time) ease-out; 
     overflow-x: hidden;
 }
 
 @media (min-width: 768px) and (orientation: landscape), (min-width: 992px) {
     #mainContainer {
-        max-width: 600px;
-        height: 85vh;
+        /* max-width: 1200px; */
+        height: 100%; 
     }
 }
 
@@ -91,11 +104,23 @@ body {
     border: 3px solid transparent;
 }
 
-#appTitle {
+/* ⚠️ สไตล์เดิมสำหรับข้อความ (ถ้ายังมีการใช้) */
+#appTitle { 
     font-size: 1.8rem;
     color: var(--primary-color);
     margin-bottom: 30px;
     font-weight: 700;
+}
+
+/* 🔑 สไตล์สำหรับรูปภาพแทนชื่อเว็บไซต์ (ปรับขนาดเป็น 280px) */
+#appTitleImage {
+    width: 320px; 
+    height: auto;
+    margin-bottom: 30px;
+    transition: all var(--transition-time);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #userInfoArea {
@@ -118,24 +143,26 @@ body {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 300px;
+    /* 🔑 [KEEP] ปุ่มยังคงถูกจำกัดความกว้างที่ 300px เพื่อให้อ่านง่าย */
+    max-width: 300px; 
     margin: 0 auto;
 }
 
 /* =============================================== */
-/* 5. Buttons */
+/* 5. Buttons (ยกเลิก Bubble Style) */
 /* =============================================== */
 .primary-button,
 .secondary-button {
     border: none;
     padding: 12px 25px;
-    border-radius: 25px;
+    /* 🔑 [EDIT] เปลี่ยนขอบมนกลับไปเป็น 25px */
+    border-radius: 25px; 
     cursor: pointer;
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: 10px;
-    transition: all var(--transition-time);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-time) ease-out; 
+    box-shadow: var(--shadow-medium); 
     width: 100%;
     max-width: 300px;
 }
@@ -147,19 +174,24 @@ body {
 
 .primary-button:hover {
     background-color: var(--primary-hover);
-    transform: translateY(-1px);
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); 
 }
 
 .secondary-button {
-    background-color: #E9ECEF;
+    /* 🔑 [EDIT] เปลี่ยนพื้นหลังเป็นสีขาว */
+    background-color: white; 
     color: var(--secondary-color);
-    border: 1px solid #DEE2E6;
-    box-shadow: none;
+    /* 🔑 [EDIT] เพิ่มขอบ 1px กลับเข้าไป */
+    border: 1px solid #DEE2E6; 
+    box-shadow: var(--shadow-low);
 }
 
 .secondary-button:hover {
-    background-color: #DDE2E6;
+    /* 🔑 [EDIT] ปรับสีพื้นหลังตอน Hover */
+    background-color: #F8F9FA; 
     transform: translateY(-1px);
+    box-shadow: var(--shadow-medium); 
 }
 
 #authButton {
@@ -204,9 +236,9 @@ body {
     color: white;
     border: none;
     padding: 6px 10px;
-    border-radius: var(--border-radius-md);
+    border-radius: 4px; 
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color var(--transition-time); 
     font-weight: 500;
 }
 
@@ -226,7 +258,7 @@ body {
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 2px;
 }
 
 .input-area {
@@ -249,6 +281,12 @@ body {
     font-family: 'Sarabun', sans-serif;
     line-height: 1.4;
     max-height: 80px;
+    transition: border-color var(--transition-time);
+}
+
+#chatInput:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 1px var(--primary-color);
 }
 
 #sendButton {
@@ -262,12 +300,13 @@ body {
     justify-content: center;
     align-items: center;
     font-size: 1rem;
-    transition: background-color 0.2s;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-time); 
+    box-shadow: var(--shadow-medium); 
 }
 
 #sendButton:hover {
     background-color: var(--primary-hover);
+    transform: translateY(-1px) scale(1.05); 
 }
 
 #sendButton i {
@@ -275,41 +314,17 @@ body {
 }
 
 /* =============================================== */
-/* 8. Message Styles (Messenger Style Bubbles) - FINAL FIX */
+/* 8. Message Styles (Admin ซ้าย, User ขวา, Grouped) */
 /* =============================================== */
 
-/* 🎯 8.1 Base Message Container: ทำให้ Container ย่อขนาดตามเนื้อหาและจัดชิดซ้าย/ขวา */
+/* 🎯 8.1 Base Message Container: ทำให้ Container ย่อขนาดตามเนื้อหา */
 .message-container {
-    /* 🔑 [NEW] ทำให้ Container เป็น Block เพื่อให้มันสามารถใช้ margin-left/right: auto ได้ */
     display: block;
-
-    max-width: 80%; /* จำกัดความกว้างของข้อความ */
-    margin-bottom: 5px;
-    width: fit-content; /* 💥 สำคัญ: บังคับให้ Container ย่อขนาดตามเนื้อหาภายใน */
-}
-
-/* --- 8.2 User Container (ชิดขวา, User Message) --- */
-.user-container {
-    /* 🔑 [NEW] ผลัก Container ไปชิดขวา */
-    margin-left: auto;
-    margin-right: 0;
-
-    /* 🎯 [NEW] ใช้ Flexbox จัดเรียง Bubble กับ Time Stamp ให้ชิดกัน */
-    display: flex;
-    align-items: flex-end; /* จัด Time Stamp ให้อยู่ด้านล่าง */
-    flex-direction: row-reverse; /* [Time] [Bubble] */
-}
-
-/* --- 8.3 Admin Container (ชิดซ้าย, Friend Message) --- */
-.admin-container {
-    /* 🔑 [NEW] ผลัก Container ไปชิดซ้าย */
-    margin-right: auto;
-    margin-left: 0;
-
-    /* 🎯 [NEW] ใช้ Flexbox จัดเรียง Bubble กับ Time Stamp ให้ชิดกัน */
-    display: flex;
-    align-items: flex-end; /* จัด Time Stamp ให้อยู่ด้านล่าง */
-    flex-direction: row; /* [Bubble] [Time] */
+    /* 🔑 [KEEP] Bubble ยังคงจำกัดความกว้างที่ 80% ของพื้นที่แชท */
+    max-width: 80%; 
+    margin-bottom: 2px;
+    width: fit-content; 
+    transition: opacity var(--transition-time) ease-in-out, transform var(--transition-time) ease-out;
 }
 
 /* --- 8.4 System Container (อยู่กลาง) --- */
@@ -322,65 +337,111 @@ body {
 
 /* --- 8.5 Message Bubble Style (Rounded Corners & Colors) --- */
 .message-bubble {
-    padding: 8px 12px;
-    border-radius: var(--border-radius-bubble);
+    padding: 6px 12px;
+    border-radius: var(--border-radius-bubble); 
     line-height: 1.4;
     font-size: 15px;
     word-wrap: break-word;
     white-space: pre-wrap;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-low); 
     display: block;
     position: static;
     max-width: 100%;
 }
 
-/* 🚩 User Bubble */
-.user-bubble {
-    background-color: var(--primary-color);
-    color: white;
-    border-bottom-right-radius: 4px;
+/* ---------------------------------------------------- */
+/* A. ADMIN BUBBLES (ชิดซ้าย) */
+/* ---------------------------------------------------- */
+.admin-container {
+    margin-right: auto;
+    margin-left: 0;
+    display: flex;
+    align-items: flex-end; 
+    flex-direction: row; 
+    justify-content: flex-start;
 }
 
-/* 🎯 Admin Bubble */
 .admin-bubble {
     background-color: var(--admin-bubble-bg);
-    color: #000000;
-    border-bottom-left-radius: 4px;
-    padding-right: 12px;
+    color: var(--admin-text-color);
 }
 
-/* 🚩 System Bubble */
-.system-bubble {
-    background-color: transparent;
-    color: var(--system-text);
-    font-size: 12px;
-    padding: 2px 10px;
-    text-align: center;
-    box-shadow: none;
-    display: inline-block;
+/* 1. ADMIN - บับเบิ้ลแรกในกลุ่ม: ตัดมุมล่างซ้ายออก */
+.admin-container:has(+ .admin-container) .message-bubble {
+    border-bottom-left-radius: var(--border-radius-group-corner); 
+    border-top-left-radius: var(--border-radius-bubble); 
 }
 
-/* --- 8.6 Time Stamp Style --- */
+/* 2. ADMIN - บับเบิ้ลกลางในกลุ่ม: ตัดมุมบนซ้ายและมุมล่างซ้ายออก */
+.admin-container + .admin-container:has(+ .admin-container) .message-bubble {
+    border-top-left-radius: var(--border-radius-group-corner); 
+    border-bottom-left-radius: var(--border-radius-group-corner); 
+}
+
+/* 3. ADMIN - บับเบิ้ลสุดท้ายในกลุ่ม: ตัดมุมบนซ้ายออก */
+.admin-container + .admin-container:not(:has(+ .admin-container)) .message-bubble {
+    border-top-left-radius: var(--border-radius-group-corner); 
+    border-bottom-left-radius: var(--border-radius-bubble); 
+}
+
+/* ---------------------------------------------------- */
+/* B. USER BUBBLES (ชิดขวา) */
+/* ---------------------------------------------------- */
+.user-container {
+    margin-left: auto;
+    margin-right: 0;
+    display: flex;
+    align-items: flex-end; 
+    flex-direction: row-reverse; 
+    justify-content: flex-end;
+}
+
+.user-bubble {
+    background-color: var(--user-bubble-bg);
+    color: var(--user-text-color);
+}
+
+/* 1. USER - บับเบิ้ลแรกในกลุ่ม: ตัดมุมล่างขวาออก */
+.user-container:has(+ .user-container) .message-bubble {
+    border-bottom-right-radius: var(--border-radius-group-corner); 
+    border-top-right-radius: var(--border-radius-bubble); 
+}
+
+/* 2. USER - บับเบิ้ลกลางในกลุ่ม: ตัดมุมบนขวาและมุมล่างขวาออก */
+.user-container + .user-container:has(+ .user-container) .message-bubble {
+    border-top-right-radius: var(--border-radius-group-corner); 
+    border-bottom-right-radius: var(--border-radius-group-corner); 
+}
+
+/* 3. USER - บับเบิ้ลสุดท้ายในกลุ่ม: ตัดมุมบนขวาออก */
+.user-container + .user-container:not(:has(+ .user-container)) .message-bubble {
+    border-top-right-radius: var(--border-radius-group-corner); 
+    border-bottom-right-radius: var(--border-radius-bubble); 
+}
+
+
+/* --- 8.6 Time Stamp Style (ปรับให้ตัวเล็กลง) --- */
 .message-time {
-    font-size: 10px;
+    font-size: 0.65rem; 
     white-space: nowrap;
     flex-shrink: 0;
     color: var(--system-text);
+    margin: 0 6px; 
 }
 
 /* 🎯 Time Stamp สำหรับ Admin (อยู่ด้านขวาของ Bubble) */
 .admin-container .message-time {
-    margin-left: 8px;
+    order: 2; 
 }
 
 /* 🚩 Time Stamp สำหรับ User (อยู่ด้านซ้ายของ Bubble) */
 .user-container .message-time {
-    margin-right: 8px;
+    order: 1; 
 }
 
 
 /* =============================================== */
-/* 9. Context Menu & Utilities */
+/* 9. Context Menu & Utilities (คงเดิม) */
 /* =============================================== */
 
 #contextMenu {
@@ -388,11 +449,12 @@ body {
     background-color: white;
     border: 1px solid #DEE2E6;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-medium); 
     z-index: 1000;
     display: none;
     min-width: 150px;
     overflow: hidden;
+    transition: opacity var(--transition-time);
 }
 
 .context-menu-option {
@@ -400,7 +462,7 @@ body {
     cursor: pointer;
     font-size: 14px;
     color: #333;
-    transition: background-color 0.15s;
+    transition: background-color var(--transition-time);
 }
 
 #deleteOption {

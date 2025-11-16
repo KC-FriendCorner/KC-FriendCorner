@@ -1,8 +1,8 @@
 // =================================================================
-// === 🟢 admin.js - ฉบับรวมสมบูรณ์ (Active, History, Chat View) ===
+// === 🟢 admin.js - ฉบับรวมสมบูรณ์ (พร้อม LINE Notification Logic) ===
 // =================================================================
 
-// 1. **[CONFIG] ข้อมูล Firebase**
+// 1. **[CONFIG] ข้อมูล Firebase และ LINE API**
 const firebaseConfig = {
     apiKey: "AIzaSyCs3_LcJN5RfOIo9jZ4fnz1CBl8hXqfvig",
     authDomain: "kc-tobe-friendcorner-21655.firebaseapp.com",
@@ -14,6 +14,12 @@ const firebaseConfig = {
 };
 
 const ADMIN_UID = "o139Nm6N3wSW25fCtAzwf2ymfSm2"; // UID ของผู้ดูแลระบบที่ได้รับอนุญาต
+const ADMIN_UID_TO_HIDE = 'o139Nm6N3wSW25fCtAzwf2ymfSm2'; // 🚩 เปลี่ยนเป็น UID ของ Admin จริง
+
+// 🔑 [สำคัญมาก] ส่วนนี้ต้องเปลี่ยน
+const ADMIN_LINE_ID = "Uxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // 🚨 CRITICAL: เปลี่ยนเป็น User ID หรือ Group ID ของ Admin ที่รับแจ้งเตือนใน LINE
+const LINE_ACCESS_TOKEN = "ECRO36u9CNaNzQZo2rJfzEeSo66rG+lBmApfBToqIKmqaS5fv9sbXf2+y17xGiqJRdXCdEUVJMsKuCayTQaEdV915gPwPEPYEF0+UTTyJiz1iBrLici8N4wMz1J8KqLqTZ9/H749IvzrWcXgi7bu6AdB04t89/1O/w1cDnyilFU="; // 🚨 CRITICAL: ใส่ Channel Access Token จาก LINE Developers Console ที่นี่
+// ⚠️ คำเตือน: การใส่ Token ใน Client-Side Code มีความเสี่ยงด้านความปลอดภัย
 
 // 2. **[Declaration] ประกาศตัวแปร Global**
 let auth = null;
@@ -89,6 +95,46 @@ document.addEventListener('DOMContentLoaded', () => {
     // =================================================================
     // === 2. UTILITY & FORMATTING FUNCTIONS ===
     // =================================================================
+
+    // 🚩 [NEW] ฟังก์ชันสำหรับส่งแจ้งเตือนไปยัง LINE Official Account (ใช้ Messaging API)
+    async function sendLineNotification(messageText) {
+        if (!LINE_ACCESS_TOKEN || !ADMIN_LINE_ID || LINE_ACCESS_TOKEN === "YOUR_LINE_CHANNEL_ACCESS_TOKEN") {
+            console.error("LINE Notification failed: LINE_ACCESS_TOKEN or ADMIN_LINE_ID is not configured.");
+            return;
+        }
+
+        const apiEndpoint = "https://api.line.me/v2/bot/message/push";
+
+        const payload = {
+            to: ADMIN_LINE_ID,
+            messages: [{
+                type: "text",
+                text: messageText,
+            }],
+        };
+
+        try {
+            // ใช้ fetch API ในการส่งข้อมูลไปยัง LINE API
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${LINE_ACCESS_TOKEN}`,
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (response.ok) {
+                console.log("LINE notification sent successfully.");
+            } else {
+                // ดึง Error จาก LINE API
+                const errorData = await response.json();
+                console.error("Failed to send LINE notification:", response.status, errorData);
+            }
+        } catch (error) {
+            console.error("Error connecting to LINE API:", error);
+        }
+    }
 
     function playNotifySound() {
         const soundEl = document.getElementById('notifySound');
@@ -192,8 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const existingMenu = document.querySelector('.temp-context-menu');
         if (existingMenu) {
             // 🔑 [FIX]: ค้นหา Element แม่ที่ทำหน้าที่เป็นตัวอ้างอิงตำแหน่ง (คือ bubble)
-            const referenceElement = existingMenu.parentElement; 
-            
+            const referenceElement = existingMenu.parentElement;
+
             // 1. ลบ Event Listeners ออกก่อน
             document.removeEventListener('click', hideContextMenu);
             document.removeEventListener('contextmenu', hideContextMenu);
@@ -205,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 2. ลบเมนูออก และล้าง style position: relative ที่เคยใส่ไว้ใน Bubble ออก
             if (referenceElement) {
                 // ล้าง style position: relative ที่เราใส่ใน Bubble
-                referenceElement.style.position = ''; 
+                referenceElement.style.position = '';
                 referenceElement.removeChild(existingMenu);
             }
         }
@@ -221,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 1. ป้องกันการแสดงผล Context Menu ดั้งเดิมของเบราว์เซอร์
         e.preventDefault();
         // 🔑 [NEW] หยุด Propagation เพื่อป้องกันปัญหา Event ที่ container
-        e.stopPropagation(); 
+        e.stopPropagation();
 
         // 2. ซ่อนเมนูที่เปิดอยู่ก่อน (ถ้ามี)
         hideContextMenu();
@@ -241,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
         contextMenu.className = 'context-menu temp-context-menu';
         contextMenu.setAttribute('data-message-id', messageId);
         contextMenu.setAttribute('data-chat-id', chatId);
-
+        contextMenu.setAttribute('data-sender', messageSender); // ค่าจะเป็น 'admin' หรือ 'user'
         // 🔑 [NEW]: ไม่จำเป็นต้องตั้งค่า top/left/right/bottom ใน JS ถ้าใช้ CSS ที่ถูกต้อง
         // โดยจะใช้ CSS กำหนดตำแหน่ง top: 0; left: 0; เพื่อให้ไปอยู่มุมซ้ายบนของ Bubble
 
@@ -292,8 +338,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // อัปเดต node ข้อความให้มี property 'deleted: true' และลบ 'text' ออก
         database.ref(`${CHATS_PATH}/${chatId}/${MESSAGES_SUB_PATH}/${messageId}`).update({
-            text: null, 	// ลบข้อความจริงออกจากฐานข้อมูล
-            deleted: true, 	// ตั้งค่าสถานะว่าถูกลบแล้ว
+            text: null,     // ลบข้อความจริงออกจากฐานข้อมูล
+            deleted: true,  // ตั้งค่าสถานะว่าถูกลบแล้ว
             deletedAt: Date.now() // บันทึกเวลาที่ลบ
         })
             .then(() => {
@@ -953,6 +999,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
+    // 🔑 [MODIFIED]: เพิ่ม Logic การตรวจสอบและส่ง LINE Notification ที่นี่
+    let lastMessageTimestamp = 0; // เพื่อติดตามข้อความล่าสุดที่ส่งแจ้งเตือนไปแล้ว
+
     function listenForMessages(chatId, isHistory = false) {
         if (!isFirebaseReady || !database) return;
 
@@ -983,6 +1032,32 @@ document.addEventListener('DOMContentLoaded', () => {
             if (message && (message.text || message.deleted)) { // ตรวจสอบ deleted ด้วย
                 // 🔑 [CRITICAL]: ส่ง isHistory ไปด้วย
                 appendMessage(message, messageId, chatId, isHistory);
+
+                // -----------------------------------------------------------
+                // 🟢 LINE NOTIFICATION LOGIC (NEW/MODIFIED)
+                // -----------------------------------------------------------
+                const isNewMessage = existingElement === null;
+
+                if (!isHistory && isNewMessage) {
+
+                    // 1. ตรวจสอบว่าเป็นข้อความจาก 'user' (ลูกค้า) เท่านั้น
+                    if (message.sender === 'user') {
+
+                        // 2. ตรวจสอบว่าเป็นข้อความใหม่จริง ๆ และไม่ใช่ข้อความซ้ำจากการโหลดครั้งแรก
+                        if (message.timestamp > lastMessageTimestamp) {
+
+                            const notificationText = `[📢 แชทใหม่] ID: ${chatId.substring(0, 8)}... ข้อความ: ${message.text || 'ข้อความรูปภาพ/ไฟล์'}`;
+
+                            // 3. เรียกใช้ฟังก์ชันส่งแจ้งเตือน LINE
+                            sendLineNotification(notificationText);
+
+                            // 4. อัปเดตเวลาล่าสุดที่ส่งแจ้งเตือนไปแล้ว
+                            lastMessageTimestamp = message.timestamp;
+                        }
+                    }
+                }
+                // -----------------------------------------------------------
+
             }
         };
 
@@ -1029,15 +1104,31 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // 🔑 [NEW LOGIC START]: กำหนดชื่อผู้ส่ง
+        let senderDisplayName = '';
+
         if (isUser) {
             containerClass = 'user-container';
             bubbleClass = 'message-bubble user-bubble';
+
+            // 🔑 ตรวจสอบ UID ของผู้ส่งข้อความ (ownerUID ควรถูกส่งมาพร้อมกับ message จาก Firebase)
+            const ownerUID = message.ownerUID;
+
+            if (ownerUID === ADMIN_UID_TO_HIDE) {
+                // ถ้าเป็น Admin ที่ปลอมเป็น User
+                senderDisplayName = '<strong style="color: #007bff;">Admin Chat</strong>';
+            } else {
+                // ถ้าเป็น User ทั่วไป
+                senderDisplayName = message.name || 'ผู้ใช้';
+            }
+
         } else if (isAdmin) {
             containerClass = 'admin-container';
             bubbleClass = 'message-bubble admin-bubble';
         } else {
             return;
         }
+        // 🔑 [NEW LOGIC END]
 
         // 🚩 [FIXED]: ถ้าถูกลบ ให้เพิ่ม class พิเศษและเปลี่ยนข้อความแสดงผล
         if (isDeleted) {
@@ -1061,7 +1152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 🔑 [CRITICAL FIX]: ผูก contextmenu กับ bubble โดยตรง และส่ง bubble element ไปด้วย
             bubble.addEventListener('contextmenu', (e) => {
                 // ส่ง bubble element ไปเป็นตัวอ้างอิงตำแหน่ง
-                window.showContextMenu(e, chatId, messageId, message.sender, bubble); 
+                window.showContextMenu(e, chatId, messageId, message.sender, bubble);
             });
         }
 
@@ -1071,10 +1162,19 @@ document.addEventListener('DOMContentLoaded', () => {
         timeEl.textContent = formatTime(message.timestamp);
 
         if (isAdmin) {
-            // สำหรับ Admin: เวลา -> Bubble (เพื่อการจัดเรียงที่ถูกต้อง)
+            // สำหรับ Admin (ข้อความสีเขียว/น้ำเงิน): เวลา -> Bubble
             messageContainer.appendChild(timeEl);
             messageContainer.appendChild(bubble);
-        } else { // User
+        } else { // User (ข้อความสีเทา/ขาว)
+
+            // 🔑 [NEW LOGIC]: แสดงชื่อผู้ส่งด้านบน Bubble ของ User
+            if (senderDisplayName) {
+                const nameEl = document.createElement('div');
+                nameEl.className = 'sender-display-name';
+                nameEl.innerHTML = senderDisplayName;
+                messageContainer.appendChild(nameEl);
+            }
+
             // สำหรับ User: Bubble -> เวลา
             messageContainer.appendChild(bubble);
             messageContainer.appendChild(timeEl);
@@ -1099,6 +1199,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // === 7. AUTHENTICATION FUNCTIONS (Login/Logout) ===
     // =================================================================
 
+    // =================================================================
+    // === 7. AUTHENTICATION FUNCTIONS (Login/Logout) ===
+    // =================================================================
+
+    // ในไฟล์ admin.js (หรือไฟล์ที่ควบคุมหน้าล็อกอินของแอดมิน)
     window.adminLogin = function () {
         if (!auth || !isFirebaseReady) {
             const errorEl = document.getElementById(ERROR_MESSAGE_ELEMENT_ID);
@@ -1120,9 +1225,16 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        auth.signInWithEmailAndPassword(email, password)
+        // 🔑 [การแก้ไขสำคัญ]: ใช้ Persistence.LOCAL สำหรับ Admin 
+        // เพื่อให้ Admin ล็อกอินค้างไว้ได้ (Remember Me)
+        auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+            .then(() => {
+                // เมื่อตั้งค่า Persistence สำเร็จ จึงทำการล็อกอิน
+                return auth.signInWithEmailAndPassword(email, password);
+            })
             .then((userCredential) => {
                 console.log("Admin logged in successfully:", userCredential.user.uid);
+                // *** เพิ่มโค้ด redirect ไปหน้า Admin Dashboard ที่นี่ ***
             })
             .catch((error) => {
                 let message = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
@@ -1136,6 +1248,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         break;
                     case 'auth/invalid-api-key':
                         message = 'API Key ของ Firebase ไม่ถูกต้อง (โปรดตรวจสอบ admin.js)';
+                        break;
+                    case 'auth/web-storage-unsupported':
+                        message = 'ข้อผิดพลาด: เบราว์เซอร์บล็อกการจัดเก็บข้อมูล (Storage) กรุณาลองใหม่หรือปิดโหมดส่วนตัว';
                         break;
                     default:
                         message = 'เข้าสู่ระบบล้มเหลว: ' + error.message;
@@ -1227,5 +1342,6 @@ document.addEventListener('DOMContentLoaded', () => {
             window.deleteChatPermanently(activeChatId);
         };
     }
-    // --------------------------------------------------------------------------------------------------
+
+    // 🚩 [REMOVED/DELETED] โค้ด handleNewMessage ที่ไม่สมบูรณ์ถูกลบออกแล้ว
 });
