@@ -1,0 +1,27 @@
+{
+  "functions": {
+    "source": "functions" 
+    
+  },
+  
+  "hosting": {
+    "public": "public", 
+    
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    
+    "rewrites": [
+      {
+        "source": "/api/notify", 
+        "function": "webhookReceiver" 
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
