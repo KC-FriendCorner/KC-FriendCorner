@@ -1,479 +1,182 @@
 <!DOCTYPE html>
 <html lang="th">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin - Friend Corner Chat</title>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap"
-            rel="stylesheet">
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Friend Corner Chat</title>
 
-        <link rel="stylesheet" href="admin.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
-        <style>
-        
-        /* 1. ตัวแปรสำหรับสี (Vibrant Berry: #D81B60) */
-        :root {
-            /* 💖 สีหลัก: Vibrant Berry (แดงเลือดหมูสดใส) */
-            --primary-color: #D81B60; 
-            /* สีสำหรับ Hover (เข้มขึ้นเล็กน้อย) */
-            --primary-hover: #AD1457;
-            /* สีอ่อนสำหรับพื้นหลัง/ไฮไลท์ (Light Pink) */
-            --light-bg-color: #FCE4EC; 
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-            /* สีรอง (ยังคงเป็นสีเทา) */
-            --secondary-color: #6c757d;
-            /* สีสำหรับปุ่มอันตราย (จบการสนทนา/ลบ) */
-            --danger-color: #dc3545; 
+    <link rel="stylesheet" href="admin.css">
 
-            --border-radius-xl: 16px;
-            --border-radius-lg: 12px;
-            --border-radius-md: 8px;
-            --shadow-lift: 0 6px 20px rgba(0, 0, 0, 0.15);
-            --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.2);
-            --transition-time: 0.3s;
-        }
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
 
-        /* 1. โค้งมนและเงาให้กับคอนเทนเนอร์หลัก */
-        #loginScreen, .welcome-screen-container {
-            border-radius: var(--border-radius-xl);
-            box-shadow: var(--shadow-lift);
-        }
-        /* ลบเงาและโค้งมนจาก admin-panel-container เมื่อมันยืดเต็มหน้าจอ */
-        .admin-panel-container {
-            border-radius: 0 !important;
-            box-shadow: none !important;
-        }
+</head>
 
-        /* 2. โค้งมนให้กับช่องกรอกข้อมูล */
-        .input-field {
-            border-radius: var(--border-radius-lg);
-        }
+<body>
 
-        /* 3. โค้งมนให้กับปุ่มต่างๆ และเพิ่มเงาเมื่อโฮเวอร์ */
-        .primary-button, .secondary-button, .action-btn, .small-action-btn, .danger-button {
-            border-radius: var(--border-radius-md);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all var(--transition-time); /* เพิ่ม Transition */
-        }
+    <div id="loginScreen" class="screen">
+        <div id="logoArea">
+            <img id="newLogo" class="circular" src="TOBEKC.jpg.jpg"
+                alt="TOBEKC Logo">
+            <img id="schoolLogo" src="KC.png" alt="School Logo">
+            <img id="friendCornerLogo" class="circular"
+                src="FriendCorner.jpg.png" alt="Friend Corner Logo">
+        </div>
+        <h1 class="app-title-login">KC FriendCorner ADMIN</h1>
 
-        .primary-button:hover, .secondary-button:hover, .action-btn:hover, .small-action-btn:hover, .danger-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-        }
+        <input type="email" id="emailInput" class="input-field"
+            placeholder="อีเมลแอดมิน">
+        <input type="password" id="passwordInput" class="input-field"
+            placeholder="รหัสผ่าน">
 
-        /* 💥 การปรับสีปุ่มหลัก (Primary Button) */
-        .primary-button {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .primary-button:hover {
-            background-color: var(--primary-hover);
-        }
+        <p id="errorMessage"
+            style="color: #dc3545; display: none; margin-bottom: 15px; font-weight: 500; text-align: center; padding: 0 5px;"></p>
 
-        /* 💡 NEW: Danger Button Class (สำหรับปุ่มลบ/จบการสนทนา) */
-        .danger-button {
-            background-color: var(--danger-color);
-            color: white;
-        }
-        .danger-button:hover {
-            background-color: #c82333; /* Darker red */
-        }
-        
-        /* สไตล์สำหรับปุ่มที่ถูกปิดใช้งาน (Disabled Button) */
-        .disabled-button {
-            background-color: #ccc !important;
-            cursor: not-allowed !important;
-            opacity: 0.8;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        /* 4. โค้งมนให้กับแผงแชทและกล่องแชท */
-        .chat-box-base {
-            border-radius: var(--border-radius-xl);
-        }
+        <button id="loginBtn" class="primary-button">เข้าสู่ระบบ</button>
+    </div>
 
-        /* 5. โค้งมนและแอนิเมชันให้กับรายการแชท */
-        .chat-item {
-            border-radius: var(--border-radius-md);
-            margin: 5px 10px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease-in-out;
-        }
-
-        .chat-item:hover {
-            /* 💥 พื้นหลังเมื่อโฮเวอร์ ใช้สีอ่อน */
-            background-color: var(--light-bg-color); 
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .chat-item.active {
-            /* 💥 ไฮไลท์รายการแชทที่ถูกเลือก */
-            background-color: var(--light-bg-color) !important;
-            border-left: 5px solid var(--primary-color) !important;
-            box-shadow: 0 0 10px rgba(216, 27, 96, 0.5); /* เงาจากสีหลัก */
-            transform: scale(1.02);
-        }
-        .chat-item.active .chat-id {
-            color: var(--primary-color); /* สี ID ให้เป็นสีหลัก */
-            font-weight: 700;
-        }
-
-        /* ปรับปรุง Input Area ให้สอดคล้องกับโครงสร้างใหม่ */
-        .input-area { /* ใช้ class แทน ID */
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #eee;
-        }
-        
-        .input-area textarea {
-            border-radius: var(--border-radius-md);
-        }
-
-        /* === สไตล์ที่ปรับปรุง: ปุ่มย้อนกลับ (#backButton) === */
-        #backButton {
-            background-color: var(--primary-hover);
-            color: white; /* 💥 สีขาวเพื่อให้ตัดกับพื้นหลังสีเข้ม */
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 8px 12px; 
-            cursor: pointer;
-            margin-right: 15px;
-            font-size: 16px;
-            font-weight: 600; 
-            transition: all 0.2s;
-            border-radius: var(--border-radius-md); 
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
-        }
-        #backButton:hover {
-            background-color: #0056b3; 
-            transform: translateY(-1px);
-        }
-        /* ================================================= */
-
-        /* 💥 สไตล์สำหรับ Chat Header (ใช้สีหลัก) */
-        .chat-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* 💥 ปรับสี Title ใน Login และ Welcome Screen */
-        .app-title-login, .app-title-welcome {
-            color: var(--primary-color);
-        }
-        
-        /* 💥 ปรับปุ่ม 'จบการสนทนา' ให้ใช้สี Danger */
-        /* ⚠️ [REMOVED]: ลบโค้ดสไตล์เฉพาะ #closeChatBtn ออก เพื่อให้ JS ควบคุม Class ได้ */
-
-        /* 💥 ปรับสี Header ของ Chat List (Active) */
-        #chatListHeader {
-            border-bottom: 2px solid var(--primary-color);
-        }
-        #chatListHeader .panel-title {
-            color: var(--primary-color);
-        }
-
-        /* 💥 สไตล์สำหรับ Bubble ข้อความ (แก้ไข Class ให้สอดคล้องกับ JS) */
-        .admin-container .message-bubble { 
-            background-color: var(--primary-color) !important;
-            color: white !important;
-        }
-        .user-container .message-bubble { 
-            background-color: var(--light-bg-color) !important;
-            color: #333 !important;
-        }
-        
-        /* 🎯 [CSS สำหรับ 3 โลโก้] */
-        #logoArea, .welcome-logo-area {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end; /* 🚩 จัดให้ฐานขององค์ประกอบทั้งหมดอยู่ล่างสุด */
-            margin-bottom: 20px;
-        }
-        
-        /* 1. สไตล์สำหรับโลโก้ด้านข้าง (TOBEKC, FriendCorner) */
-        #logoArea img, .welcome-logo-area img {
-            height: 50px; /* ขนาดปกติ (โลโก้ด้านข้าง) */
-            width: 50px; 
-            margin: 0 8px; /* ลดระยะห่างแนวนอน (8px) */
-            border: none;
-            object-fit: cover; 
-            border-radius: 50%;
-            /* ดันโลโก้ลงมาเพื่อให้ฐานเสมอกับโลโก้ 120px */
-            margin-top: calc(120px - 50px); 
-        }
-
-        /* 2. สไตล์เฉพาะสำหรับโลโก้หลัก (KC.png/School Logo) */
-        #logoArea #schoolLogo, 
-        .welcome-logo-area #welcomeSchoolLogo 
-        { 
-            /* ขนาดใหญ่ */
-            height: 120px; 
-            width: 120px;
-            object-fit: contain; 
-            border-radius: 0; 
-            margin: 0 5px; /* เพื่อควบคุมระยะห่างแนวนอน */
-            margin-top: 0; 
-        }
-
-        /* สไตล์สำหรับโลโก้ที่ต้องเป็นวงกลม (TOBEKC, FriendCorner) */
-        #logoArea img.circular, .welcome-logo-area img.circular {
-            object-fit: cover;
-            border-radius: 50%;
-        }
-        
-        /* สไตล์สำหรับ Context Menu (ใช้สำหรับลบข้อความ) */
-        .context-menu {
-            position: absolute;
-            background-color: white;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            z-index: 10;
-            min-width: 150px;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-        .context-menu-item {
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-        .context-menu-item:hover {
-            background-color: var(--light-bg-color);
-        }
-        .context-menu-item.delete {
-            color: var(--danger-color);
-        }
-
-        /* สไตล์สำหรับการแสดงข้อความ */
-        .message-container {
-            display: flex;
-            margin-bottom: 10px;
-            align-items: flex-end;
-            transition: all 0.3s ease-out;
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        .message-container.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* [FIXED] ใช้ .user-container */
-        .user-container {
-            justify-content: flex-start;
-        }
-        /* [FIXED] ใช้ .admin-container */
-        .admin-container {
-            justify-content: flex-end;
-        }
-        .system-message {
-            justify-content: center;
-            text-align: center;
-            font-style: italic;
-            color: #999;
-        }
-
-        /* [FIXED] ใช้ .message-bubble และเพิ่ม white-space: pre-wrap; */
-        .message-bubble {
-            max-width: 70%;
-            padding: 8px 12px;
-            border-radius: 18px;
-            line-height: 1.4;
-            word-wrap: break-word;
-            /* 🔑 [CRITICAL FIX]: คำสั่งให้เคารพการขึ้นบรรทัดใหม่และช่องว่าง */
-            white-space: pre-wrap; 
-        }
-
-        /* [FIXED] ใช้ .user-container และ .message-bubble */
-        .user-container .message-bubble {
-            border-top-left-radius: 4px; /* มุมซ้ายบนแบน */
-        }
-        /* [FIXED] ใช้ .admin-container และ .message-bubble */
-        .admin-container .message-bubble {
-            border-top-right-radius: 4px; /* มุมขวาบนแบน */
-        }
-
-        .message-time {
-            font-size: 10px;
-            color: #999;
-            margin: 0 5px;
-            white-space: nowrap;
-        }
-        
-        /* สไตล์สำหรับ Dot แจ้งเตือนข้อความใหม่ */
-        .unread-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: var(--primary-color);
-            margin-left: 8px;
-            flex-shrink: 0;
-        }
-
-        </style>
-    </head>
-
-    <body>
-
-        <div id="loginScreen">
-            <div id="logoArea">
-                <img id="newLogo" class="circular" src="TOBEKC.jpg.jpg"
+    <div id="welcomeScreen" class="welcome-screen-container screen"
+        style="display: none;">
+        <div id="welcomeHeader">
+            <div class="welcome-logo-area">
+                <img class="welcome-logo-img circular" src="TOBEKC.jpg.jpg"
                     alt="TOBEKC Logo">
-
-                <img id="schoolLogo" src="KC.png" alt="School Logo">
-
-                <img id="friendCornerLogo" class="circular"
+                <img class="welcome-logo-img" id="welcomeSchoolLogo"
+                    src="KC.png" alt="School Logo">
+                <img class="welcome-logo-img circular"
                     src="FriendCorner.jpg.png" alt="Friend Corner Logo">
             </div>
-            <h1 class="app-title-login">KC FriendCorner ADMIN</h1>
-
-            <input type="email" id="emailInput" class="input-field"
-                placeholder="อีเมลแอดมิน">
-            <input type="password" id="passwordInput" class="input-field"
-                placeholder="รหัสผ่าน">
-
-            <p id="errorMessage"
-                style="color: #dc3545; display: none; margin-bottom: 15px; font-weight: 500; text-align: center; padding: 0 5px;"></p>
-
-            <button id="loginBtn" class="primary-button">เข้าสู่ระบบ</button>
+            <br>
+            <h2 class="app-title-welcome">KC Friend Corner ADMIN</h2>
+            <p class="welcome-message" id="welcomeMessage">
+                ยินดีต้อนรับ Admin! กรุณาเลือกดำเนินการ
+            </p>
         </div>
 
-        <div id="welcomeScreen" class="welcome-screen-container"
+        <div class="welcome-box">
+            <div class="welcome-button-group">
+                <button class="primary-button enter-chat-btn"
+                    onclick="showListScreen('active')">
+                    <i class="fas fa-comments"></i> เข้าสู่ห้องสนทนา
+                    (Active)
+                </button>
+
+                <button class="secondary-button"
+                    onclick="showListScreen('history')">
+                    <i class="fas fa-history"></i> ประวัติแชทที่สิ้นสุดแล้ว
+                </button>
+
+                <button id="logoutButton"
+                    class="secondary-button logout-full-btn"
+                    onclick="adminLogout()">
+                    <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminPanelContainer" class="admin-panel-container"
+        style="display: none;">
+
+        <div id="temporaryMessage"
+            style="display: none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 8px; z-index: 1000; font-weight: 500;">
+            ข้อความชั่วคราว
+        </div>
+
+        <div id="listScreen" class="screen list-screen"
             style="display: none;">
-            <div id="welcomeHeader">
-                <div class="welcome-logo-area">
-                    <img class="welcome-logo-img circular" src="TOBEKC.jpg.jpg"
-                        alt="TOBEKC Logo">
-
-                    <img class="welcome-logo-img" id="welcomeSchoolLogo" src="KC.png"
-                        alt="School Logo">
-
-                    <img class="welcome-logo-img circular"
-                        src="FriendCorner.jpg.png"
-                        alt="Friend Corner Logo">
+            <div id="chatListPanel" class="list-panel">
+                <div id="chatListHeader" class="chat-list-header">
+                    <h3 id="listTitle" class="panel-title">🟢 ห้องสนทนาที่เปิดอยู่</h3>
+                    <button id="goHomeBtn"
+                        class="secondary-button small-action-btn"
+                        onclick="showWelcomeScreen()">
+                        <i class="fas fa-home"></i> หน้าหลัก
+                    </button>
                 </div>
-                <br>
-                <h2 class="app-title-welcome">KC Friend Corner ADMIN</h2>
-                <p class="welcome-message">
-                    กรุณาเลือกดำเนินการ
-                </p>
-            </div>
-
-            <div class="welcome-box">
-                <div class="welcome-button-group">
-                    <button class="primary-button enter-chat-btn"
-                        onclick="showListScreen('active')"
-                        style="margin-bottom: 15px;">
-                        <i class="fas fa-comments"></i> เข้าสู่ห้องสนทนา
-                        (Active)
-                    </button>
-
-                    <button class="secondary-button logout-full-btn"
-                        onclick="showListScreen('history')"
-                        style="margin-bottom: 15px;">
-                        <i class="fas fa-history"></i> ประวัติแชทที่สิ้นสุดแล้ว
-                    </button>
-
-                    <button class="secondary-button logout-full-btn"
-                        onclick="adminLogout()">
-                        <i class="fas fa-sign-out-alt"></i> ออกจากระบบ
-                    </button>
+                <div id="chatList" class="chat-list-container">
+                    <p
+                        style="color:#777; text-align:center;">กำลังโหลดห้องสนทนา...</p>
                 </div>
             </div>
         </div>
 
-        <div id="adminPanelContainer" class="admin-panel-container"
+        <div id="historyScreen" class="screen list-screen"
+            style="display: none;">
+            <div id="historyListPanel" class="list-panel">
+                <div id="historyListHeader"
+                    class="chat-list-header history-header">
+                    <h3 class="panel-title" id="historyListTitle"
+                        style="color:#ffffff;">
+                        🔴 ประวัติแชทที่สิ้นสุดแล้ว</h3>
+                    <button id="backToWelcomeBtn"
+                        class="secondary-button small-action-btn"
+                        onclick="showWelcomeScreen()">
+                        <i class="fas fa-home"></i> หน้าหลัก
+                    </button>
+                </div>
+                <div id="historyList" class="chat-list-container">
+                    <p
+                        style="color:#777; text-align:center;">กำลังโหลดประวัติการสนทนา...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="chatScreenContainer" class="chat-screen-container"
             style="display: none;">
 
-            <div id="listScreenContainer"> 
-                <div id="chatListPanel">
-                    <div id="chatListHeader" class="chat-list-header">
-                        <h3 class="panel-title">ห้องสนทนาที่เปิดอยู่</h3>
-                        <button id="goHomeBtn"
-                            class="secondary-button small-action-btn"
-                            onclick="showWelcomeScreen()">
-                            <i class="fas fa-home"></i> หน้าหลัก
-                        </button>
+            <div id="fullChatView" class="chat-view-panel">
+
+                <div class="chat-header-bar">
+                    
+                    <div id="chatTitle">
+                        สนทนากับ ID: <span id="currentUserID"></span>
                     </div>
-                    <div id="chatList">
-                        <p
-                            style="color:#777; text-align:center;">กำลังโหลดห้องสนทนา...</p>
-                    </div>
+
+                    <button id="closeChatBtn" class="danger-button"
+                        style="display: none;">
+                        <i class="fas fa-power-off"></i> จบ/ลบการสนทนา
+                    </button>
+
+                    <button id="backButton">
+                        <i class="fas fa-arrow-left"></i> รายการแชท
+                    </button>
+
                 </div>
 
-                <div id="historyListPanel" style="display: none;"> 
-                    <div id="historyListHeader" class="chat-list-header">
-                        <h3 class="panel-title"
-                            style="color:#6c757d;">ประวัติแชทที่สิ้นสุด</h3>
-                        <button id="backToWelcomeBtn"
-                            class="secondary-button small-action-btn"
-                            onclick="showWelcomeScreen()">
-                            <i class="fas fa-home"></i> หน้าหลัก
-                        </button>
-                    </div>
-                    <div id="historyList">
-                        <p
-                            style="color:#777; text-align:center;">กำลังโหลดประวัติการสนทนา...</p>
-                    </div>
+                <div id="chatBox" class="chat-box-base">
                 </div>
-            </div>
 
-            <div id="chatScreenContainer"
-                style="display: none;">
-
-                <div id="fullChatView">
-                    <div id="chatHeader" class="chat-header">
-                        <button id="backButton"
-                            onclick="showListScreen(currentListType)">
-                            <i class="fas fa-arrow-left"></i> รายการแชท
-                        </button>
-
-                        <span id="chatTitle" style="flex-grow: 1;">สนทนากับ ID:
-                        </span>
-
-                        <button id="closeChatBtn"
-                            class="action-btn small-action-btn">
-                            <i class="fas fa-times-circle"></i> จบการสนทนา
-                        </button>
-                    </div>
-
-                    <div id="chatBox" class="chat-box-base">
-                    </div>
-
-                    <div class="input-area">
-                        <textarea id="chatInput" placeholder="พิมพ์ข้อความ..."
-                            rows="1"></textarea>
-                        <button id="sendButton" class="primary-button"><i
-                                class="fas fa-paper-plane"></i> ส่ง</button>
-                    </div>
+                <div class="input-area">
+                    <textarea id="chatInput" placeholder="พิมพ์ข้อความ..." rows="1"></textarea>
+                    <button id="sendButton" class="primary-button"><i class="fas fa-paper-plane"></i> ส่ง</button>
                 </div>
-            </div>
 
-        </div>
-
-        <audio id="notifySound" src="notification.mp3" preload="auto"></audio>
-
-        <div id="chatContextMenu" class="context-menu" style="display: none;">
-            <div id="deleteMessageOption" class="context-menu-item delete">
-                <i class="fas fa-trash-alt"></i> ยกเลิกการส่งข้อความ
             </div>
         </div>
-        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-        <script src="admin.js"></script>
 
-    </body>
+    </div>
+
+    <audio id="notifySound" src="notification.mp3" preload="auto"></audio>
+
+    <script
+        src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script
+        src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script
+        src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <script src="admin.js"></script>
+
+</body>
 
 </html>
