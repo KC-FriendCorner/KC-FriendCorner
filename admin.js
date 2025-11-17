@@ -1119,7 +1119,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 senderDisplayName = '<strong style="color: #007bff;">Admin Chat</strong>';
             } else {
                 // ถ้าเป็น User ทั่วไป
-                senderDisplayName = message.name || 'ผู้ใช้';
+                senderDisplayName = message.name || '';
             }
 
         } else if (isAdmin) {
@@ -1344,4 +1344,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 🚩 [REMOVED/DELETED] โค้ด handleNewMessage ที่ไม่สมบูรณ์ถูกลบออกแล้ว
+
 });
