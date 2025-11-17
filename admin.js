@@ -1,5 +1,5 @@
 // =================================================================
-// === 🟢 admin.js - ฉบับรวมสมบูรณ์ (พร้อมแก้ไข DeletedAt Display) ===
+// === 🟢 admin.js - ฉบับรวมสมบูรณ์ (พร้อมแก้ไข DeletedAt Display & Long Press) ===
 // =================================================================
 
 // 1. **[CONFIG] ข้อมูล Firebase และ LINE API**
@@ -228,6 +228,56 @@ document.addEventListener('DOMContentLoaded', () => {
             messageEl.style.display = 'none';
         }, 4000);
     }
+    
+    // 🚩 [NEW] ฟังก์ชันจัดการ Long Press
+    function setupLongPressHandler(bubbleElement, chatId, messageId, messageSender) {
+        let pressTimer = null;
+        const LONG_PRESS_DURATION = 500; // 500ms
+
+        const startPress = (e) => {
+            // ต้องป้องกันการทำงานปกติของ contextmenu ในมือถือ
+            if (e.type === 'contextmenu') {
+                e.preventDefault();
+                showContextMenu(e, chatId, messageId, messageSender, bubbleElement);
+                return;
+            }
+            
+            // ยกเลิกการกดค้างอื่น ๆ ก่อน
+            hideContextMenu();
+
+            pressTimer = setTimeout(() => {
+                // เมื่อถึงเวลา Long Press
+                showContextMenu(e, chatId, messageId, messageSender, bubbleElement);
+            }, LONG_PRESS_DURATION);
+        };
+
+        const cancelPress = () => {
+            clearTimeout(pressTimer);
+        };
+
+        // สำหรับ Desktop (Mouse Events)
+        bubbleElement.addEventListener('mousedown', startPress, false);
+        bubbleElement.addEventListener('mouseup', cancelPress, false);
+        bubbleElement.addEventListener('mouseleave', cancelPress, false);
+
+        // สำหรับ Mobile (Touch Events)
+        bubbleElement.addEventListener('touchstart', (e) => {
+            e.stopPropagation(); // หยุดการ Propagation ก่อนเสมอ
+            startPress(e);
+        }, false);
+        bubbleElement.addEventListener('touchend', cancelPress, false);
+        bubbleElement.addEventListener('touchcancel', cancelPress, false);
+
+        // สำหรับ Desktop (Right-click/Context Menu)
+        // ใช้ event contextmenu แทนการกดค้างสำหรับ Desktop
+        bubbleElement.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            // ยกเลิก Long Press Timer ถ้ามี
+            clearTimeout(pressTimer); 
+            showContextMenu(e, chatId, messageId, messageSender, bubbleElement);
+        }, false);
+    }
+
 
     // =================================================================
     // === 3. CONTEXT MENU & MESSAGE DELETION LOGIC (แก้ไข) ===
@@ -339,8 +389,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // อัปเดต node ข้อความให้มี property 'deleted: true' และลบ 'text' ออก
         // 🚩 [FIXED]: เพิ่ม deletedAt เพื่อใช้ในการเรียงลำดับในหน้าแอดมิน (ถ้าจำเป็น) และเป็นข้อมูล Log
         database.ref(`${CHATS_PATH}/${chatId}/${MESSAGES_SUB_PATH}/${messageId}`).update({
-            text: null, 	// ลบข้อความจริงออกจากฐานข้อมูล
-            deleted: true, 	// ตั้งค่าสถานะว่าถูกลบแล้ว
+            text: null,     // ลบข้อความจริงออกจากฐานข้อมูล
+            deleted: true,  // ตั้งค่าสถานะว่าถูกลบแล้ว
             deletedAt: Date.now() // บันทึกเวลาที่ลบ
         })
             .then(() => {
@@ -601,6 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 🚩 ส่ง true (isHistory) เข้าไป
         showChatViewScreen(chatId, true);
     }
+
 
     // =================================================================
     // === 5. CHAT LIST HANDLERS (ACTIVE & HISTORY) ===
@@ -1190,11 +1241,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // 🔑 [FIXED 2]: ใช้ innerHTML และใส่ข้อความที่ถูกแปลงแล้ว
         bubble.innerHTML = formattedText;
 
-        // เพิ่ม Event Listener สำหรับ Context Menu (Delete Message)
+        // 🔑 [NEW LONG PRESS LOGIC]: เพิ่ม Event Listener สำหรับ Context Menu (Delete Message)
         if (isAdmin && !isHistory && !isDeleted) {
+            // 1. เพิ่ม Event Listener สำหรับ Context Menu ปกติ (Right-click)
             bubble.addEventListener('contextmenu', (e) => {
                 window.showContextMenu(e, chatId, messageId, message.sender, bubble);
             });
+            // 2. เพิ่ม Event Listener สำหรับ Long Press (Mobile/Touch)
+            setupLongPressHandler(bubble, chatId, messageId, message.sender);
         }
 
         // เวลาข้อความ
@@ -1382,171 +1436,4 @@ document.addEventListener('DOMContentLoaded', () => {
             window.deleteChatPermanently(activeChatId);
         };
     }
-
-    // =======================================================================
-    // PART 1: ฟังก์ชันหลักในการตรวจจับ Long Press (กดค้าง)
-    // =======================================================================
-
-    const LONG_PRESS_DELAY = 500; // กำหนดระยะเวลาสำหรับการ "กดค้าง" (500 มิลลิวินาที)
-    let pressTimer = null; // ตัวแปรสำหรับเก็บ timer
-
-    /**
-     * กำหนด Event Listener สำหรับการตรวจจับ Long Press เพื่อเรียกฟังก์ชันยกเลิกข้อความ
-     * รองรับทั้ง Mouse (Desktop) และ Touch (Mobile)
-     * @param {HTMLElement} element องค์ประกอบ DOM ที่แสดงข้อความ
-     * @param {function} callback ฟังก์ชันที่จะถูกเรียกเมื่อเกิด Long Press (ในที่นี้คือ cancelMessage)
-     * @param {string|number} messageId ID ของข้อความที่จะส่งไปใน callback
-     */
-    function setupLongPressToCancel(element, callback, messageId) {
-        // 1. Event เมื่อเริ่มกด/เริ่มสัมผัส
-        element.addEventListener('mousedown', startPress);
-        element.addEventListener('touchstart', startPress);
-
-        // 2. Event เมื่อปล่อย/ยกเลิก/เลื่อน
-        element.addEventListener('mouseup', cancelPress);
-        element.addEventListener('mouseleave', cancelPress);
-        element.addEventListener('touchend', cancelPress);
-        element.addEventListener('touchcancel', cancelPress);
-        element.addEventListener('mousemove', cancelPress);
-        element.addEventListener('touchmove', cancelPress);
-
-        // ป้องกันการเกิด Context Menu (คลิกขวา) เพื่อให้ Long Press ทำงานได้บน Mobile
-        element.addEventListener('contextmenu', (e) => {
-            if (pressTimer === null) { // ถ้า Long Press เกิดขึ้นแล้ว (timer เป็น null)
-                e.preventDefault();
-            }
-        });
-
-        function startPress(e) {
-            // ป้องกันการเกิด context menu (คลิกขวา) บน desktop
-            if (e.type === 'mousedown' && e.button === 2) return;
-
-            // เคลียร์ timer เดิม และตั้งเวลาใหม่
-            if (pressTimer) {
-                clearTimeout(pressTimer);
-            }
-
-            pressTimer = setTimeout(() => {
-                // ถือว่าเป็น Long Press
-                pressTimer = null; // ตั้งให้เป็น null เพื่อบ่งชี้ว่า Long Press เกิดขึ้นแล้ว
-                callback(messageId);
-            }, LONG_PRESS_DELAY);
-        }
-
-        function cancelPress() {
-            // ยกเลิก timer หากมีการปล่อยนิ้ว/เมาส์ หรือมีการเคลื่อนที่
-            if (pressTimer) {
-                clearTimeout(pressTimer);
-                pressTimer = null;
-            }
-        }
-    }
-
-    // =======================================================================
-    // PART 2: ฟังก์ชันสำหรับยกเลิกข้อความจริง ๆ
-    // =======================================================================
-
-    /**
-     * ฟังก์ชันที่จะถูกเรียกเมื่อเกิด Long Press เพื่อจัดการการยกเลิกข้อความ
-     * @param {string|number} messageId ID ของข้อความที่ต้องการยกเลิก
-     */
-    function cancelMessage(messageId) {
-        // 1. ยืนยันกับผู้ใช้
-        if (!confirm(`คุณต้องการยกเลิกข้อความนี้ (ID: ${messageId}) ใช่หรือไม่?`)) {
-            return;
-        }
-
-        console.log(`[Admin] กำลังส่งคำขอยกเลิกข้อความ ID: ${messageId}`);
-
-        // 2. **ส่งคำขอไปยังเซิร์ฟเวอร์เพื่อยกเลิกข้อความ**
-        // **NOTE:** คุณต้องปรับ URL และวิธีการส่งข้อมูลให้เข้ากับ Backend ของคุณ
-        fetch(`/api/admin/cancel-message/${messageId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                // อาจจะต้องเพิ่ม Authorization Token/API Key ที่นี่
-            },
-            // body: JSON.stringify({ reason: 'Admin override' }) // สามารถส่งเหตุผลไปด้วย
-        })
-            .then(response => {
-                if (response.ok) {
-                    alert(`ข้อความ ${messageId} ถูกยกเลิกและลบออกจากระบบแล้ว`);
-
-                    // 3. อัพเดท UI: ลบข้อความออกจากหน้าจอทันที
-                    const elementToRemove = document.querySelector(`[data-message-id="${messageId}"]`);
-                    if (elementToRemove) {
-                        elementToRemove.remove();
-                    }
-                } else {
-                    // แสดงข้อความ error จากเซิร์ฟเวอร์
-                    response.json().then(data => {
-                        alert(`เกิดข้อผิดพลาดในการยกเลิกข้อความ: ${data.error || response.statusText}`);
-                    }).catch(() => {
-                        alert(`เกิดข้อผิดพลาดในการยกเลิกข้อความ (Status: ${response.status})`);
-                    });
-                }
-            })
-            .catch(error => {
-                console.error('Fetch Error canceling message:', error);
-                alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์เพื่อยกเลิกข้อความได้');
-            });
-    }
-
-    // =======================================================================
-    // PART 3: การนำไปใช้ในฟังก์ชันสร้างและแสดงข้อความ
-    // =======================================================================
-
-    /**
-     * ตัวอย่างฟังก์ชันที่ใช้ในการสร้างและแสดงผลข้อความในแชท
-     * **คุณต้องนำโค้ดในส่วนนี้ไปรวมกับฟังก์ชันเดิมของคุณ**
-     * @param {object} message วัตถุข้อความที่มี ID และเนื้อหา
-     * @param {HTMLElement} chatContainer องค์ประกอบ DOM ของพื้นที่แชท
-     */
-    function appendMessageToChat(message, chatContainer) {
-        // 1. สร้าง Element ของข้อความ
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('chat-message', message.sender === 'admin' ? 'admin-msg' : 'user-msg');
-
-        // **สำคัญ:** กำหนด Attribute เพื่อใช้ค้นหา Element เมื่อต้องการลบ
-        messageElement.setAttribute('data-message-id', message.id);
-
-        // 2. สร้างเนื้อหา
-        const content = document.createElement('span');
-        content.classList.add('message-content');
-        content.textContent = message.text;
-        messageElement.appendChild(content);
-
-        // 3. **เรียกใช้ฟังก์ชัน Long Press เพื่อเปิดใช้งานการยกเลิก**
-        setupLongPressToCancel(messageElement, cancelMessage, message.id);
-
-        // 4. เพิ่มข้อความเข้าสู่หน้าจอ
-        chatContainer.appendChild(messageElement);
-
-        // เลื่อนลงไปด้านล่างสุดของแชท
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-
-    // =======================================================================
-    // PART 4: ตัวอย่างการเรียกใช้ (สมมติ)
-    // =======================================================================
-    // *** ลบหรือปรับโค้ดส่วนนี้ตามการเริ่มต้นระบบของคุณ ***
-
-    // const chatArea = document.getElementById('chat-messages'); // สมมติว่ามี Element นี้
-
-    // // ตัวอย่างการใช้งาน: สมมติว่ามีข้อความเข้ามาใหม่
-    // const incomingMessage = {
-    //     id: 'msg-12345',
-    //     text: 'สวัสดีครับ/ค่ะ ข้อความนี้ควรถูกกดค้างเพื่อยกเลิกได้',
-    //     sender: 'user',
-    //     timestamp: Date.now()
-    // };
-
-    // if (chatArea) {
-    //     appendMessageToChat(incomingMessage, chatArea);
-    // } else {
-    //     console.error("ไม่พบ Element 'chat-messages'. กรุณาตรวจสอบ ID ใน HTML");
-    // }
-
-    // 🚩 [REMOVED/DELETED] โค้ด handleNewMessage ที่ไม่สมบูรณ์ถูกลบออกแล้ว
 });
