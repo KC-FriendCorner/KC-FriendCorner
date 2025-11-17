@@ -25,9 +25,12 @@
     --border-radius-md: 8px;
 
     /* 🔑 [NEW VARIABLES] สำหรับ Bubble Grouping และ Effects */
-    --border-radius-bubble: 18px; /* ค่าโค้งมนสูงสุด */
-    --border-radius-group: 8px; /* ค่าโค้งมนต่ำสุด/แหลม */
-    --transition-time: 0.25s; /* เวลาสำหรับ Transition */
+    --border-radius-bubble: 18px;
+    /* ค่าโค้งมนสูงสุด */
+    --border-radius-group: 8px;
+    /* ค่าโค้งมนต่ำสุด/แหลม */
+    --transition-time: 0.25s;
+    /* เวลาสำหรับ Transition */
 }
 
 html,
@@ -105,13 +108,13 @@ body {
 
 /* 🔑 [NEW/MODIFIED] Input Field ทั่วไป (สำหรับ Login/Welcome Screen) */
 .input-field,
-.text-input { 
+.text-input {
     width: 100%;
     /* 🔑 [CRITICAL FIX]: กำหนดความกว้างสูงสุดให้ Input Field */
-    max-width: 300px; 
+    max-width: 300px;
     padding: 12px;
     border: 1px solid #ced4da;
-    border-radius: var(--border-radius-group); 
+    border-radius: var(--border-radius-group);
     font-size: 16px;
     margin-bottom: 15px;
     box-sizing: border-box;
@@ -157,7 +160,7 @@ body {
 }
 
 #appTitleImage {
-    width: 320px; 
+    width: 320px;
     height: auto;
     margin-bottom: 30px;
     transition: all var(--transition-time);
@@ -167,7 +170,7 @@ body {
 }
 
 #appTitleImageAdmin {
-    width: 320px; 
+    width: 320px;
     height: auto;
     margin-bottom: 30px;
     transition: all var(--transition-time);
@@ -226,15 +229,16 @@ body {
 
 /* 🔑 [CRITICAL FIX]: บังคับปุ่ม Login (#loginScreen) ให้มีความกว้างสูงสุดเท่ากับ Input Field (300px) */
 #loginScreen .primary-button {
-    max-width: 300px; 
+    max-width: 300px;
     margin-left: auto;
     margin-right: auto;
-    display: block; /* ต้องเป็น block เพื่อให้ max-width และ margin auto ทำงาน */
+    display: block;
+    /* ต้องเป็น block เพื่อให้ max-width และ margin auto ทำงาน */
 }
 
 .primary-button:hover {
     background: var(--primary-hover);
-    transform: translateY(-3px); 
+    transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -441,7 +445,7 @@ body {
     flex-direction: column;
     gap: 3px;
     margin: 15px;
-    position: relative; 
+    position: relative;
 }
 
 .chat-list-header {
@@ -684,10 +688,10 @@ body {
 }
 
 .message-bubble {
-    font-size: 15px; 
-    padding: 8px 12px; 
+    font-size: 15px;
+    padding: 8px 12px;
     width: fit-content;
-    border-radius: var(--border-radius-bubble); 
+    border-radius: var(--border-radius-bubble);
     max-width: 70%;
     position: relative;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -697,21 +701,21 @@ body {
 }
 
 .message-bubble:hover {
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 /* ---------------------------------------------------- */
 /* 🔑 [CHAT BUBBLE GROUPING] - USER (ชิดซ้าย) */
 /* ---------------------------------------------------- */
 .user-container {
-    position: relative; 
+    position: relative;
     justify-content: flex-start;
 }
 
 .user-container .message-bubble {
     background-color: var(--user-bubble-bg);
     color: var(--text-color);
-    border-bottom-left-radius: var(--border-radius-bubble); 
+    border-bottom-left-radius: var(--border-radius-bubble);
     border-top-left-radius: var(--border-radius-bubble);
 }
 
@@ -722,13 +726,13 @@ body {
 }
 
 /* 2. USER - บับเบิ้ลกลางในกลุ่ม: ตัดมุมบนซ้ายและมุมล่างซ้ายออก */
-.user-container + .user-container:has(+ .user-container) .message-bubble {
+.user-container+.user-container:has(+ .user-container) .message-bubble {
     border-top-left-radius: var(--border-radius-group);
     border-bottom-left-radius: var(--border-radius-group);
 }
 
 /* 3. USER - บับเบิ้ลสุดท้ายในกลุ่ม: ตัดมุมบนซ้ายออก */
-.user-container + .user-container:not(:has(+ .user-container)) .message-bubble {
+.user-container+.user-container:not(:has(+ .user-container)) .message-bubble {
     border-top-left-radius: var(--border-radius-group);
     border-bottom-left-radius: var(--border-radius-bubble);
 }
@@ -744,13 +748,13 @@ body {
 /* ---------------------------------------------------- */
 .admin-container {
     justify-content: flex-end;
-    position: relative; 
+    position: relative;
 }
 
 .admin-container .message-bubble {
     background-color: var(--admin-bubble-bg);
     color: white;
-    border-bottom-right-radius: var(--border-radius-bubble); 
+    border-bottom-right-radius: var(--border-radius-bubble);
     border-top-right-radius: var(--border-radius-bubble);
     order: 2;
 }
@@ -768,13 +772,13 @@ body {
 }
 
 /* 2. ADMIN - บับเบิ้ลกลางในกลุ่ม: ตัดมุมบนขวาและมุมล่างขวาออก */
-.admin-container + .admin-container:has(+ .admin-container) .message-bubble {
+.admin-container+.admin-container:has(+ .admin-container) .message-bubble {
     border-top-right-radius: var(--border-radius-group);
     border-bottom-right-radius: var(--border-radius-group);
 }
 
 /* 3. ADMIN - บับเบิ้ลสุดท้ายในกลุ่ม: ตัดมุมบนขวาออก */
-.admin-container + .admin-container:not(:has(+ .admin-container)) .message-bubble {
+.admin-container+.admin-container:not(:has(+ .admin-container)) .message-bubble {
     border-top-right-radius: var(--border-radius-group);
     border-bottom-right-radius: var(--border-radius-bubble);
 }
@@ -872,7 +876,7 @@ body {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s, visibility 0.2s;
-    left: 0; 
+    left: 0;
     right: auto;
     pointer-events: none;
 }
@@ -885,7 +889,7 @@ body {
 }
 
 .admin-container .context-menu {
-    right: 0; 
+    right: 0;
     left: auto;
 }
 
