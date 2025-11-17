@@ -602,68 +602,68 @@ document.addEventListener('DOMContentLoaded', () => {
         showChatViewScreen(chatId, true);
     }
 
-// =================================================================
-// === 5. CHAT LIST HANDLERS (ACTIVE & HISTORY) ===
-// =================================================================
+    // =================================================================
+    // === 5. CHAT LIST HANDLERS (ACTIVE & HISTORY) ===
+    // =================================================================
 
-// 🚩 [CRITICAL] ฟังก์ชันหาข้อความสุดท้ายที่ไม่ถูกลบ (ต้องเพิ่ม)
-function findLastValidMessage(messagesSnapshot) {
-    let lastValidMessage = { text: 'เริ่มการสนทนา', timestamp: 0 }; // Default value
+    // 🚩 [CRITICAL] ฟังก์ชันหาข้อความสุดท้ายที่ไม่ถูกลบ (ต้องเพิ่ม)
+    function findLastValidMessage(messagesSnapshot) {
+        let lastValidMessage = { text: 'เริ่มการสนทนา', timestamp: 0 }; // Default value
 
-    if (messagesSnapshot.exists()) {
-        const messagesData = messagesSnapshot.val();
-        const messageKeys = Object.keys(messagesData).sort((a, b) => {
-            // เรียงลำดับตาม Timestamp หรือ Key (ถ้าไม่มี Timestamp)
-            const aTime = messagesData[a].timestamp || 0;
-            const bTime = messagesData[b].timestamp || 0;
-            return aTime - bTime;
-        });
+        if (messagesSnapshot.exists()) {
+            const messagesData = messagesSnapshot.val();
+            const messageKeys = Object.keys(messagesData).sort((a, b) => {
+                // เรียงลำดับตาม Timestamp หรือ Key (ถ้าไม่มี Timestamp)
+                const aTime = messagesData[a].timestamp || 0;
+                const bTime = messagesData[b].timestamp || 0;
+                return aTime - bTime;
+            });
 
-        // วนจากข้อความล่าสุดย้อนกลับ
-        for (let i = messageKeys.length - 1; i >= 0; i--) {
-            const key = messageKeys[i];
-            const message = messagesData[key];
+            // วนจากข้อความล่าสุดย้อนกลับ
+            for (let i = messageKeys.length - 1; i >= 0; i--) {
+                const key = messageKeys[i];
+                const message = messagesData[key];
 
-            // 🔑 [FIX LOGIC]: ตรวจสอบว่าข้อความไม่ถูกลบ และมีข้อความจริง
-            if (message.deleted !== true && message.text) {
-                lastValidMessage = {
-                    text: message.text,
-                    timestamp: message.timestamp
-                };
-                return lastValidMessage; // เจอข้อความที่ใช้ได้ล่าสุดแล้ว, ออกจากลูป
+                // 🔑 [FIX LOGIC]: ตรวจสอบว่าข้อความไม่ถูกลบ และมีข้อความจริง
+                if (message.deleted !== true && message.text) {
+                    lastValidMessage = {
+                        text: message.text,
+                        timestamp: message.timestamp
+                    };
+                    return lastValidMessage; // เจอข้อความที่ใช้ได้ล่าสุดแล้ว, ออกจากลูป
+                }
             }
         }
-    }
-    return lastValidMessage;
-}
-
-// 🔑 [MODIFIED]: แก้ไขโครงสร้าง HTML เพื่อให้รองรับการเรียงแนวตั้ง
-function renderChatItem(chatData, chatId, activeChatId) {
-    const chatListEl = document.getElementById('chatList');
-    if (!chatListEl) return null;
-
-    let item = document.getElementById('chat-' + chatId);
-    if (!item) {
-        item = document.createElement('div');
-        item.id = 'chat-' + chatId;
-        item.className = 'chat-item';
-        item.onclick = () => selectChat(chatId);
-        chatListEl.appendChild(item);
+        return lastValidMessage;
     }
 
-    const lastMessageText = chatData.lastMessage ? (chatData.lastMessage.text || chatData.lastMessage.message || 'ไม่มีข้อความล่าสุด') : 'ไม่มีข้อความล่าสุด';
+    // 🔑 [MODIFIED]: แก้ไขโครงสร้าง HTML เพื่อให้รองรับการเรียงแนวตั้ง
+    function renderChatItem(chatData, chatId, activeChatId) {
+        const chatListEl = document.getElementById('chatList');
+        if (!chatListEl) return null;
 
-    // 🟢 [ปรับปรุง]: ใช้ formatDateTime
-    const lastActivityTime = chatData.lastActivity ? formatDateTime(chatData.lastActivity) : '';
+        let item = document.getElementById('chat-' + chatId);
+        if (!item) {
+            item = document.createElement('div');
+            item.id = 'chat-' + chatId;
+            item.className = 'chat-item';
+            item.onclick = () => selectChat(chatId);
+            chatListEl.appendChild(item);
+        }
 
-    const unreadDot = chatData.unreadByAdmin ? '<span class="unread-dot"></span>' : '';
+        const lastMessageText = chatData.lastMessage ? (chatData.lastMessage.text || chatData.lastMessage.message || 'ไม่มีข้อความล่าสุด') : 'ไม่มีข้อความล่าสุด';
 
-    // 🚩 [STATUS]: แสดงสถานะ [Active]
-    const statusDisplay = '<span class="status-active" style="color: #28a745; font-size: 10px; font-weight: 500;">[Active]</span>';
+        // 🟢 [ปรับปรุง]: ใช้ formatDateTime
+        const lastActivityTime = chatData.lastActivity ? formatDateTime(chatData.lastActivity) : '';
 
-    // 🔑 โครงสร้างใหม่: ใช้ .chat-info-container เพื่อจัด ID/Message/Time เป็นแนวตั้ง
-    // *คุณต้องเพิ่ม CSS สำหรับ .chat-info-container เพื่อใช้ display: flex และ flex-direction: column
-    item.innerHTML = `
+        const unreadDot = chatData.unreadByAdmin ? '<span class="unread-dot"></span>' : '';
+
+        // 🚩 [STATUS]: แสดงสถานะ [Active]
+        const statusDisplay = '<span class="status-active" style="color: #28a745; font-size: 10px; font-weight: 500;">[Active]</span>';
+
+        // 🔑 โครงสร้างใหม่: ใช้ .chat-info-container เพื่อจัด ID/Message/Time เป็นแนวตั้ง
+        // *คุณต้องเพิ่ม CSS สำหรับ .chat-info-container เพื่อใช้ display: flex และ flex-direction: column
+        item.innerHTML = `
         <div class="chat-info-container"> 
             <p style="margin-bottom: 2px;">
                 <strong>ID: <span class="chat-id">${chatId.substring(0, 8)}...</span></strong>
@@ -678,151 +678,151 @@ function renderChatItem(chatData, chatId, activeChatId) {
         </div>
     `;
 
-    item.className = 'chat-item';
-    if (chatData.unreadByAdmin && activeChatId !== chatId) {
-        item.classList.add('unread');
-    } else {
-        item.classList.remove('unread');
-    }
-    if (activeChatId === chatId) {
-        item.classList.add('active');
-    } else {
-        item.classList.remove('active');
-    }
-
-    return item;
-}
-
-function loadChatList() {
-    if (!isFirebaseReady || !auth || !database || !auth.currentUser) {
-        const chatListEl = document.getElementById('chatList');
-        if (chatListEl) {
-            chatListEl.innerHTML = '<p style="padding: 15px; color:#dc3545; text-align:center;">ไม่ได้รับอนุญาตให้โหลดรายการ (กรุณาล็อกอิน Admin)</p>';
-        }
-        return;
-    }
-
-    const chatListRef = database.ref(CHATS_PATH);
-    const chatListEl = document.getElementById('chatList');
-    if (!chatListEl) return;
-
-    // ยกเลิก Listener เดิมถ้ามี
-    if (chatListeners.active) {
-        chatListRef.off('value', chatListeners.active.callback);
-        delete chatListeners.active;
-    }
-
-    chatListEl.innerHTML = '<p id="loadingActiveChats" style="padding: 15px; color:#777; text-align:center;">กำลังโหลด...</p>';
-
-    const callback = (snapshot) => {
-        const chats = [];
-        let newUnreadCount = 0;
-
-        snapshot.forEach(childSnapshot => {
-            const chatData = childSnapshot.val();
-
-            // 1. ตรวจสอบ User Logged Out เพื่อปิดแชทอัตโนมัติ (หลังผ่านไป 10 นาที)
-            if (chatData && chatData.status === 'active' && chatData.isLoggedOut === true) {
-                if (Date.now() - (chatData.lastActivity || 0) > 600000) { // 10 minutes (600,000 ms)
-                    window.closeChat(childSnapshot.key, false);
-                }
-                return;
-            }
-
-            // 🚩 เงื่อนไข: ต้องเป็น 'active' และไม่มี closedAt
-            if (chatData && chatData.status === 'active' && !chatData.closedAt) {
-                chatData.id = childSnapshot.key;
-                chats.push(chatData);
-
-                if (chatData.unreadByAdmin && childSnapshot.key !== activeChatId) {
-                    newUnreadCount++;
-                }
-            } else if (chatData && childSnapshot.key === activeChatId && chatData.status !== 'active') {
-                // แชทที่กำลังดูอยู่ถูกปิดไปแล้ว
-                showTemporaryMessage(`แชท ID: ${activeChatId.substring(0, 8)}... ถูกปิดแล้ว`, true);
-                activeChatId = null;
-                showListScreen('active');
-            }
-        });
-
-        // เรียงลำดับ: Unread ก่อน, ตามด้วย Last Activity ล่าสุด
-        chats.sort((a, b) => {
-            if (a.unreadByAdmin && !b.unreadByAdmin) return -1;
-            if (!a.unreadByAdmin && b.unreadByAdmin) return 1;
-            return (b.lastActivity || 0) - (a.lastActivity || 0);
-        });
-
-        chatListEl.innerHTML = '';
-        if (chats.length === 0) {
-            chatListEl.innerHTML = '<p style="padding: 15px; color:#777; text-align:center;">ไม่มีห้องสนทนาที่เปิดอยู่</p>';
+        item.className = 'chat-item';
+        if (chatData.unreadByAdmin && activeChatId !== chatId) {
+            item.classList.add('unread');
         } else {
-            chats.forEach(chat => renderChatItem(chat, chat.id, activeChatId));
+            item.classList.remove('unread');
+        }
+        if (activeChatId === chatId) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
         }
 
-        // Notification Logic
-        if (newUnreadCount > 0) {
-            playNotifySound();
-            showWebNotification(`ข้อความใหม่ (${newUnreadCount} แชท)`, `มี ${newUnreadCount} แชทที่รอการตอบกลับ`, 'new-chat-list-update');
+        return item;
+    }
+
+    function loadChatList() {
+        if (!isFirebaseReady || !auth || !database || !auth.currentUser) {
+            const chatListEl = document.getElementById('chatList');
+            if (chatListEl) {
+                chatListEl.innerHTML = '<p style="padding: 15px; color:#dc3545; text-align:center;">ไม่ได้รับอนุญาตให้โหลดรายการ (กรุณาล็อกอิน Admin)</p>';
+            }
+            return;
         }
-    };
 
-    // กำหนด Listener ใหม่
-    chatListeners.active = { ref: chatListRef, callback: callback };
-    chatListRef.on('value', callback);
-}
+        const chatListRef = database.ref(CHATS_PATH);
+        const chatListEl = document.getElementById('chatList');
+        if (!chatListEl) return;
 
+        // ยกเลิก Listener เดิมถ้ามี
+        if (chatListeners.active) {
+            chatListRef.off('value', chatListeners.active.callback);
+            delete chatListeners.active;
+        }
 
-// 1. ฟังก์ชันแสดงรายการแชทที่สิ้นสุดแล้ว (History)
-// 🔑 [MODIFIED]: แก้ไขโครงสร้าง HTML เพื่อให้รองรับการเรียงแนวตั้ง
-function renderHistoryItem(chatData, chatId, activeChatId) {
-    const historyListEl = document.getElementById('historyList');
-    if (!historyListEl) return null;
+        chatListEl.innerHTML = '<p id="loadingActiveChats" style="padding: 15px; color:#777; text-align:center;">กำลังโหลด...</p>';
 
-    let item = document.getElementById('history-' + chatId);
-    let deleteBtn;
+        const callback = (snapshot) => {
+            const chats = [];
+            let newUnreadCount = 0;
 
-    // 🔑 ถ้า item ยังไม่มี
-    if (!item) {
-        item = document.createElement('div');
-        item.id = 'history-' + chatId;
-        item.className = 'chat-item history-item';
-        item.onclick = () => selectHistoryChat(chatId);
-        historyListEl.appendChild(item);
+            snapshot.forEach(childSnapshot => {
+                const chatData = childSnapshot.val();
 
-        deleteBtn = document.createElement('button');
-        deleteBtn.className = 'delete-chat-history-btn';
-        deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                // 1. ตรวจสอบ User Logged Out เพื่อปิดแชทอัตโนมัติ (หลังผ่านไป 10 นาที)
+                if (chatData && chatData.status === 'active' && chatData.isLoggedOut === true) {
+                    if (Date.now() - (chatData.lastActivity || 0) > 600000) { // 10 minutes (600,000 ms)
+                        window.closeChat(childSnapshot.key, false);
+                    }
+                    return;
+                }
 
-        // 🔑 [IMPORTANT]: ผูก Event ลบแชท
-        deleteBtn.onclick = (e) => {
-            e.stopPropagation(); // 🔑 หยุดไม่ให้ Event เปิดแชททำงาน
-            if (window.confirm(`ยืนยันการลบประวัติแชท ID: ${chatId.substring(0, 8)}... อย่างถาวร? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
-                window.deleteChatPermanently(chatId);
+                // 🚩 เงื่อนไข: ต้องเป็น 'active' และไม่มี closedAt
+                if (chatData && chatData.status === 'active' && !chatData.closedAt) {
+                    chatData.id = childSnapshot.key;
+                    chats.push(chatData);
+
+                    if (chatData.unreadByAdmin && childSnapshot.key !== activeChatId) {
+                        newUnreadCount++;
+                    }
+                } else if (chatData && childSnapshot.key === activeChatId && chatData.status !== 'active') {
+                    // แชทที่กำลังดูอยู่ถูกปิดไปแล้ว
+                    showTemporaryMessage(`แชท ID: ${activeChatId.substring(0, 8)}... ถูกปิดแล้ว`, true);
+                    activeChatId = null;
+                    showListScreen('active');
+                }
+            });
+
+            // เรียงลำดับ: Unread ก่อน, ตามด้วย Last Activity ล่าสุด
+            chats.sort((a, b) => {
+                if (a.unreadByAdmin && !b.unreadByAdmin) return -1;
+                if (!a.unreadByAdmin && b.unreadByAdmin) return 1;
+                return (b.lastActivity || 0) - (a.lastActivity || 0);
+            });
+
+            chatListEl.innerHTML = '';
+            if (chats.length === 0) {
+                chatListEl.innerHTML = '<p style="padding: 15px; color:#777; text-align:center;">ไม่มีห้องสนทนาที่เปิดอยู่</p>';
+            } else {
+                chats.forEach(chat => renderChatItem(chat, chat.id, activeChatId));
+            }
+
+            // Notification Logic
+            if (newUnreadCount > 0) {
+                playNotifySound();
+                showWebNotification(`ข้อความใหม่ (${newUnreadCount} แชท)`, `มี ${newUnreadCount} แชทที่รอการตอบกลับ`, 'new-chat-list-update');
             }
         };
-    } else {
-        // ถ้า Item มีอยู่แล้ว ให้หาปุ่มลบเดิม
-        deleteBtn = item.querySelector('.delete-chat-history-btn');
-        if (!deleteBtn) {
-            // สร้างใหม่ถ้าหายไป (กรณีมีการ InnerHTML ใหม่)
+
+        // กำหนด Listener ใหม่
+        chatListeners.active = { ref: chatListRef, callback: callback };
+        chatListRef.on('value', callback);
+    }
+
+
+    // 1. ฟังก์ชันแสดงรายการแชทที่สิ้นสุดแล้ว (History)
+    // 🔑 [MODIFIED]: แก้ไขโครงสร้าง HTML เพื่อให้รองรับการเรียงแนวตั้ง
+    function renderHistoryItem(chatData, chatId, activeChatId) {
+        const historyListEl = document.getElementById('historyList');
+        if (!historyListEl) return null;
+
+        let item = document.getElementById('history-' + chatId);
+        let deleteBtn;
+
+        // 🔑 ถ้า item ยังไม่มี
+        if (!item) {
+            item = document.createElement('div');
+            item.id = 'history-' + chatId;
+            item.className = 'chat-item history-item';
+            item.onclick = () => selectHistoryChat(chatId);
+            historyListEl.appendChild(item);
+
             deleteBtn = document.createElement('button');
             deleteBtn.className = 'delete-chat-history-btn';
             deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+
+            // 🔑 [IMPORTANT]: ผูก Event ลบแชท
             deleteBtn.onclick = (e) => {
-                e.stopPropagation();
+                e.stopPropagation(); // 🔑 หยุดไม่ให้ Event เปิดแชททำงาน
                 if (window.confirm(`ยืนยันการลบประวัติแชท ID: ${chatId.substring(0, 8)}... อย่างถาวร? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
                     window.deleteChatPermanently(chatId);
                 }
             };
+        } else {
+            // ถ้า Item มีอยู่แล้ว ให้หาปุ่มลบเดิม
+            deleteBtn = item.querySelector('.delete-chat-history-btn');
+            if (!deleteBtn) {
+                // สร้างใหม่ถ้าหายไป (กรณีมีการ InnerHTML ใหม่)
+                deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-chat-history-btn';
+                deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (window.confirm(`ยืนยันการลบประวัติแชท ID: ${chatId.substring(0, 8)}... อย่างถาวร? การกระทำนี้ไม่สามารถย้อนกลับได้`)) {
+                        window.deleteChatPermanently(chatId);
+                    }
+                };
+            }
         }
-    }
 
-    const lastMessageText = chatData.lastMessage ? (chatData.lastMessage.text || chatData.lastMessage.message || 'สิ้นสุดการสนทนา') : 'สิ้นสุดการสนทนา';
-    const lastActivityTime = chatData.closedAt ? formatDateTime(chatData.closedAt) : (chatData.lastActivity ? formatDateTime(chatData.lastActivity) : '');
-    const statusDisplay = '<span class="status-closed" style="color: #dc3545; font-size: 10px; font-weight: 500;">[Closed]</span>';
+        const lastMessageText = chatData.lastMessage ? (chatData.lastMessage.text || chatData.lastMessage.message || 'สิ้นสุดการสนทนา') : 'สิ้นสุดการสนทนา';
+        const lastActivityTime = chatData.closedAt ? formatDateTime(chatData.closedAt) : (chatData.lastActivity ? formatDateTime(chatData.lastActivity) : '');
+        const statusDisplay = '<span class="status-closed" style="color: #dc3545; font-size: 10px; font-weight: 500;">[Closed]</span>';
 
-    // 🔑 โครงสร้างใหม่: ใช้ .chat-info-container เพื่อจัด ID/Message/Time เป็นแนวตั้ง
-    item.innerHTML = `
+        // 🔑 โครงสร้างใหม่: ใช้ .chat-info-container เพื่อจัด ID/Message/Time เป็นแนวตั้ง
+        item.innerHTML = `
         <div class="chat-info-container chat-item-content">
             <p style="margin-bottom: 2px;">
                 <strong>ID: <span class="chat-id">${chatId.substring(0, 8)}...</span></strong>
@@ -837,74 +837,74 @@ function renderHistoryItem(chatData, chatId, activeChatId) {
         </div>
     `;
 
-    // 🔑 [RE-APPEND]: นำปุ่มที่สร้างไว้กลับมาใส่ใน item
-    // [FIX]: ใช้ appendChild แทนการเขียน InnerHTML ทับ เพื่อไม่ให้ deleteBtn ถูกลบ
-    const contentContainer = item.querySelector('.chat-item-content');
-    if (contentContainer) {
-        item.appendChild(deleteBtn);
-    } else {
-        // ถ้าหา .chat-item-content ไม่เจอ ให้ append deleteBtn ไว้ที่ท้ายสุด (อาจไม่สวย)
-        item.appendChild(deleteBtn);
-    }
-
-
-    item.className = 'chat-item history-item';
-    if (activeChatId === chatId) {
-        item.classList.add('active');
-    } else {
-        item.classList.remove('active');
-    }
-
-    return item;
-}
-
-function loadHistoryList() {
-    if (!isFirebaseReady || !auth || !database || !auth.currentUser) {
-        const historyListEl = document.getElementById('historyList');
-        if (historyListEl) {
-            historyListEl.innerHTML = '<p style="padding: 15px; color:#dc3545; text-align:center;">ไม่ได้รับอนุญาตให้โหลดรายการ (กรุณาล็อกอิน Admin)</p>';
-        }
-        return;
-    }
-
-    const historyListRef = database.ref(CHATS_PATH);
-    const historyListEl = document.getElementById('historyList');
-    if (!historyListEl) return;
-
-    // ยกเลิก Listener เดิมถ้ามี
-    if (chatListeners.history) {
-        historyListRef.off('value', chatListeners.history.callback);
-        delete chatListeners.history;
-    }
-
-    historyListEl.innerHTML = '<p id="loadingHistoryChats" style="padding: 15px; color:#777; text-align:center;">กำลังโหลด...</p>';
-
-    const callback = (snapshot) => {
-        const historyChats = [];
-        snapshot.forEach(childSnapshot => {
-            const chatData = childSnapshot.val();
-            // 🚩 เงื่อนไข: ต้องเป็น 'closed' และมี closedAt
-            if (chatData && chatData.status === 'closed' && chatData.closedAt) {
-                chatData.id = childSnapshot.key;
-                historyChats.push(chatData);
-            }
-        });
-
-        // เรียงลำดับ: Closed At ล่าสุด
-        historyChats.sort((a, b) => (b.closedAt || 0) - (a.closedAt || 0));
-
-        historyListEl.innerHTML = '';
-        if (historyChats.length === 0) {
-            historyListEl.innerHTML = '<p style="padding: 15px; color:#777; text-align:center;">ไม่มีประวัติแชท</p>';
+        // 🔑 [RE-APPEND]: นำปุ่มที่สร้างไว้กลับมาใส่ใน item
+        // [FIX]: ใช้ appendChild แทนการเขียน InnerHTML ทับ เพื่อไม่ให้ deleteBtn ถูกลบ
+        const contentContainer = item.querySelector('.chat-item-content');
+        if (contentContainer) {
+            item.appendChild(deleteBtn);
         } else {
-            historyChats.forEach(chat => renderHistoryItem(chat, chat.id, activeChatId));
+            // ถ้าหา .chat-item-content ไม่เจอ ให้ append deleteBtn ไว้ที่ท้ายสุด (อาจไม่สวย)
+            item.appendChild(deleteBtn);
         }
-    };
 
-    // กำหนด Listener ใหม่
-    chatListeners.history = { ref: historyListRef, callback: callback };
-    historyListRef.on('value', callback);
-}
+
+        item.className = 'chat-item history-item';
+        if (activeChatId === chatId) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+
+        return item;
+    }
+
+    function loadHistoryList() {
+        if (!isFirebaseReady || !auth || !database || !auth.currentUser) {
+            const historyListEl = document.getElementById('historyList');
+            if (historyListEl) {
+                historyListEl.innerHTML = '<p style="padding: 15px; color:#dc3545; text-align:center;">ไม่ได้รับอนุญาตให้โหลดรายการ (กรุณาล็อกอิน Admin)</p>';
+            }
+            return;
+        }
+
+        const historyListRef = database.ref(CHATS_PATH);
+        const historyListEl = document.getElementById('historyList');
+        if (!historyListEl) return;
+
+        // ยกเลิก Listener เดิมถ้ามี
+        if (chatListeners.history) {
+            historyListRef.off('value', chatListeners.history.callback);
+            delete chatListeners.history;
+        }
+
+        historyListEl.innerHTML = '<p id="loadingHistoryChats" style="padding: 15px; color:#777; text-align:center;">กำลังโหลด...</p>';
+
+        const callback = (snapshot) => {
+            const historyChats = [];
+            snapshot.forEach(childSnapshot => {
+                const chatData = childSnapshot.val();
+                // 🚩 เงื่อนไข: ต้องเป็น 'closed' และมี closedAt
+                if (chatData && chatData.status === 'closed' && chatData.closedAt) {
+                    chatData.id = childSnapshot.key;
+                    historyChats.push(chatData);
+                }
+            });
+
+            // เรียงลำดับ: Closed At ล่าสุด
+            historyChats.sort((a, b) => (b.closedAt || 0) - (a.closedAt || 0));
+
+            historyListEl.innerHTML = '';
+            if (historyChats.length === 0) {
+                historyListEl.innerHTML = '<p style="padding: 15px; color:#777; text-align:center;">ไม่มีประวัติแชท</p>';
+            } else {
+                historyChats.forEach(chat => renderHistoryItem(chat, chat.id, activeChatId));
+            }
+        };
+
+        // กำหนด Listener ใหม่
+        chatListeners.history = { ref: historyListRef, callback: callback };
+        historyListRef.on('value', callback);
+    }
     // =================================================================
     // === 6. CHAT INTERACTION & CORE MESSAGE HANDLERS ===
     // =================================================================
@@ -1114,129 +1114,129 @@ function loadHistoryList() {
     }
 
     function appendMessage(message, messageId, chatId, isHistory = false) {
-    const chatBox = document.getElementById('chatBox');
-    if (!chatBox) {
-        console.error("#chatBox element not found.");
-        return;
-    }
+        const chatBox = document.getElementById('chatBox');
+        if (!chatBox) {
+            console.error("#chatBox element not found.");
+            return;
+        }
 
-    const isUser = message.sender === 'user';
-    const isAdmin = message.sender === 'admin';
-    const isSystem = message.sender === 'system';
-    const isDeleted = message.deleted === true;
+        const isUser = message.sender === 'user';
+        const isAdmin = message.sender === 'admin';
+        const isSystem = message.sender === 'system';
+        const isDeleted = message.deleted === true;
 
-    // 🚩 [FIXED: HIDE SYSTEM ONLY]: ไม่แสดงข้อความจาก system (ถ้าไม่ได้ใช้)
-    if (isSystem) {
-        return;
-    }
+        // 🚩 [FIXED: HIDE SYSTEM ONLY]: ไม่แสดงข้อความจาก system (ถ้าไม่ได้ใช้)
+        if (isSystem) {
+            return;
+        }
 
-    let bubbleClass;
-    let containerClass;
-    let textContent = message.text || message.message || message.content || '';
+        let bubbleClass;
+        let containerClass;
+        let textContent = message.text || message.message || message.content || '';
 
-    // 🔑 [FIXED 1]: การจัดการข้อความขึ้นบรรทัดใหม่
-    let formattedText = textContent.replace(/\n/g, '<br>');
+        // 🔑 [FIXED 1]: การจัดการข้อความขึ้นบรรทัดใหม่
+        let formattedText = textContent.replace(/\n/g, '<br>');
 
-    // ถ้าเป็นข้อความว่างเปล่า ก็ไม่แสดงผล
-    if (textContent.trim() === '' && !isDeleted) {
-        return;
-    }
+        // ถ้าเป็นข้อความว่างเปล่า ก็ไม่แสดงผล
+        if (textContent.trim() === '' && !isDeleted) {
+            return;
+        }
 
-    // 🔑 [NEW LOGIC START]: กำหนดชื่อผู้ส่ง
-    let senderDisplayName = '';
+        // 🔑 [NEW LOGIC START]: กำหนดชื่อผู้ส่ง
+        let senderDisplayName = '';
 
-    if (isUser) {
-        containerClass = 'user-container';
-        bubbleClass = 'message-bubble user-bubble';
+        if (isUser) {
+            containerClass = 'user-container';
+            bubbleClass = 'message-bubble user-bubble';
 
-        const ownerUID = message.ownerUID;
+            const ownerUID = message.ownerUID;
 
-        if (ownerUID === ADMIN_UID_TO_HIDE) {
-            senderDisplayName = '<strong style="color: #007bff;">Admin Chat</strong>';
+            if (ownerUID === ADMIN_UID_TO_HIDE) {
+                senderDisplayName = '<strong style="color: #007bff;">Admin Chat</strong>';
+            } else {
+                senderDisplayName = message.name || '';
+            }
+
+        } else if (isAdmin) {
+            containerClass = 'admin-container';
+            bubbleClass = 'message-bubble admin-bubble';
         } else {
-            senderDisplayName = message.name || '';
+            return;
+        }
+        // 🔑 [NEW LOGIC END]
+
+        // 🔑 [แก้ไข] จัดการเวลาที่แสดงผล (เวลาที่ส่ง vs. เวลายกเลิก)
+        let timeToDisplay = message.timestamp;
+        let timePrefix = '';
+
+        // 🚩 [FIXED 3]: ถ้าถูกลบ ให้แสดงเวลายกเลิกการส่ง
+        if (isDeleted) {
+            bubbleClass += ' deleted-bubble';
+            formattedText = '<span style="font-style: italic; color: #888;">[ข้อความถูกยกเลิกการส่ง]</span>';
+
+            // 🚩 [CRITICAL FIX]: ใช้ deletedAt แทน timestamp เดิม (ถ้ามี)
+            if (message.deletedAt) {
+                timeToDisplay = message.deletedAt;
+            }
         }
 
-    } else if (isAdmin) {
-        containerClass = 'admin-container';
-        bubbleClass = 'message-bubble admin-bubble';
-    } else {
-        return;
-    }
-    // 🔑 [NEW LOGIC END]
+        const messageContainer = document.createElement('div');
+        messageContainer.className = `message-container ${containerClass}`;
+        messageContainer.setAttribute('data-message-id', messageId);
 
-    // 🔑 [แก้ไข] จัดการเวลาที่แสดงผล (เวลาที่ส่ง vs. เวลายกเลิก)
-    let timeToDisplay = message.timestamp;
-    let timePrefix = '';
+        const bubble = document.createElement('div');
+        bubble.className = bubbleClass;
 
-    // 🚩 [FIXED 3]: ถ้าถูกลบ ให้แสดงเวลายกเลิกการส่ง
-    if (isDeleted) {
-        bubbleClass += ' deleted-bubble';
-        formattedText = '<span style="font-style: italic; color: #888;">[ข้อความถูกยกเลิกการส่ง]</span>';
+        // 🔑 [FIXED 2]: ใช้ innerHTML และใส่ข้อความที่ถูกแปลงแล้ว
+        bubble.innerHTML = formattedText;
 
-        // 🚩 [CRITICAL FIX]: ใช้ deletedAt แทน timestamp เดิม (ถ้ามี)
-        if (message.deletedAt) {
-            timeToDisplay = message.deletedAt;
-        }
-    }
-
-    const messageContainer = document.createElement('div');
-    messageContainer.className = `message-container ${containerClass}`;
-    messageContainer.setAttribute('data-message-id', messageId);
-
-    const bubble = document.createElement('div');
-    bubble.className = bubbleClass;
-
-    // 🔑 [FIXED 2]: ใช้ innerHTML และใส่ข้อความที่ถูกแปลงแล้ว
-    bubble.innerHTML = formattedText;
-
-    // เพิ่ม Event Listener สำหรับ Context Menu (Delete Message)
-    if (isAdmin && !isHistory && !isDeleted) {
-        bubble.addEventListener('contextmenu', (e) => {
-            window.showContextMenu(e, chatId, messageId, message.sender, bubble);
-        });
-    }
-
-    // เวลาข้อความ
-    const timeEl = document.createElement('span');
-    timeEl.className = 'message-time';
-    timeEl.innerHTML = timePrefix + formatTime(timeToDisplay);
-
-
-    // 🚨 [ปรับปรุง]: เปลี่ยนลำดับการ append เพื่อให้ง่ายต่อการจัดเรียงด้วย Flexbox
-    if (isAdmin) {
-        // สำหรับ Admin: เวลา -> Bubble (แล้วใช้ CSS จัดเรียงให้ Bubble ชิดขวา)
-        messageContainer.appendChild(timeEl);
-        messageContainer.appendChild(bubble);
-    } else { // User (ข้อความสีเทา/ขาว)
-
-        // 🔑 [NEW LOGIC]: แสดงชื่อผู้ส่งด้านบน Bubble ของ User
-        if (senderDisplayName) {
-            const nameEl = document.createElement('div');
-            nameEl.className = 'sender-display-name';
-            nameEl.innerHTML = senderDisplayName;
-            // 🚨 [CRITICAL]: ต้องให้ nameEl เป็นลำดับแรกสุดใน messageContainer
-            messageContainer.appendChild(nameEl);
+        // เพิ่ม Event Listener สำหรับ Context Menu (Delete Message)
+        if (isAdmin && !isHistory && !isDeleted) {
+            bubble.addEventListener('contextmenu', (e) => {
+                window.showContextMenu(e, chatId, messageId, message.sender, bubble);
+            });
         }
 
-        // 🚨 [ปรับปรุง]: เปลี่ยนเป็น เวลา -> Bubble เหมือน Admin (แล้วใช้ CSS จัดเรียงให้ Bubble ชิดซ้าย)
-        messageContainer.appendChild(timeEl);
-        messageContainer.appendChild(bubble);
+        // เวลาข้อความ
+        const timeEl = document.createElement('span');
+        timeEl.className = 'message-time';
+        timeEl.innerHTML = timePrefix + formatTime(timeToDisplay);
+
+
+        // 🚨 [ปรับปรุง]: เปลี่ยนลำดับการ append เพื่อให้ง่ายต่อการจัดเรียงด้วย Flexbox
+        if (isAdmin) {
+            // สำหรับ Admin: เวลา -> Bubble (แล้วใช้ CSS จัดเรียงให้ Bubble ชิดขวา)
+            messageContainer.appendChild(timeEl);
+            messageContainer.appendChild(bubble);
+        } else { // User (ข้อความสีเทา/ขาว)
+
+            // 🔑 [NEW LOGIC]: แสดงชื่อผู้ส่งด้านบน Bubble ของ User
+            if (senderDisplayName) {
+                const nameEl = document.createElement('div');
+                nameEl.className = 'sender-display-name';
+                nameEl.innerHTML = senderDisplayName;
+                // 🚨 [CRITICAL]: ต้องให้ nameEl เป็นลำดับแรกสุดใน messageContainer
+                messageContainer.appendChild(nameEl);
+            }
+
+            // 🚨 [ปรับปรุง]: เปลี่ยนเป็น เวลา -> Bubble เหมือน Admin (แล้วใช้ CSS จัดเรียงให้ Bubble ชิดซ้าย)
+            messageContainer.appendChild(timeEl);
+            messageContainer.appendChild(bubble);
+        }
+
+        chatBox.appendChild(messageContainer);
+
+        // 🚩 เพิ่ม Class 'show' หลัง append เพื่อให้เกิด Animation
+        setTimeout(() => {
+            messageContainer.classList.add('show');
+        }, 10);
+
+
+        // Scroll to the bottom (ทำเมื่อผู้ใช้ไม่ได้เลื่อนดูข้อความเก่า)
+        if (!isHistory && chatBox.scrollHeight - chatBox.scrollTop < chatBox.clientHeight + 200) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
     }
-
-    chatBox.appendChild(messageContainer);
-
-    // 🚩 เพิ่ม Class 'show' หลัง append เพื่อให้เกิด Animation
-    setTimeout(() => {
-        messageContainer.classList.add('show');
-    }, 10);
-
-
-    // Scroll to the bottom (ทำเมื่อผู้ใช้ไม่ได้เลื่อนดูข้อความเก่า)
-    if (!isHistory && chatBox.scrollHeight - chatBox.scrollTop < chatBox.clientHeight + 200) {
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-}
 
 
     // =================================================================
@@ -1382,6 +1382,171 @@ function loadHistoryList() {
             window.deleteChatPermanently(activeChatId);
         };
     }
+
+    // =======================================================================
+    // PART 1: ฟังก์ชันหลักในการตรวจจับ Long Press (กดค้าง)
+    // =======================================================================
+
+    const LONG_PRESS_DELAY = 500; // กำหนดระยะเวลาสำหรับการ "กดค้าง" (500 มิลลิวินาที)
+    let pressTimer = null; // ตัวแปรสำหรับเก็บ timer
+
+    /**
+     * กำหนด Event Listener สำหรับการตรวจจับ Long Press เพื่อเรียกฟังก์ชันยกเลิกข้อความ
+     * รองรับทั้ง Mouse (Desktop) และ Touch (Mobile)
+     * @param {HTMLElement} element องค์ประกอบ DOM ที่แสดงข้อความ
+     * @param {function} callback ฟังก์ชันที่จะถูกเรียกเมื่อเกิด Long Press (ในที่นี้คือ cancelMessage)
+     * @param {string|number} messageId ID ของข้อความที่จะส่งไปใน callback
+     */
+    function setupLongPressToCancel(element, callback, messageId) {
+        // 1. Event เมื่อเริ่มกด/เริ่มสัมผัส
+        element.addEventListener('mousedown', startPress);
+        element.addEventListener('touchstart', startPress);
+
+        // 2. Event เมื่อปล่อย/ยกเลิก/เลื่อน
+        element.addEventListener('mouseup', cancelPress);
+        element.addEventListener('mouseleave', cancelPress);
+        element.addEventListener('touchend', cancelPress);
+        element.addEventListener('touchcancel', cancelPress);
+        element.addEventListener('mousemove', cancelPress);
+        element.addEventListener('touchmove', cancelPress);
+
+        // ป้องกันการเกิด Context Menu (คลิกขวา) เพื่อให้ Long Press ทำงานได้บน Mobile
+        element.addEventListener('contextmenu', (e) => {
+            if (pressTimer === null) { // ถ้า Long Press เกิดขึ้นแล้ว (timer เป็น null)
+                e.preventDefault();
+            }
+        });
+
+        function startPress(e) {
+            // ป้องกันการเกิด context menu (คลิกขวา) บน desktop
+            if (e.type === 'mousedown' && e.button === 2) return;
+
+            // เคลียร์ timer เดิม และตั้งเวลาใหม่
+            if (pressTimer) {
+                clearTimeout(pressTimer);
+            }
+
+            pressTimer = setTimeout(() => {
+                // ถือว่าเป็น Long Press
+                pressTimer = null; // ตั้งให้เป็น null เพื่อบ่งชี้ว่า Long Press เกิดขึ้นแล้ว
+                callback(messageId);
+            }, LONG_PRESS_DELAY);
+        }
+
+        function cancelPress() {
+            // ยกเลิก timer หากมีการปล่อยนิ้ว/เมาส์ หรือมีการเคลื่อนที่
+            if (pressTimer) {
+                clearTimeout(pressTimer);
+                pressTimer = null;
+            }
+        }
+    }
+
+    // =======================================================================
+    // PART 2: ฟังก์ชันสำหรับยกเลิกข้อความจริง ๆ
+    // =======================================================================
+
+    /**
+     * ฟังก์ชันที่จะถูกเรียกเมื่อเกิด Long Press เพื่อจัดการการยกเลิกข้อความ
+     * @param {string|number} messageId ID ของข้อความที่ต้องการยกเลิก
+     */
+    function cancelMessage(messageId) {
+        // 1. ยืนยันกับผู้ใช้
+        if (!confirm(`คุณต้องการยกเลิกข้อความนี้ (ID: ${messageId}) ใช่หรือไม่?`)) {
+            return;
+        }
+
+        console.log(`[Admin] กำลังส่งคำขอยกเลิกข้อความ ID: ${messageId}`);
+
+        // 2. **ส่งคำขอไปยังเซิร์ฟเวอร์เพื่อยกเลิกข้อความ**
+        // **NOTE:** คุณต้องปรับ URL และวิธีการส่งข้อมูลให้เข้ากับ Backend ของคุณ
+        fetch(`/api/admin/cancel-message/${messageId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                // อาจจะต้องเพิ่ม Authorization Token/API Key ที่นี่
+            },
+            // body: JSON.stringify({ reason: 'Admin override' }) // สามารถส่งเหตุผลไปด้วย
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert(`ข้อความ ${messageId} ถูกยกเลิกและลบออกจากระบบแล้ว`);
+
+                    // 3. อัพเดท UI: ลบข้อความออกจากหน้าจอทันที
+                    const elementToRemove = document.querySelector(`[data-message-id="${messageId}"]`);
+                    if (elementToRemove) {
+                        elementToRemove.remove();
+                    }
+                } else {
+                    // แสดงข้อความ error จากเซิร์ฟเวอร์
+                    response.json().then(data => {
+                        alert(`เกิดข้อผิดพลาดในการยกเลิกข้อความ: ${data.error || response.statusText}`);
+                    }).catch(() => {
+                        alert(`เกิดข้อผิดพลาดในการยกเลิกข้อความ (Status: ${response.status})`);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Fetch Error canceling message:', error);
+                alert('ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์เพื่อยกเลิกข้อความได้');
+            });
+    }
+
+    // =======================================================================
+    // PART 3: การนำไปใช้ในฟังก์ชันสร้างและแสดงข้อความ
+    // =======================================================================
+
+    /**
+     * ตัวอย่างฟังก์ชันที่ใช้ในการสร้างและแสดงผลข้อความในแชท
+     * **คุณต้องนำโค้ดในส่วนนี้ไปรวมกับฟังก์ชันเดิมของคุณ**
+     * @param {object} message วัตถุข้อความที่มี ID และเนื้อหา
+     * @param {HTMLElement} chatContainer องค์ประกอบ DOM ของพื้นที่แชท
+     */
+    function appendMessageToChat(message, chatContainer) {
+        // 1. สร้าง Element ของข้อความ
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('chat-message', message.sender === 'admin' ? 'admin-msg' : 'user-msg');
+
+        // **สำคัญ:** กำหนด Attribute เพื่อใช้ค้นหา Element เมื่อต้องการลบ
+        messageElement.setAttribute('data-message-id', message.id);
+
+        // 2. สร้างเนื้อหา
+        const content = document.createElement('span');
+        content.classList.add('message-content');
+        content.textContent = message.text;
+        messageElement.appendChild(content);
+
+        // 3. **เรียกใช้ฟังก์ชัน Long Press เพื่อเปิดใช้งานการยกเลิก**
+        setupLongPressToCancel(messageElement, cancelMessage, message.id);
+
+        // 4. เพิ่มข้อความเข้าสู่หน้าจอ
+        chatContainer.appendChild(messageElement);
+
+        // เลื่อนลงไปด้านล่างสุดของแชท
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+
+    // =======================================================================
+    // PART 4: ตัวอย่างการเรียกใช้ (สมมติ)
+    // =======================================================================
+    // *** ลบหรือปรับโค้ดส่วนนี้ตามการเริ่มต้นระบบของคุณ ***
+
+    // const chatArea = document.getElementById('chat-messages'); // สมมติว่ามี Element นี้
+
+    // // ตัวอย่างการใช้งาน: สมมติว่ามีข้อความเข้ามาใหม่
+    // const incomingMessage = {
+    //     id: 'msg-12345',
+    //     text: 'สวัสดีครับ/ค่ะ ข้อความนี้ควรถูกกดค้างเพื่อยกเลิกได้',
+    //     sender: 'user',
+    //     timestamp: Date.now()
+    // };
+
+    // if (chatArea) {
+    //     appendMessageToChat(incomingMessage, chatArea);
+    // } else {
+    //     console.error("ไม่พบ Element 'chat-messages'. กรุณาตรวจสอบ ID ใน HTML");
+    // }
 
     // 🚩 [REMOVED/DELETED] โค้ด handleNewMessage ที่ไม่สมบูรณ์ถูกลบออกแล้ว
 });
