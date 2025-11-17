@@ -1,4 +1,4 @@
-// user.js (ฉบับสมบูรณ์ แก้ไขปัญหาไม่เห็นข้อความ, ID ถูกลบ/ปิดสถานะ, และป้องกันการปิดแชทอัตโนมัติ)
+// user.js (ฉบับสมบูรณ์ แก้ไขปัญหาข้อความถูกยกเลิกการส่งหายไปหลังรีเฟรช และปรับขนาดตัวอักษร)
 
 // ===============================================
 // 1. Firebase Initialization & Config
@@ -683,8 +683,8 @@ function attachChatChangeListener(chatId) {
 
 
 /**
- * @function attachMessageListener (FIXED: เพื่อให้ User เห็นข้อความ Admin)
- * ผูก Listener กับ messages sub-collection เพื่อรับข้อความทั้งหมด (user, admin, system)
+ * @function attachMessageListener (FIXED: เพื่อให้ User เห็นข้อความ Admin และข้อความถูกลบ)
+ * ผูก Listener กับ messages sub-collection เพื่อรับข้อความทั้งหมด (user, admin, system, deleted)
  */
 function attachMessageListener(chatId) {
     // 1. ยกเลิก Listener เดิม (ถ้ามี)
@@ -699,13 +699,14 @@ function attachMessageListener(chatId) {
     const callback = (snapshot) => {
 
         const message = snapshot.val();
+        const messageId = snapshot.key;
 
-        if (!message || message.deleted) return;
-
+        // ❌ [BUG REMOVED]: ลบโค้ดกรองข้อความที่ถูกลบ เพื่อให้ข้อความที่มี message.deleted: true ถูกส่งต่อไป
+        
         // ตรวจสอบว่าข้อความใหม่เป็นข้อความที่เพิ่งเข้ามาหรือไม่ (เพื่อให้เสียงแจ้งเตือนทำงานได้)
         const isNewMessage = chatBox.childElementCount > 0;
 
-        appendMessage(message, snapshot.key, chatId);
+        appendMessage(message, messageId, chatId);
 
         // 3. เมื่อเป็นข้อความของ Admin ให้เล่นเสียงแจ้งเตือน
         if (message.sender === 'admin' && isNewMessage) {
@@ -721,29 +722,49 @@ function attachMessageListener(chatId) {
 
 function appendMessage(message, messageId, chatId) {
 
+    // ตรวจสอบ chatBox (สมมติว่ามีการประกาศ chatBox ไว้แล้ว)
+    const chatBox = document.getElementById('chatBox');
+    if (!chatBox) return; 
+
+    // 1. ตัวแปรเริ่มต้น
     const isUser = message.sender === 'user';
     const isAdmin = message.sender === 'admin';
-    let isSystem = message.sender === 'system';
     const isDeleted = message.deleted === true;
+    let isSystem = message.sender === 'system';
 
-    if (isUser && message.uid === ADMIN_UID_TO_HIDE) {
-        // ถ้าข้อความมาจาก UID ของ Admin ที่ปลอมตัวเป็น User
-        displayName = 'Admin Chat';
+    // 🔑 [CRITICAL FIX]: กรองข้อความที่ไม่มีเนื้อหา *และ* ไม่ได้ถูกลบ
+    const textContent = message.text || message.message || message.content || '';
+    if (textContent.trim() === '' && !isDeleted) {
+        return; // กรองข้อความว่างเปล่าที่ไม่ใช่ข้อความถูกลบ
     }
-
+    
+    // 2. ป้องกันข้อความซ้ำ
     if (document.querySelector(`[data-message-id="${messageId}"]`)) {
         return;
     }
 
     let bubbleClass;
     let containerClass;
-    let textContent = message.text;
+    let senderDisplayName = null;
+    let formattedText; 
 
+    // 3. Logic การแสดงชื่อผู้ส่ง (สำหรับ Admin ที่ปลอมเป็น User)
+    if (isUser && message.uid === ADMIN_UID_TO_HIDE) {
+        senderDisplayName = '<strong style="color: #007bff;">Admin Chat</strong>';
+    } else if (isUser) {
+        senderDisplayName = message.name || '';
+    }
+
+    // 4. Logic การจัดการประเภทข้อความ (รวมถึงการแทนที่ข้อความที่ถูกลบ)
     if (isDeleted) {
-        isSystem = true;
-        bubbleClass = 'system-bubble';
+        // 🔑 [CRITICAL FIX]: แทนที่ข้อความเดิมด้วยข้อความยกเลิกการส่ง
+        isSystem = true; // กำหนดให้เป็น System เพื่อให้ไม่มีเวลาแสดงผลและอยู่ตรงกลาง
+        bubbleClass = 'deleted-bubble'; 
         containerClass = 'system-container';
-        textContent = `<i class="fas fa-ban"></i> ${textContent}`;
+        
+        // ** 🚩 แก้ไข: เพิ่ม font-size: 0.8em; เพื่อให้ตัวอักษรเล็กลง **
+        formattedText = '<span style="font-style: italic; color: #888; font-size: 0.8em;">[ข้อความถูกยกเลิกการส่ง]</span>'; 
+
     } else if (isSystem) {
         bubbleClass = 'system-bubble';
         containerClass = 'system-container';
@@ -751,42 +772,65 @@ function appendMessage(message, messageId, chatId) {
     } else if (isUser) {
         bubbleClass = 'user-bubble';
         containerClass = 'user-container';
+        // แปลง \n เป็น <br> สำหรับข้อความจริง
+        formattedText = textContent.replace(/\n/g, '<br>');
 
     } else if (isAdmin) {
-        // 🚩 ต้องแน่ใจว่า Admin message ถูกจัดรูปแบบเป็น admin-bubble
         bubbleClass = 'admin-bubble';
         containerClass = 'admin-container';
+        // แปลง \n เป็น <br> สำหรับข้อความจริง
+        formattedText = textContent.replace(/\n/g, '<br>');
+    } else {
+        return;
     }
-
-
+    
+    // 5. การสร้าง Element
     const messageContainer = document.createElement('div');
     messageContainer.className = `message-container ${containerClass} new-message`;
     messageContainer.setAttribute('data-message-id', messageId);
-
+    
+    // 6. การแสดงชื่อผู้ส่ง (ถ้ามี)
+    if (senderDisplayName && isUser && !isDeleted) {
+        const nameEl = document.createElement('div');
+        nameEl.className = 'sender-display-name';
+        nameEl.innerHTML = senderDisplayName;
+        messageContainer.appendChild(nameEl);
+    }
+    
+    // 7. สร้าง Bubble และใส่เนื้อหา
     const bubble = document.createElement('div');
     bubble.className = `message-bubble ${bubbleClass}`;
 
-    if (isDeleted || isSystem) {
-        bubble.innerHTML = textContent;
+    // ใช้ formattedText เป็นหลัก ซึ่งถูกกำหนดไว้แล้วสำหรับทุกกรณี
+    if (formattedText) {
+        bubble.innerHTML = formattedText;
     } else {
-        bubble.textContent = textContent;
+         // Fallback สำหรับข้อความดิบ
+         bubble.textContent = textContent; 
     }
 
-
+    // 8. Event Listener
     if (isUser && !isDeleted) {
         setupContextMenu(bubble, chatId, messageId);
     }
 
-    if (!isSystem) {
+    // 9. การจัดเรียงเวลาและ Bubble
+    if (!isSystem) { // เฉพาะข้อความ User หรือ Admin (ไม่รวม System/Deleted)
         const time = document.createElement('span');
         time.className = 'message-time';
         time.textContent = formatTimestamp(message.timestamp);
 
-        messageContainer.appendChild(bubble);
-        messageContainer.appendChild(time);
-
+        // จัดเรียงตาม type ของผู้ส่ง
+        if (isUser) { 
+            messageContainer.appendChild(bubble);
+            messageContainer.appendChild(time);
+        } else if (isAdmin) {
+            messageContainer.appendChild(time);
+            messageContainer.appendChild(bubble);
+        }
     } else {
-        messageContainer.appendChild(bubble);
+        // ข้อความ System หรือ Deleted จะอยู่ตรงกลางและไม่มีเวลา
+        messageContainer.appendChild(bubble); 
     }
 
     chatBox.appendChild(messageContainer);
@@ -797,7 +841,6 @@ function appendMessage(message, messageId, chatId) {
 
     chatBox.scrollTop = chatBox.scrollHeight;
 }
-
 
 // ===============================================
 // 8. Message Sending & Deletion
@@ -842,25 +885,16 @@ function sendMessage() {
 function deleteMessage(chatId, messageId) {
     if (!confirm("คุณต้องการลบข้อความนี้จริงหรือไม่? ข้อความจะถูกซ่อนจากทุกคน")) return;
 
-    const deletedText = "[ข้อความนี้ถูกยกเลิกการส่ง]";
+    // 🚩 FIX: ลบข้อความต้นฉบับทิ้ง (กำหนดเป็น null) เพื่อให้มั่นใจว่าข้อความถูกแทนที่ด้วย deleted: true ในหน้า User
     database.ref(`${CHATS_PATH}/${chatId}/messages/${messageId}`).update({
         deleted: true,
-        text: deletedText
+        text: null // ล้างข้อความเดิม
     }).then(() => {
 
         const oldContainer = document.querySelector(`[data-message-id="${messageId}"]`);
         if (oldContainer) {
             oldContainer.remove();
         }
-
-        const deletedMessage = {
-            text: deletedText,
-            sender: 'system',
-            deleted: true,
-            timestamp: Date.now()
-        };
-
-        appendMessage(deletedMessage, messageId, chatId);
 
         alert("ข้อความถูกยกเลิกการส่งแล้ว");
 
@@ -882,6 +916,12 @@ function copyMessage(chatId, messageId) {
     }
 
     if (textToCopy) {
+        // ตรวจสอบไม่ให้คัดลอกข้อความถูกลบ
+        if (textToCopy.trim() === "[ข้อความถูกยกเลิกการส่ง]") {
+             alert("ไม่สามารถคัดลอกข้อความที่ถูกยกเลิกการส่งได้");
+             return;
+        }
+
         navigator.clipboard.writeText(textToCopy)
             .then(() => alert("คัดลอกข้อความเรียบร้อย!"))
             .catch(err => {
@@ -893,7 +933,7 @@ function copyMessage(chatId, messageId) {
 
     database.ref(`${CHATS_PATH}/${chatId}/messages/${messageId}/text`).once('value', snapshot => {
         const text = snapshot.val();
-        if (text && text !== "[ข้อความนี้ถูกยกเลิกการส่ง]") {
+        if (text && text !== "[ข้อความถูกยกเลิกการส่ง]") {
             navigator.clipboard.writeText(text)
                 .then(() => alert("คัดลอกข้อความเรียบร้อย!"))
                 .catch(err => {
