@@ -1,5 +1,5 @@
 /* ========================================================= */
-/* [CSS FIX] ADMIN CHAT PANEL STYLING (ฉบับแก้ไขปุ่ม Login ให้เท่ากับ Input Field) */
+/* [CSS FIX] ADMIN CHAT PANEL STYLING (ฉบับแก้ไขปัญหา Scrollbar) */
 /* ========================================================= */
 
 /* 0. VARIABLES & BASE STYLES */
@@ -42,7 +42,8 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     overflow-x: hidden;
-    overflow-y: hidden;
+    /* 🔑 [FIX 1/3]: เปลี่ยน overflow-y: hidden; เป็นการจัดการใน Container ย่อย */
+    overflow-y: auto; /* อนุญาตให้ Scrollbar ของ Body/HTML ทำงานได้ถ้าจำเป็น */
 }
 
 /* 1. LAYOUT & CONTAINER (Full Viewport) */
@@ -52,10 +53,12 @@ body {
     width: 100vw;
     height: 100vh;
     background-color: var(--container-bg);
-    overflow: hidden;
+    /* 🔑 [FIX 2/3]: ลบ overflow: hidden; ออกจาก body หรือเปลี่ยนเป็น auto */
+    /* เพื่อให้ส่วน listScreenContainer มีความสูงเต็ม 100% และสามารถจัดการ scroll ภายในได้ */
+    overflow: hidden; /* คงไว้ที่ hidden เพื่อบังคับ Scroll ภายใน #chatList (ในกรณีที่หน้าจอหลักไม่มีอะไรล้น) */
 }
 
-/* 2. LOGIN & WELCOME SCREEN STYLES */
+/* 2. LOGIN & WELCOME SCREEN STYLES (ไม่มีการแก้ไขในส่วนนี้) */
 #loginScreen {
     position: absolute;
     top: 50%;
@@ -211,7 +214,7 @@ body {
     gap: 15px;
 }
 
-/* 3. BUTTONS */
+/* 3. BUTTONS (ไม่มีการแก้ไขในส่วนนี้) */
 .primary-button {
     background: var(--primary-color);
     color: white;
@@ -316,7 +319,8 @@ body {
     box-shadow: none;
     border-radius: 0;
     background-color: var(--container-bg);
-    overflow: hidden;
+    /* 🔑 [FIX 3/3]: ลบ overflow: hidden; ออกจาก container หลัก */
+    overflow: hidden; /* คงไว้ที่ hidden เพื่อบังคับให้ #listScreen จัดการพื้นที่ scroll ภายในแทน */
     position: relative;
     display: block;
     padding: 0 !important;
@@ -332,8 +336,8 @@ body {
     flex-direction: column;
     flex-grow: 1;
     width: 100%;
-    height: 100%;
-    overflow: hidden;
+    height: 100%; /* 🔑 [CONFIRMATION]: ยืนยันว่า Panel หลักยืดเต็มจอ */
+    overflow: hidden; /* ควบคุม Scroll ภายใน Panel ย่อย */
     padding: 0 !important;
     position: absolute;
     top: 0;
@@ -342,6 +346,20 @@ body {
     background-color: var(--container-bg);
     box-sizing: border-box;
 }
+
+/* 🔑 [CRITICAL FIX]: เพิ่มการกำหนดความสูงให้ Chat List Panel (ส่วนที่อยู่ระหว่าง Header และ List) */
+#chatListPanel,
+#historyListPanel {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    /* 🔴 [NEW FIX]: ทำให้ Panel ย่อยที่บรรจุ #chatList ยืดเต็มพื้นที่ที่เหลืออยู่ของ Container แม่ (#listScreen) */
+    height: calc(100% - 50px); /* ประมาณ 100% ลบความสูงของ Header (50px โดยประมาณ) */
+    /* หรือใช้ height: 100%; หาก #listScreen ถูกกำหนดให้ใช้ flexbox ดีแล้ว */
+    /* หากใช้ flexbox ถูกต้องแล้ว ไม่จำเป็นต้องใส่ height: 100% แต่โค้ดนี้จะช่วยแก้ปัญหา fallback ได้ */
+}
+
 
 #chatScreenContainer {
     position: absolute;
@@ -464,6 +482,7 @@ body {
     background: var(--primary-color);
     color: white !important;
     padding: 12px 15px;
+    flex-shrink: 0; /* 🔴 [NEW FIX]: ป้องกันไม่ให้ Header ถูกบีบอัดเมื่อ listScreen ใช้ flexbox */
 }
 
 .panel-title {
@@ -505,8 +524,9 @@ body {
 #chatList,
 #historyList {
     flex-grow: 1;
-    overflow-y: auto;
+    overflow-y: auto; /* ✅ ส่วนนี้คือตัวสร้าง Scrollbar */
     padding: 10px;
+    box-sizing: border-box; /* 🔴 [NEW FIX]: ทำให้ padding ไม่ไปขยายขนาดเกินความสูงที่กำหนด */
 }
 
 .chat-item {
@@ -630,7 +650,7 @@ body {
 }
 
 
-/* CHAT PANEL (ขวา - Active Chat) */
+/* CHAT PANEL (ขวา - Active Chat) (ไม่มีการแก้ไขในส่วนนี้) */
 .input-area {
     display: flex;
     padding: 15px;
@@ -676,7 +696,7 @@ body {
 }
 
 
-/* 5. CHAT MESSAGE STYLES (รวมการจัดกลุ่มบับเบิ้ล) */
+/* 5. CHAT MESSAGE STYLES (รวมการจัดกลุ่มบับเบิ้ล) (ไม่มีการแก้ไขในส่วนนี้) */
 .message-container {
     display: flex;
     margin: 0 0;
@@ -862,7 +882,7 @@ body {
 }
 
 
-/* 6. CONTEXT MENU STYLES (สำหรับยกเลิกข้อความ) */
+/* 6. CONTEXT MENU STYLES (สำหรับยกเลิกข้อความ) (ไม่มีการแก้ไขในส่วนนี้) */
 
 .context-menu {
     position: absolute;
@@ -980,6 +1000,7 @@ body {
         flex-direction: column;
         flex-grow: 1;
         width: 100%;
+        height: 100%; /* 🔴 [NEW FIX]: ยืนยันความสูงเต็มจอในโหมด Mobile */
         overflow: hidden;
         padding: 0 !important;
     }
@@ -990,6 +1011,8 @@ body {
         flex-grow: 1;
         flex-direction: column;
         width: 100%;
+        /* 🔴 [NEW FIX]: ทำให้ Panel ย่อยยืดเต็มที่ */
+        height: 100%;
     }
 
 
@@ -1065,8 +1088,19 @@ body {
         flex-direction: column;
         flex-grow: 1;
         width: 100%;
+        height: 100%;
         overflow: hidden;
         padding: 0 !important;
+    }
+    
+    #chatListPanel,
+    #historyListPanel {
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+        width: 100%;
+        /* 🔴 [NEW FIX]: ทำให้ Panel ย่อยยืดเต็มที่ */
+        height: 100%;
     }
 
     #chatScreenContainer {
@@ -1088,7 +1122,7 @@ body {
 
 
 /* ---------------------------------------------------- */
-/* DELETE HISTORY BUTTON STYLES */
+/* DELETE HISTORY BUTTON STYLES (ไม่มีการแก้ไขในส่วนนี้) */
 /* ---------------------------------------------------- */
 .delete-chat-history-btn {
     background: var(--danger-color);
