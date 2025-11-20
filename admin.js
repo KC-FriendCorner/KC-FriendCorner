@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
             messageEl.style.display = 'none';
         }, 4000);
     }
-    
+
     // 🚩 [NEW] ฟังก์ชันจัดการ Long Press
     function setupLongPressHandler(bubbleElement, chatId, messageId, messageSender) {
         let pressTimer = null;
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showContextMenu(e, chatId, messageId, messageSender, bubbleElement);
                 return;
             }
-            
+
             // ยกเลิกการกดค้างอื่น ๆ ก่อน
             hideContextMenu();
 
@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bubbleElement.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             // ยกเลิก Long Press Timer ถ้ามี
-            clearTimeout(pressTimer); 
+            clearTimeout(pressTimer);
             showContextMenu(e, chatId, messageId, messageSender, bubbleElement);
         }, false);
     }

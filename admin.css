@@ -1155,3 +1155,17 @@ body {
 #chatList .delete-chat-history-btn {
     display: none !important;
 }
+
+/* --- Scrollbar Hiding --- */
+#mainContainer::-webkit-scrollbar,
+#chatBox::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+#mainContainer,
+#chatBox {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
