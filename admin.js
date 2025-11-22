@@ -402,6 +402,44 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     };
 
+    // 🚩 ส่วนนี้ควรถูกประกาศใน Global Scope หรือภายใน document.addEventListener('DOMContentLoaded', ...)
+
+    window.setupLongPressHandler = function (element, chatId, messageId, sender) {
+        // 💡 ฟังก์ชันนี้ต้องถูกประกาศเป็น window.functionName เพื่อให้เข้าถึงได้
+        let pressTimer = null;
+
+        const startPress = (e) => {
+            // อนุญาตเฉพาะ Left-click หรือ Touchstart
+            if (e.button !== 0 && e.type !== 'touchstart') return;
+
+            // ป้องกันการ Scroll เมื่อ Touch (สำคัญสำหรับ Mobile)
+            if (e.type === 'touchstart') e.stopPropagation();
+
+            pressTimer = setTimeout(() => {
+                // 🔑 เรียกใช้ showContextMenu โดยส่ง element (bubble) เข้าไป
+                window.showContextMenu({
+                    clientX: e.clientX,
+                    clientY: e.clientY,
+                    preventDefault: () => { }
+                }, chatId, messageId, sender, element);
+                clearTimeout(pressTimer);
+            }, 700); // 700ms คือระยะเวลา Long Press
+
+        };
+
+        const endPress = () => {
+            clearTimeout(pressTimer);
+        };
+
+        // ผูก Event Listener เข้ากับ element (bubble)
+        element.addEventListener('mousedown', startPress);
+        element.addEventListener('touchstart', startPress);
+        element.addEventListener('mouseup', endPress);
+        element.addEventListener('mouseleave', endPress);
+        element.addEventListener('touchend', endPress);
+        element.addEventListener('touchcancel', endPress);
+    };
+
     // =================================================================
     // === 4. NAVIGATION & SCREEN MANAGEMENT ===
     // =================================================================
@@ -1248,7 +1286,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.showContextMenu(e, chatId, messageId, message.sender, bubble);
             });
             // 2. เพิ่ม Event Listener สำหรับ Long Press (Mobile/Touch)
-            setupLongPressHandler(bubble, chatId, messageId, message.sender);
+            window.setupLongPressHandler(bubble, chatId, messageId, message.sender);
         }
 
         // เวลาข้อความ
